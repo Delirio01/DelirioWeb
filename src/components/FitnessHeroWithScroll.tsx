@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
 import { ParticleVisual } from "./ParticleVisual";
+import { defaultParticlePositions } from "./particle-defaults";
 
 const sections = [
   {
@@ -123,7 +124,7 @@ export function FitnessHeroWithScroll() {
           {sections.map((section, index) => (
             <div
               key={index}
-              ref={(el) => (sectionRefs.current[index] = el)}
+              ref={el => { sectionRefs.current[index] = el; }}
               className="min-h-screen flex items-center py-12 md:py-16 lg:py-20"
             >
               <div
@@ -182,7 +183,7 @@ export function FitnessHeroWithScroll() {
         style={{ opacity: isInView ? 1 : 0 }}
       >
         <div className="w-[450px] h-[450px] relative">
-          <ParticleVisual color={sections[activeIndex].color} />
+          <ParticleVisual color={sections[activeIndex].color} particleCount={defaultParticlePositions.length} nodeScale={0.7} />
 
           {/* Decorative gradient */}
           <div

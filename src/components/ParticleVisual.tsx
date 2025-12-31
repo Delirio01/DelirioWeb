@@ -54,23 +54,17 @@ export function ParticleVisual({
   const [useCanvas2D, setUseCanvas2D] = useState(() => {
     try {
       const canvas = document.createElement("canvas");
-      const gl =
-        canvas.getContext("webgl") ||
-        canvas.getContext("experimental-webgl");
 
+      const gl = canvas.getContext("webgl") as WebGLRenderingContext | null;
       if (!gl) {
         console.log("⚠️ WebGL not available, using Canvas2D");
         return true;
       }
 
       // Check for software renderer
-      const debugInfo = gl.getExtension(
-        "WEBGL_debug_renderer_info",
-      );
+      const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
       if (debugInfo) {
-        const renderer = gl.getParameter(
-          debugInfo.UNMASKED_RENDERER_WEBGL,
-        ) as string;
+        const renderer = gl.getParameter((debugInfo as any).UNMASKED_RENDERER_WEBGL) as string;
         if (
           renderer.includes("SwiftShader") ||
           renderer.includes("llvmpipe")
@@ -84,7 +78,7 @@ export function ParticleVisual({
 
       return false;
     } catch (e) {
-      console.log("⚠️ WebGL check failed, using Canvas2D");
+      console.log("⚠️ WebGL check failed, using Canvas2D", e);
       return true;
     }
   });
@@ -171,7 +165,6 @@ export function ParticleVisual({
         "ParticleVisual: Renderer created successfully",
         {
           canvas: renderer.domElement,
-          contextLost: renderer.context.isContextLost(),
         },
       );
 
@@ -184,7 +177,7 @@ export function ParticleVisual({
       // Calculate center and scale from default positions
       const centerX = 300; // Approximate center of 0-600 range
       const centerY = 300;
-      const scale = 0.05; // Scale down from 600px space to our 3D units
+  const scale = 0.03; // Smaller scale for 3D units
       const rotationAngle = 90 * (Math.PI / 180); // 90 degrees in radians
 
       for (
@@ -735,7 +728,11 @@ export function ParticleVisual({
         );
       });
     } catch (e) {
-      console.log(e.message);
+      if (e instanceof Error) {
+        console.log(e.message);
+      } else {
+        console.log(e);
+      }
     }
   }, [color, isInitialized]);
 
