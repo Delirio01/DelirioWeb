@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import '../styles/fitness-waitlist-fade.css';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 
@@ -33,7 +34,9 @@ export function FitnessWaitlist() {
   };
 
   return (
-    <section id="waitlist" className="bg-black py-32">
+    <section id="waitlist" className="bg-black py-32 relative overflow-hidden">
+      {/* Fade overlay at the top border */}
+      <div className="fitness-waitlist-fade" />
       <div className="max-w-7xs mx-auto px-6">
         <div className="max-w-2xl mx-auto" style = {{display:"flex", justifyContent:"center"}} >
     

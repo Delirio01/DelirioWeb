@@ -1,0 +1,22 @@
+/* Fade effect for FitnessFeatures grid background */
+.grid-fade-bg {
+  position: absolute;
+  inset: 0;
+}
+.grid-fade-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* Fade from white (opaque) to transparent and back to white */
+  background: linear-gradient(
+    to bottom,
+    white 0%,
+    rgba(255,255,255,0.85) 6%,
+    rgba(255,255,255,0.0) 18%,
+    rgba(255,255,255,0.0) 82%,
+    rgba(255,255,255,0.85) 94%,
+    white 100%
+  );
+  z-index: 2;
+}

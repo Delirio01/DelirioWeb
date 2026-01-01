@@ -1,3 +1,14 @@
+
+import React, { useRef, useState } from 'react';
+import type { ReactElement } from 'react';
+import {
+  ShieldCheck,
+  Zap,
+  Gauge,
+  Award,
+  Lightbulb,
+} from "lucide-react";
+
 // FeatureCard component for rendering each feature
 type Feature = {
   icon: React.ElementType;
@@ -20,14 +31,6 @@ function FeatureCard({ feature }: { feature: Feature }) {
     </div>
   );
 }
-import {
-  ShieldCheck,
-  Zap,
-  Gauge,
-  Award,
-  Lightbulb,
-} from "lucide-react";
-
 const features = [
   {
     icon: ShieldCheck,
@@ -61,19 +64,111 @@ const features = [
   },
 ];
 
-export function FitnessFeatures() {
+
+function FitnessFeatures() {
+  // Grid settings
+  const gridSize = 40;
+  const width = 1200;
+  const height = 800;
+  const cols = Math.floor(width / gridSize) + 1;
+  const rows = Math.floor(height / gridSize) + 1;
+
+  const [mouse, setMouse] = useState<{ x: number; y: number } | null>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  // Mouse move handler for interactive grid
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const rect = sectionRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const x = ((e.clientX - rect.left) / rect.width) * width;
+    const y = ((e.clientY - rect.top) / rect.height) * height;
+    setMouse({ x, y });
+  };
+
+  const handleMouseLeave = () => setMouse(null);
+
+  // Hill effect function (Gaussian bump)
+  function getZ(x: number, y: number) {
+    if (!mouse) return 0;
+    const dx = x - mouse.x;
+    const dy = y - mouse.y;
+    const distSq = dx * dx + dy * dy;
+    const sigma = 120; // controls width of hill
+    const amplitude = 32; // max height in px
+    return amplitude * Math.exp(-distSq / (2 * sigma * sigma));
+  }
+
+  // Generate grid lines with hill effect and fading opacity from center
+  const gridLines: ReactElement[] = [];
+  const centerX = width / 2;
+  const centerY = height / 2;
+  const maxDist = Math.sqrt(centerX * centerX + centerY * centerY);
+
+  // Vertical lines
+  for (let c = 0; c < cols; c++) {
+    const x = c * gridSize;
+    let path = '';
+    for (let r = 0; r < rows; r++) {
+      const y = r * gridSize;
+      const z = getZ(x, y);
+      if (r === 0) {
+        path = `M ${x} ${y - z}`;
+      } else {
+        path += ` L ${x} ${y - z}`;
+      }
+    }
+    // Fade opacity based on distance from center (vertical line: use x)
+    const dist = Math.abs(x - centerX);
+  const opacity = 1 - 0.9 * (dist / centerX); // 1 at center, 0.1 at edge
+    gridLines.push(
+      <path key={`v-${c}`} d={path} stroke="#e5e7eb" strokeWidth="1" fill="none" style={{ opacity }} />
+    );
+  }
+  // Horizontal lines
+  for (let r = 0; r < rows; r++) {
+    const y = r * gridSize;
+    let path = '';
+    for (let c = 0; c < cols; c++) {
+      const x = c * gridSize;
+      const z = getZ(x, y);
+      if (c === 0) {
+        path = `M ${x} ${y - z}`;
+      } else {
+        path += ` L ${x} ${y - z}`;
+      }
+    }
+    // Fade opacity based on distance from center (horizontal line: use y)
+    const dist = Math.abs(y - centerY);
+  const opacity = 1 - 0.9 * (dist / centerY); // 1 at center, 0.1 at edge
+    gridLines.push(
+      <path key={`h-${r}`} d={path} stroke="#e5e7eb" strokeWidth="1" fill="none" style={{ opacity }} />
+    );
+  }
+
   return (
     <section
       id="features"
-      className="bg-white py-32"
+      className="bg-white py-32 relative overflow-hidden"
+      ref={sectionRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ zIndex: 1 }}
     >
-      <div className="max-w-7xl mx-auto px-6">
+      {/* Interactive 3D Hill Grid Background */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 w-full h-full"
+        style={{ zIndex: 0 }}
+      >
+        <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+          {gridLines}
+        </svg>
+      </div>
+      <div className="max-w-7xl mx-auto px-6 relative" style={{ zIndex: 1 }}>
         {/* Heading */}
-
         <h2 className="text-5xl md:text-6xl lg:text-7xl tracking-tight mb-20 leading-[1.1] text-center max-w-4xl mx-auto">
           Feedback has never been more accesible
         </h2>
-
         {/* Features Grid - 3 on top, 2 on bottom */}
         <div className="flex flex-col gap-12 max-w-6xl mx-auto">
           {/* Top Row - 3 cards */}
@@ -94,3 +189,5 @@ export function FitnessFeatures() {
     </section>
   );
 }
+
+export default FitnessFeatures;

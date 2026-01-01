@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { FitnessHeader } from './components/FitnessHeader';
 import { FitnessHeroWithScroll, SectionVisibility } from './components/FitnessHeroWithScroll';
-import { FitnessFeatures } from './components/FitnessFeatures';
+import FitnessFeatures from './components/FitnessFeatures';
 import { FitnessWaitlist } from './components/FitnessWaitlist';
 import { FitnessFooter } from './components/FitnessFooter';
 import TermsServices from './components/TermsServices';
