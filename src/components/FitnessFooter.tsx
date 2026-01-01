@@ -25,13 +25,13 @@ export function FitnessFooter({ onNavigate }: { onNavigate?: (page: 'main' | 'te
               <div className="flex items-center gap-4">
                 <Logo color="white" width="40" height="40" />
                 <div className='flex items-center gap-2'>
-                  <a href="https://instagram.com/yourprofile" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                  <a href="https://www.instagram.com/delirio__official/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                     <InstaIcon color="white" />
                   </a>
-                  <a href="https://tiktok.com/@yourprofile" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+                  <a href="https://www.tiktok.com/@delirio__official" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
                     <TikTokIcon color="white" />
                   </a>
-                  <a href="https://x.com/yourprofile" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)">
+                  <a href="https://x.com/Delirio1_" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)">
                     <XIcon color="white" />
                   </a>
                 </div>

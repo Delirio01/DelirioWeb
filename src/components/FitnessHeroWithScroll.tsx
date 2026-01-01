@@ -42,7 +42,7 @@ title: "Your personal fitness coach, available 24/7. Live feedback during workou
 <iframe 
     width="560" 
     height="315" 
-    src="https://www.youtube.com/embed/oq70h9XBj_0?list=RDoq70h9XBj_0&start_radio=1" 
+    src="https://youtu.be/2aZN-99-hn4" 
     title="YouTube video player" 
     frameBorder="0" 
     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
