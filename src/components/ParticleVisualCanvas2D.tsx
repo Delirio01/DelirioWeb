@@ -177,9 +177,13 @@ export function ParticleVisualCanvas2D({
         style={{ minHeight: "400px" }}
       />
       {isInitialized && (
+        <>   </>
+        /*
         <div className="absolute top-4 left-4 text-xs opacity-30 font-mono bg-green-500/20 px-2 py-1 rounded">
           ✅ {particlesRef.current.length} particles (Canvas2D)
         </div>
+        */
+      
       )}
     </div>
   );

@@ -100,7 +100,7 @@ export function Footer() {
           </p>
           <div className="flex flex-wrap gap-8 justify-center">
             <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+            <a href="#terms-of-service" className="hover:text-white transition-colors">Terms of Service</a>
             <a href="#" className="hover:text-white transition-colors">Data Processing Agreement</a>
             <a href="#" className="hover:text-white transition-colors">Cookie Settings</a>
           </div>

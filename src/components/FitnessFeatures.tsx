@@ -1,41 +1,63 @@
+// FeatureCard component for rendering each feature
+type Feature = {
+  icon: React.ElementType;
+  title: string;
+  description: string;
+};
+
+function FeatureCard({ feature }: { feature: Feature }) {
+  const Icon = feature.icon;
+    return (
+      <div
+        className="rounded-2xl border border-black/10 bg-white px-8 py-8 shadow-sm flex flex-col items-start transition-transform transition-shadow duration-200 ease-in-out hover:shadow-lg hover:-translate-y-2 hover:scale-105"
+        style={{ width: 240, paddingInline: 20, paddingBlock: 32 }}
+      >
+      <div className="w-10 h-10 mb-4 flex items-center justify-start">
+        <Icon className="w-7 h-7 text-black" />
+      </div>
+      <h3 className="font-semibold text-lg mb-2 text-left">{feature.title}</h3>
+      <p className="text-base text-black/60 leading-snug text-left">{feature.description}</p>
+    </div>
+  );
+}
 import {
-  Dumbbell,
+  ShieldCheck,
   Zap,
-  Shield,
-  Users,
-  TrendingUp,
+  Gauge,
+  Award,
+  Lightbulb,
 } from "lucide-react";
 
 const features = [
   {
-    icon: Dumbbell,
-    title: "Real-Time Form Analysis",
+    icon: ShieldCheck,
+    title: "Reliability",
     description:
-      "AI-powered computer vision tracks your movements and provides instant feedback on your exercise form to prevent injuries.",
+      "Consistent, dependable coaching infrastructure built for continuous support and unwavering accountability.",
   },
   {
     icon: Zap,
-    title: "Adaptive Training Plans",
+    title: "Responsiveness",
     description:
-      "Personalized workout programs that evolve with your progress, adjusting difficulty and volume based on your performance.",
+      "Immediate guidance available around the clock, ensuring you never face challenges alone.",
   },
   {
-    icon: Shield,
-    title: "Privacy-First Technology",
+    icon: Gauge,
+    title: "Continuous Optimization",
     description:
-      "All analysis happens on-device in real-time. Your workout data is never stored or transmitted to external servers.",
+      "Maintain momentum through daily insights, progress tracking, and adaptive coaching that evolves based on your performance and feedback.",
   },
   {
-    icon: Users,
-    title: "Accessible for All Levels",
+    icon: Award,
+    title: "Confidence",
     description:
-      "Designed for beginners to advanced athletes with intuitive guidance and progressive difficulty scaling.",
+      "Build lasting self-assurance through validated progress and evidence-based growth strategies",
   },
   {
-    icon: TrendingUp,
-    title: "Progress Tracking",
+    icon: Lightbulb,
+    title: "Clarity",
     description:
-      "Comprehensive metrics and visualizations show your strength gains, endurance improvements, and consistency trends.",
+      "Crystal-clear communication and transparent processes that eliminate ambiguity and drive focused action.",
   },
 ];
 
@@ -44,43 +66,29 @@ export function FitnessFeatures() {
     <section
       id="features"
       className="bg-white py-32"
-      style={{
-
-      }}
     >
       <div className="max-w-7xl mx-auto px-6">
         {/* Heading */}
 
         <h2 className="text-5xl md:text-6xl lg:text-7xl tracking-tight mb-20 leading-[1.1] text-center max-w-4xl mx-auto">
-          Getting back in shape has never been more accessible
+          Feedback has never been more accesible
         </h2>
 
-        {/* Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12">
-          {features.map((feature, index) => {
-            const Icon = feature.icon;
-            return (
-              <div
-                key={index}
-                className="flex flex-col items-start"
-              >
-                {/* Icon */}
-                <div className="w-16 h-16 rounded-2xl bg-black/5 flex items-center justify-center mb-6">
-                  <Icon className="w-8 h-8 text-black" />
-                </div>
+        {/* Features Grid - 3 on top, 2 on bottom */}
+        <div className="flex flex-col gap-12 max-w-6xl mx-auto">
+          {/* Top Row - 3 cards */}
+          <div className="flex flex-wrap justify-center gap-12">
+            {features.slice(0, 3).map((feature, idx) => (
+              <FeatureCard key={idx} feature={feature}/>
+            ))}
+          </div>
 
-                {/* Title */}
-                <h3 className="text-2xl mb-4 tracking-tight">
-                  {feature.title}
-                </h3>
-
-                {/* Description */}
-                <p className="text-lg text-foreground/60 leading-relaxed">
-                  {feature.description}
-                </p>
-              </div>
-            );
-          })}
+          {/* Bottom Row - 2 cards centered */}
+          <div className="flex flex-wrap justify-center gap-12">
+            {features.slice(3, 5).map((feature, idx) => (
+              <FeatureCard key={idx + 3} feature={feature} />
+            ))}
+          </div>
         </div>
       </div>
     </section>

@@ -1,29 +1,52 @@
 import { Button } from './ui/button';
 import { Logo } from './logo';
+import InstaIcon from '../imports/InstaIcon';
+import XIcon from '../imports/XIcon';
+import TikTokIcon from '../imports/TikTokIcon';
 
-export function FitnessHeader() {
+interface FitnessHeaderProps {
+  whiteMode?: boolean;
+}
+
+export function FitnessHeader({ whiteMode = false }: FitnessHeaderProps) {
+  // Use whiteMode to determine color classes
+  const navText = whiteMode ? 'text-white/80 hover:text-white' : 'text-black/75 hover:text-black';
+  const headerBg = whiteMode ? 'bg-black/80 border-white/10' : 'bg-white/50 border-black/5';
+  const buttonClass = whiteMode
+    ? 'bg-white text-black hover:bg-white/90'
+    : 'bg-black text-white hover:bg-black/90';
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/50 border-b border-black/5">
+    <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md ${headerBg} border-b`}>
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between h-24">
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <Logo />
+          <div className="hidden md:flex items-center gap-12">
+            {/* Logo */}
+            <div className="flex items-center gap-3">
+              <Logo color={whiteMode ? 'white' : undefined} />
+            </div>
+
+            {/* Navigation */}
+            <nav className="hidden md:flex items-center gap-12">
+              <a href="#product" className={`${navText} transition-colors`}>
+                Product
+              </a>
+              <a
+                href="#footer"
+                className={`${navText} transition-colors`}
+                onClick={e => {
+                  e.preventDefault();
+                  document.getElementById('footer')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                Contact
+              </a>
+            </nav>
           </div>
 
-          {/* Navigation */}
-          <nav className="hidden md:flex items-center gap-12">
-            <a href="#product" className="text-black/75 hover:text-black transition-colors">
-              Product
-            </a>
-            <a href="#contact" className="text-black/75 hover:text-black transition-colors">
-              Contact
-            </a>
-          </nav>
-
           {/* CTA Button */}
-          <Button 
-            className="bg-black text-white hover:bg-black/90 rounded-lg px-8 h-11"
+          <Button
+            className={`${buttonClass} rounded-lg px-8 h-11`}
             onClick={() => {
               document.getElementById('waitlist')?.scrollIntoView({ behavior: 'smooth' });
             }}

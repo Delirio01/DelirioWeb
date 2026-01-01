@@ -2,7 +2,23 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
 import { ParticleVisualCanvas2D } from "./ParticleVisualCanvas2D";
 import { defaultParticlePositions } from "./particle-defaults";
-
+import { FitnessWaitlist } from "./FitnessWaitlist";
+import IMessage from "../imports/imsg"
+import WhatsApp from "../imports/whatsApp"
+import Device from "../imports/device"
+const typeWrittenTexts = [ 
+  { 
+    text: '',
+    keyword: 'coach'
+  }
+]
+ 
+const iMessageWhatsApp_icon_list = (
+ <div className="flex flex-row items-center gap-8" style = {{justifyContent:"flex-start", paddingLeft: 0, display:"flex", flexDirection:"row", columnGap: 120,}}>
+      <IMessage style={{ width: 100, height: 100 }} />
+      <WhatsApp style={{ width: 100, height: 100 }} />
+    </div>
+);
 const sections = [
   {
     title: (
@@ -14,29 +30,47 @@ const sections = [
         THE <span className="text-[#FF6B35]">COACH</span> TOO
       </>
     ),
-    description:
-      "An AI-powered coach that analyzes your form, tracks your progress, and adapts to your goals. Bring the expertise of a personal trainer wherever you go.",
+    description: "Receive seamless feedback, know your body better, act with insights. Gain a true life long coach",
     color: "#FF6B35",
     isHero: true,
   },
   {
+title: "Real time feedback during workouts through camera enabled workout lessons",
+    color: "#FF6B35",
+   
+  },
+  {
     title:
-      "Delirio AI coach is capable to see all views of a specific excercise and let you know if you are doing it correctly or not. Adapt your form in real time without injuries.",
+      "No schedule conflicts, no postponing. Plan without bottlenecks and access a truly 24/7 available coach",
     color: "#FF6B35",
   },
   {
     title:
-      "A Delirio Power is designed to be simple and easy to use, making it accessible for everyone, regardless of their fitness level or technical expertise.",
+      "A truly life long coach that fine tuners itself to you, allowing for long term fitness record keeping and better insigths of your fitness health longterm",
     color: "#FF6B35",
   },
+
   {
-    title:
-      "Delirio Power AI doesn't track you or save your workout, just analyzes in real-time and adapts to you in real time.",
+    title:<>
+        Why stay limited to in app voice chat? You can access your coach beyond in app limits and add them to your Contacts and WhatsApp
+
+    </>,
     color: "#FF6B35",
+    extraComponent: iMessageWhatsApp_icon_list
   },
 ];
 
-export function FitnessHeroWithScroll() {
+export type SectionVisibility = {
+  featuresInView: boolean;
+  footerInView: boolean;
+  waitlistInView: boolean;
+};
+
+export function FitnessHeroWithScroll({
+  onSectionVisibilityChange,
+}: {
+  onSectionVisibilityChange?: (v: SectionVisibility) => void;
+}) {
   const [activeIndex, setActiveIndex] = useState(0);
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -67,50 +101,60 @@ export function FitnessHeroWithScroll() {
     // Observer for FitnessFeatures section to hide particle system when it comes into view
     const featuresSection = document.getElementById("features");
     const footerSection = document.getElementById("footer");
+    const waitListSection = document.getElementById("waitlist");
     let featuresObserver: IntersectionObserver | null = null;
     let footerObserver: IntersectionObserver | null = null;
+    let waitListObserver: IntersectionObserver | null = null;
+
+
+    // Track visibility of all hiding sections
+    let featuresInView = false;
+    let footerInView = false;
+    let waitlistInView = false;
+
+    const updateParticles = () => {
+      setIsInView(!(featuresInView || footerInView || waitlistInView));
+      if (onSectionVisibilityChange) {
+        onSectionVisibilityChange({ featuresInView, footerInView, waitlistInView });
+      }
+    };
 
     if (featuresSection) {
       featuresObserver = new IntersectionObserver(
         (entries) => {
-          entries.forEach((entry) => {
-            // When features section comes into view, hide particles
-            // When features section leaves view (scrolling back up), show particles
-            setIsInView(!entry.isIntersecting);
-          });
+          featuresInView = entries.some(e => e.isIntersecting);
+          updateParticles();
         },
-        {
-          threshold: 0.1,
-          rootMargin: "0px 0px 0px 0px",
-        },
+        { threshold: 0.2, rootMargin: "0px" }
       );
-
       featuresObserver.observe(featuresSection);
     }
-
     if (footerSection) {
       footerObserver = new IntersectionObserver(
         (entries) => {
-          entries.forEach((entry) => {
-            // When footer comes into view, hide particles
-            if (entry.isIntersecting) {
-              setIsInView(false);
-            }
-          });
+          footerInView = entries.some(e => e.isIntersecting);
+          updateParticles();
         },
-        {
-          threshold: 0.1,
-          rootMargin: "0px 0px 0px 0px",
-        },
+        { threshold: 0.0, rootMargin: "0px" }
       );
-
       footerObserver.observe(footerSection);
+    }
+    if (waitListSection) {
+      waitListObserver = new IntersectionObserver(
+        (entries) => {
+          waitlistInView = entries.some(e => e.isIntersecting);
+          updateParticles();
+        },
+        { threshold: 0.0, rootMargin: "0px" }
+      );
+      waitListObserver.observe(waitListSection);
     }
 
     return () => {
       observers.forEach((observer) => observer?.disconnect());
       featuresObserver?.disconnect();
       footerObserver?.disconnect();
+      waitListObserver?.disconnect();
     };
   }, []);
 
@@ -160,15 +204,16 @@ export function FitnessHeroWithScroll() {
                           });
                       }}
                     >
-                      GET STARTED
+                      Joint our waitlist
                     </Button>
                   </>
                 ) : (
                   <>
                     {/* Title */}
                     <h1 className="text-3xl md:text-4xl lg:text-5xl tracking-tight mb-10 leading-[1.1]">
-                      {section.title}
+                      {section.title} 
                     </h1>
+                   
                   </>
                 )}
               </div>
@@ -194,6 +239,7 @@ export function FitnessHeroWithScroll() {
           ></div>
 
           {/* Progress indicator */}
+          {/*
           <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 flex gap-3">
             {sections.map((_, index) => (
               <div
@@ -206,6 +252,9 @@ export function FitnessHeroWithScroll() {
               ></div>
             ))}
           </div>
+      */}
+
+
         </div>
       </div>
     </section>
