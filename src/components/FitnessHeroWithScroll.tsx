@@ -35,7 +35,7 @@ const sections = [
     isHero: true,
   },
   {
-title: "Your personal fitness coach, available 24/7. Live feedback during workouts. Convient access beyond the app ",
+title: "Your personal fitness coach, available 24/7.",
     color: "#FF6B35",
        extraComponent: <>
        {/*Video embed*/}
@@ -52,19 +52,18 @@ title: "Your personal fitness coach, available 24/7. Live feedback during workou
   },
   {
     title:
-      "No schedule conflicts, no postponing. Plan without bottlenecks and access a truly 24/7 available coach",
+      "No schedule conflicts, no postponing. Workout anytime, anywhere.",
     color: "#FF6B35",
   },
   {
     title:
-      "A truly life long coach that fine tuners itself to you, allowing for long term fitness record keeping and better insigths of your fitness health longterm",
+      "Get real-time form feedback from proprietary computer vision technology.",
     color: "#FF6B35",
   },
 
   {
     title:<>
-        Why stay limited to in app voice chat? You can access your coach beyond in app limits and add them to your Contacts and WhatsApp
-
+      Starting your fitness journey has never been easier.
     </>,
     color: "#FF6B35",
     extraComponent: <></>
@@ -110,7 +109,7 @@ export function FitnessHeroWithScroll({
     });
 
     // Observer for FitnessFeatures section to hide particle system when it comes into view
-    const featuresSection = document.getElementById("features");
+  const featuresSection = document.getElementById("fitness-features");
     const footerSection = document.getElementById("footer");
     const waitListSection = document.getElementById("waitlist");
     let featuresObserver: IntersectionObserver | null = null;
