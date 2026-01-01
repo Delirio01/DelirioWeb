@@ -36,7 +36,7 @@ export function FitnessFooter({ onNavigate }: { onNavigate?: (page: 'main' | 'te
                   </a>
                 </div>
               </div>
-              <p className="text-white/60 text-sm mt-1">© 2025 Delirio</p>
+              <p className="text-white/60 text-sm mt-1">© 2026 Delirio</p>
             </div>
 
             {/* Links */}
@@ -44,14 +44,17 @@ export function FitnessFooter({ onNavigate }: { onNavigate?: (page: 'main' | 'te
 
                     <div className="space-y-2">
                 <p className="text-white/40 uppercase tracking-wider text-xs">Contacts</p>
-                <button
-                  type="button"
-                  onClick={handleCopyEmail}
+                <a
+                href="mailto:Delirio.0fficial0@gmail.com"
+                //  type="button"
+                 // onClick={handleCopyEmail}
                   className="block text-white/80 hover:text-white transition-colors underline cursor-pointer focus:outline-none"
                   style={{ background: 'none', border: 'none', padding: 0 }}
                 >
                   Email
-                </button>
+                </a>
+
+
                 {copied && (
                   <span className="ml-2 text-green-400 text-xs">Copied!</span>
                 )}

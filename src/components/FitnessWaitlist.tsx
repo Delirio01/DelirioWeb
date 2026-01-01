@@ -59,11 +59,11 @@ export function FitnessWaitlist() {
         <div className="max-w-2xl mx-auto" style = {{display:"flex", justifyContent:"center"}} >
     
           {/* Form Card */}
-          <div  className="bg-white rounded-3xl p-12 shadow-2xl">
+          <div  className="rounded-3xl p-12 shadow-2xl bg-transparent border border-white">
 
                    {/* Logo */}
           <div className="flex justify-center mb-12">
-            <Logo color = "black"  />
+            <Logo color = "white"  />
           </div>
 
          
@@ -71,58 +71,55 @@ export function FitnessWaitlist() {
             {submitted ? (
               <>
                 <div className="flex flex-col items-center justify-center py-10 animate-fade-in-up">
-            
-                  <p className="text-lg text-green-900 mb-6 text-center max-w-md">Thank you for joining. To get a head start, message <span style={{fontWeight: "bold"}}>GOAT</span>, your head coach and an administrator at Delirio!</p>
-                  <div style = {{paddingBlock: 12}} className="bg-green-0 border-green-0 rounded-2xl p-8 text-center shadow-0xl w-full max-w-lg">
-
-
-                    <a style={{color: "black", textDecoration:"underline"}} className="text-green-0 underline text-2xl font-bold block " href="tel:123-456-7890">+1 (617) 404-4888</a>
-                  
+                  <p className="text-lg text-white mb-6 text-center max-w-md">Thank you for joining. To get a head start, message <span style={{fontWeight: "bold"}}>GOAT</span>, your head coach at Delirio!</p>
+                  <div style = {{paddingBlock: 12}} className="bg-black border border-white rounded-2xl p-8 text-center shadow-0xl w-full max-w-lg">
+                    <a style={{color: "white", textDecoration:"underline"}} className="underline text-2xl font-bold block " href="sms:123-456-7890">+1 (617) 404-4888</a>
                   </div>
                 </div>
               </>
             ) : (
               <>
-                <h2 className="text-4xl md:text-2.5xl tracking-tight mb-6 text-center">
+                <h2 className="text-4xl md:text-2.5xl tracking-tight mb-6 text-center text-white">
                   Become a Founding User
                 </h2>
-                <p className="text-xl text-foreground/60 mb-10 text-center">
+                <p className="text-xl text-white/80 mb-10 text-center">
                   Gain early access to new features, and exclusive discounts!
                 </p>
-                <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+                <form onSubmit={handleSubmit} className="flex flex-col gap-12">
                   <div className="space-y-4"> 
                     <Input
-                      style={{ paddingInline: 25 }}
+                      style={{ paddingInline: 25, borderBottomColor: "rgba(255,255,255,0.5)", borderBottomWidth: 0.01, }}
                       type="text"
                       placeholder="name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       required
-                      className="h-14 text-lg rounded-xl border-2"
+                      className="h-14 text-lg bg-transparent text-white placeholder:text-white/60 border border-white/30 focus:border focus:border-white focus:bg-black focus:text-white rounded-[0] focus:rounded-lg transition-all duration-100 outline-none"
                     />
                     <Input
-                      style={{ paddingInline: 25 }}
+                      style={{ paddingInline: 25, borderBottomColor: "rgba(255,255,255,0.5)" }}
                       type="email"
                       placeholder="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="h-14 text-lg rounded-xl border-2"
+                      className="h-14 text-lg bg-transparent text-white placeholder:text-white/60 border border-white/30 focus:border focus:border-white focus:bg-black focus:text-white rounded-[0] focus:rounded-lg transition-all duration-100 outline-none"
                     />
                     <Input
-                      style={{ paddingInline: 25 }}
+
+                      style={{ paddingInline: 25, borderBottomColor: "rgba(255,255,255,0.5)", borderBottomWidth: 0.01, outline: "none" }}
                       type="tel"
                       placeholder="phone number"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="h-14 text-lg rounded-xl border-2"
+                      className="h-14 text-lg bg-transparent text-white placeholder:text-white/60 border border-white/30 focus:border focus:border-white focus:bg-black focus:text-white rounded-[0] focus:rounded-lg transition-all duration-100 outline-none"
                     />
                   </div>
-                  {error && <div className="text-red-600 text-center text-sm mt-2">{error}</div>}
+                  {error && <div className="text-red-400 text-center text-sm mt-2">{error}</div>}
                   <Button
                     type="submit"
                     size="lg"
-                    className="w-full bg-black text-white hover:bg-black/90 rounded-xl h-14 text-lg font-['Big_Caslon',serif]"
+                    className="w-full bg-white text-black hover:bg-white/90 rounded-xl h-14 text-lg font-['Big_Caslon',serif] border border-white"
                   >
                     Join Waitlist
                   </Button>

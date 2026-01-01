@@ -39,7 +39,7 @@ export default function App() {
         <Route
           path="/"
           element={
-            <div className="min-h-screen bg-white">
+            <div className="min-h-screen bg-white" style = {{overflow: "hidden"}}>
               <FitnessHeader whiteMode={headerWhite} initialCount={waitlistCount} />
               <FitnessHeroWithScroll onSectionVisibilityChange={setSectionVisibility} />
               <FitnessFeatures />
