@@ -1,4 +1,5 @@
 import { Button } from './ui/button';
+import { useIsMobile } from './ui/use-mobile';
 import { Logo } from './logo';
 import InstaIcon from '../imports/InstaIcon';
 import XIcon from '../imports/XIcon';
@@ -15,6 +16,7 @@ export function FitnessHeader({ whiteMode = false }: FitnessHeaderProps) {
   const buttonClass = whiteMode
     ? 'bg-white text-black hover:bg-white/90'
     : 'bg-black text-white hover:bg-black/90';
+  const isMobile = useIsMobile();
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md ${headerBg} border-b`}>
@@ -46,15 +48,17 @@ export function FitnessHeader({ whiteMode = false }: FitnessHeaderProps) {
             </nav>
           </div>
 
-          {/* CTA Button */}
-          <Button
-            className={`${buttonClass} rounded-lg px-8 h-11 font-[\'Big_Caslon\',serif]`}
-            onClick={() => {
-              document.getElementById('waitlist')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-          >
-            Joint our waitlist
-          </Button>
+          {/* CTA Button (hide on mobile) */}
+          {!isMobile && (
+            <Button
+              className={`${buttonClass} rounded-lg px-8 h-11 font-[\'Big_Caslon\',serif]`}
+              onClick={() => {
+                document.getElementById('waitlist')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
+              Joint our waitlist
+            </Button>
+          )}
         </div>
       </div>
     </header>

@@ -161,17 +161,19 @@ export function FitnessHeroWithScroll({
   return (
     <section
       ref={containerRef}
-      className="relative bg-white pt-8 md:pt-12"
+      className="relative bg-white pt-8 md:pt-8"
     >
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-6" >
         <div className="pt-8 md:pt-12 lg:pt-16">
           {sections.map((section, index) => (
             <div
+
               key={index}
               ref={el => { sectionRefs.current[index] = el; }}
               className="min-h-screen flex items-center py-12 md:py-16 lg:py-20"
             >
               <div
+
                 className={`transition-all duration-1000 w-full max-w-3xl ${
                   activeIndex === index
                     ? "opacity-100 translate-x-0"
@@ -179,7 +181,7 @@ export function FitnessHeroWithScroll({
                 }`}
               >
                 {section.isHero ? (
-                  <>
+                  <div   style = {{position:"relative", backgroundColor:"transpancy", top: -70}}>
                     {/* Title */}
                     <h1 className="text-5xl md:text-6xl lg:text-7xl tracking-tight mb-10 leading-[1.1]">
                       {section.title}
@@ -206,7 +208,7 @@ export function FitnessHeroWithScroll({
                     >
                       <span className="font-[\'Big_Caslon\',serif]">Joint our waitlist</span>
                     </Button>
-                  </>
+                  </div>
                 ) : (
                   <>
                     {/* Title */}
