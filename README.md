@@ -1,5 +1,5 @@
 
-  # AI Coaching Startup Landing Page
+  # Delirio Website
 
   This is a code bundle for AI Coaching Startup Landing Page. The original project is available at https://www.figma.com/design/btpXuEgzSpDA0RnPcYJxaA/AI-Coaching-Startup-Landing-Page.
 
