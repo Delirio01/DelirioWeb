@@ -147,7 +147,7 @@ function FitnessFeatures() {
 
   return (
     <section
-      id="features"
+  id="fitness-features"
       className="bg-white py-32 relative overflow-hidden"
       ref={sectionRef}
       onMouseMove={handleMouseMove}

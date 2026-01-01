@@ -35,7 +35,7 @@ const sections = [
     isHero: true,
   },
   {
-title: "Real time feedback during workouts through camera enabled workout lessons",
+title: "Your personal fitness coach, available 24/7. Live feedback during workouts. Convient access beyond the app ",
     color: "#FF6B35",
        extraComponent: <>
        {/*Video embed*/}
@@ -156,7 +156,7 @@ export function FitnessHeroWithScroll({
           waitlistInView = entries.some(e => e.isIntersecting);
           updateParticles();
         },
-        { threshold: 0.0, rootMargin: "0px" }
+        { threshold: 0, rootMargin: "0px"}
       );
       waitListObserver.observe(waitListSection);
     }
@@ -171,6 +171,7 @@ export function FitnessHeroWithScroll({
 
   return (
     <section
+      id="how-it-works"
       ref={containerRef}
       className="relative bg-white pt-8 md:pt-8"
     >

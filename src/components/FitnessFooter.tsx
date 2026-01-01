@@ -65,10 +65,10 @@ export function FitnessFooter({ onNavigate }: { onNavigate?: (page: 'main' | 'te
 
               <div className="space-y-2">
                 <p className="text-white/40 uppercase tracking-wider text-xs">Product</p>
-                <a href="#features" className="block text-white/80 hover:text-white transition-colors">
+                <a href="#fitness-features" className="block text-white/80 hover:text-white transition-colors">
                   Features
                 </a>
-                <a href="#" className="block text-white/80 hover:text-white transition-colors">
+                <a href="#how-it-works" className="block text-white/80 hover:text-white transition-colors">
                   How it works
                 </a>
               </div>
