@@ -36,21 +36,33 @@ export function ParticleVisualCanvas2D({
 
     const particles: Particle2D[] = [];
     
-    // Use company logo positions
-    const positions = defaultParticlePositions.slice(0, Math.min(particleCount, defaultParticlePositions.length));
-    
-    positions.forEach((pos, i) => {
+
+    // Find bounds of all cx/cy
+    const allPositions = defaultParticlePositions.slice(0, Math.min(particleCount, defaultParticlePositions.length));
+    const minX = Math.min(...allPositions.map(p => p.cx));
+    const maxX = Math.max(...allPositions.map(p => p.cx));
+    const minY = Math.min(...allPositions.map(p => p.cy));
+    const maxY = Math.max(...allPositions.map(p => p.cy));
+
+    // Padding as percent of canvas size
+    const paddingRatio = 0.08;
+
+    allPositions.forEach((pos, i) => {
+      // Normalized [0,1]
+      const normX = (pos.cx - minX) / (maxX - minX);
+      const normY = (pos.cy - minY) / (maxY - minY);
+      // Will be mapped to canvas size in animation loop
       particles.push({
-        x: pos.cx,
-        y: pos.cy,
+        x: normX,
+        y: normY,
         vx: (Math.random() - 0.5) * 0.5,
         vy: (Math.random() - 0.5) * 0.5,
         radius: pos.r * nodeScale,
         opacity: 0.6 + Math.random() * 0.4,
         angle: Math.random() * Math.PI * 2,
         speed: 0.2 + Math.random() * 0.3,
-        originalX: pos.cx,
-        originalY: pos.cy,
+        originalX: normX,
+        originalY: normY,
         phaseOffset: Math.random() * Math.PI * 2,
       });
     });
@@ -91,32 +103,46 @@ export function ParticleVisualCanvas2D({
 
       const particles = particlesRef.current;
 
+  // Padding in px
+  const paddingRatio = 0.08;
+  const padX = rect.width * paddingRatio;
+  const padY = rect.height * paddingRatio;
+  const drawW = rect.width - padX * 2;
+  const drawH = rect.height - padY * 2;
+
       // Update and draw particles
       particles.forEach((p, i) => {
         // Breathing animation
-        const breathing = Math.sin(t * 0.5 + p.phaseOffset) * 3;
-        
+        const breathing = Math.sin(t * 0.5 + p.phaseOffset) * 0.03;
+
         // Gentle orbital motion
         p.angle += p.speed * 0.01;
-        const orbitRadius = 2;
-        p.x = p.originalX + Math.cos(p.angle) * orbitRadius + breathing;
-        p.y = p.originalY + Math.sin(p.angle) * orbitRadius + breathing;
+        const orbitRadius = 0.015;
+        let normX = p.originalX + Math.cos(p.angle) * orbitRadius + breathing;
+        let normY = p.originalY + Math.sin(p.angle) * orbitRadius + breathing;
 
         // Add some drift
-        p.x += Math.sin(t * 0.3 + p.phaseOffset) * 0.5;
-        p.y += Math.cos(t * 0.2 + p.phaseOffset * 1.5) * 0.5;
+        normX += Math.sin(t * 0.3 + p.phaseOffset) * 0.005;
+        normY += Math.cos(t * 0.2 + p.phaseOffset * 1.5) * 0.005;
+
+        // Map normalized [0,1] to canvas coordinates
+        const drawX = padX + normX * drawW;
+        const drawY = padY + normY * drawH;
 
         // Draw particle
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.arc(drawX, drawY, p.radius, 0, Math.PI * 2);
         ctx.fillStyle = `${color}${Math.floor(p.opacity * 255).toString(16).padStart(2, '0')}`;
         ctx.fill();
 
         // Draw connections to nearby particles
         particles.forEach((p2, j) => {
           if (i < j) {
-            const dx = p2.x - p.x;
-            const dy = p2.y - p.y;
+            // Map p2 as well
+            const p2X = padX + p2.originalX * drawW;
+            const p2Y = padY + p2.originalY * drawH;
+            const dx = p2X - drawX;
+            const dy = p2Y - drawY;
             const dist = Math.sqrt(dx * dx + dy * dy);
 
             if (dist < 60) {

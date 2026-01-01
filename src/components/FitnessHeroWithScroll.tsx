@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
-import { ParticleVisual } from "./ParticleVisual";
+import { ParticleVisualCanvas2D } from "./ParticleVisualCanvas2D";
 import { defaultParticlePositions } from "./particle-defaults";
 
 const sections = [
@@ -183,7 +183,7 @@ export function FitnessHeroWithScroll() {
         style={{ opacity: isInView ? 1 : 0 }}
       >
         <div className="w-[450px] h-[450px] relative">
-          <ParticleVisual color={sections[activeIndex].color} particleCount={defaultParticlePositions.length} nodeScale={0.7} />
+          <ParticleVisualCanvas2D color={sections[activeIndex].color} particleCount={defaultParticlePositions.length} nodeScale={0.7} />
 
           {/* Decorative gradient */}
           <div
