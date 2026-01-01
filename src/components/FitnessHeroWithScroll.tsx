@@ -39,15 +39,18 @@ title: "Your personal fitness coach, available 24/7.",
     color: "#FF6B35",
        extraComponent: <>
        {/*Video embed*/}
-<iframe 
-    width="560" 
-    height="315" 
-    src="https://youtu.be/2aZN-99-hn4" 
-    title="YouTube video player" 
-    frameBorder="0" 
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-    allowFullScreen>
-</iframe>
+<iframe
+        src="https://www.youtube.com/embed/2aZN-99-hn4"
+        title="YouTube video player"
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        style={{
+          aspectRatio: "16/9",
+          width: "84%",
+
+        }}
+      />
        </>
   },
   {
