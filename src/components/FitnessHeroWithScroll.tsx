@@ -37,7 +37,18 @@ const sections = [
   {
 title: "Real time feedback during workouts through camera enabled workout lessons",
     color: "#FF6B35",
-   
+       extraComponent: <>
+       {/*Video embed*/}
+<iframe 
+    width="560" 
+    height="315" 
+    src="https://www.youtube.com/embed/oq70h9XBj_0?list=RDoq70h9XBj_0&start_radio=1" 
+    title="YouTube video player" 
+    frameBorder="0" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+    allowFullScreen>
+</iframe>
+       </>
   },
   {
     title:
@@ -56,7 +67,7 @@ title: "Real time feedback during workouts through camera enabled workout lesson
 
     </>,
     color: "#FF6B35",
-    extraComponent: iMessageWhatsApp_icon_list
+    extraComponent: <></>
   },
 ];
 
@@ -215,7 +226,9 @@ export function FitnessHeroWithScroll({
                     <h1 className="text-3xl md:text-4xl lg:text-5xl tracking-tight mb-10 leading-[1.1]">
                       {section.title} 
                     </h1>
-                   
+
+                    {/* Extra Component if any */}
+                    {section.extraComponent}
                   </>
                 )}
               </div>

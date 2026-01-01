@@ -26,12 +26,31 @@ export function FitnessWaitlist() {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    setSubmitted(true);
-    // Do not reset fields after submission; only reset if page is reloaded
+    setError(null);
+    try {
+      //fetch with POST method via sheetDB free link to append google drive google sheet waitlist.sheet file 
+      const res = await fetch('https://sheetdb.io/api/v1/5czb7k07maksm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          data: [{
+            Timestamp: new Date().toISOString(),
+            Email: email,
+            Name: name,
+            Phone: phone
+          }]
+        })
+      });
+      if (!res.ok) throw new Error('Failed to submit');
+      setSubmitted(true);
+    } catch (err) {
+      setError('There was a problem joining the waitlist. Please try again.');
+      console.log("Error occured in appending the user submitted waitlist form data to to gogole sheets via sheetDB link: ", err)
+    }
   };
 
   return (
@@ -52,14 +71,12 @@ export function FitnessWaitlist() {
             {submitted ? (
               <>
                 <div className="flex flex-col items-center justify-center py-10 animate-fade-in-up">
-                  <div className="mb-6">
-                      <span style = {{color: "green"}} className="inline-block text-5xl">✓</span>
-                  </div>
+            
                   <p className="text-lg text-green-900 mb-6 text-center max-w-md">Thank you for joining. To get a head start, message <span style={{fontWeight: "bold"}}>GOAT</span>, your head coach and an administrator at Delirio!</p>
-                  <div style = {{paddingBlock: 12}} className="bg-green-50 border border-green-200 rounded-2xl p-8 text-center shadow-xl w-full max-w-lg">
+                  <div style = {{paddingBlock: 12}} className="bg-green-0 border-green-0 rounded-2xl p-8 text-center shadow-0xl w-full max-w-lg">
 
 
-                    <a style={{color: "green", textDecoration:"underline"}} className="text-green-900 underline text-xl font-bold block " href="tel:123-456-7890">+1 (617) 404-4888</a>
+                    <a style={{color: "black", textDecoration:"underline"}} className="text-green-0 underline text-2xl font-bold block " href="tel:123-456-7890">+1 (617) 404-4888</a>
                   
                   </div>
                 </div>
@@ -101,6 +118,7 @@ export function FitnessWaitlist() {
                       className="h-14 text-lg rounded-xl border-2"
                     />
                   </div>
+                  {error && <div className="text-red-600 text-center text-sm mt-2">{error}</div>}
                   <Button
                     type="submit"
                     size="lg"

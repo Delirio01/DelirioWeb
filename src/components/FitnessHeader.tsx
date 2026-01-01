@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { useIsMobile } from './ui/use-mobile';
 import { Logo } from './logo';
@@ -35,7 +35,7 @@ function AnimatedNumber({ value, colorClass }: { value: number, colorClass?: str
   );
 }
 
-export function FitnessHeader({ whiteMode = false }: FitnessHeaderProps) {
+export function FitnessHeader({ whiteMode = false, initialCount }: FitnessHeaderProps & { initialCount?: number }) {
   // Use whiteMode to determine color classes
   const navText = whiteMode ? 'text-white/80 hover:text-white' : 'text-black/75 hover:text-black';
   const headerBg = whiteMode ? 'bg-black/80 border-white/10' : 'bg-white/50 border-black/5';
@@ -43,7 +43,23 @@ export function FitnessHeader({ whiteMode = false }: FitnessHeaderProps) {
     ? 'bg-white text-black hover:bg-white/90'
     : 'bg-black text-white hover:bg-black/90';
   const isMobile = useIsMobile();
-  const [foundingUsers, setFoundingUsers] = useState(100);
+  const [foundingUsers, setFoundingUsers] = useState(initialCount ?? 100);
+
+  // Fetch waitlist count from SheetDB (refresh after mount, but use initialCount for first render)
+  useEffect(() => {
+    async function fetchWaitlistCount() {
+      try {
+        const res = await fetch('https://sheetdb.io/api/v1/5czb7k07maksm');
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setFoundingUsers(data.length);
+        }
+      } catch (err) {
+        // Optionally handle error
+      }
+    }
+    fetchWaitlistCount();
+  }, []);
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md ${headerBg} border-b`} style={{height: 90}}>
