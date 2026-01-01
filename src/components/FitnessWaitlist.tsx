@@ -79,10 +79,9 @@ export function FitnessWaitlist() {
                 />
           </div>
                 <Button 
-
                   type="submit"
                   size="lg"
-                  className="w-full bg-black text-white hover:bg-black/90 rounded-xl h-14 text-lg"
+                  className="w-full bg-black text-white hover:bg-black/90 rounded-xl h-14 text-lg font-[\'Big_Caslon\',serif]"
                 >
                   Join Waitlist
                 </Button>

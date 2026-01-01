@@ -204,7 +204,7 @@ export function FitnessHeroWithScroll({
                           });
                       }}
                     >
-                      Joint our waitlist
+                      <span className="font-[\'Big_Caslon\',serif]">Joint our waitlist</span>
                     </Button>
                   </>
                 ) : (

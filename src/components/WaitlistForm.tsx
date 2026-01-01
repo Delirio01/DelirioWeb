@@ -29,7 +29,7 @@ export function WaitlistForm() {
         <div className="text-center mb-10">
           <h2 className="mb-4 text-slate-900">Be First in Line</h2>
           <p className="text-slate-600">
-            Join our waitlist to get early access and exclusive launch benefits.
+             to get early access and exclusive launch benefits.
           </p>
         </div>
         

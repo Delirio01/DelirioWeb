@@ -3,7 +3,7 @@ import { Logo } from './logo';
 import InstaIcon from '../imports/InstaIcon';
 import XIcon from '../imports/XIcon';
 import TikTokIcon from '../imports/TikTokIcon';
-
+import { Link } from 'react-router-dom';
 interface FitnessHeaderProps {
   whiteMode?: boolean;
 }
@@ -23,7 +23,9 @@ export function FitnessHeader({ whiteMode = false }: FitnessHeaderProps) {
           <div className="hidden md:flex items-center gap-12">
             {/* Logo */}
             <div className="flex items-center gap-3">
+              <Link to = "/">
               <Logo color={whiteMode ? 'white' : undefined} />
+              </Link>
             </div>
 
             {/* Navigation */}
@@ -46,12 +48,12 @@ export function FitnessHeader({ whiteMode = false }: FitnessHeaderProps) {
 
           {/* CTA Button */}
           <Button
-            className={`${buttonClass} rounded-lg px-8 h-11`}
+            className={`${buttonClass} rounded-lg px-8 h-11 font-[\'Big_Caslon\',serif]`}
             onClick={() => {
               document.getElementById('waitlist')?.scrollIntoView({ behavior: 'smooth' });
             }}
           >
-            Join our waitlist
+            Joint our waitlist
           </Button>
         </div>
       </div>
