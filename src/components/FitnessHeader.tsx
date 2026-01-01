@@ -12,7 +12,7 @@ interface FitnessHeaderProps {
 }
 
 // Animated number component for counter
-function AnimatedNumber({ value }: { value: number }) {
+function AnimatedNumber({ value, colorClass }: { value: number, colorClass?: string }) {
   const [display, setDisplay] = React.useState(value);
   const [fade, setFade] = React.useState(false);
   React.useEffect(() => {
@@ -27,7 +27,7 @@ function AnimatedNumber({ value }: { value: number }) {
   }, [value, display]);
   return (
     <span
-      className={`transition-all duration-300 font-extrabold text-black leading-none ${fade ? 'opacity-0 -translate-y-4' : 'opacity-100 translate-y-0'} text-3xl md:text-5xl lg:text-6xl`}
+      className={`${colorClass} transition-all duration-300 font-extrabold text-black leading-none ${fade ? 'opacity-0 -translate-y-4' : 'opacity-100 translate-y-0'} text-3xl md:text-5xl lg:text-6xl`}
       style={{ fontWeight: 450 }}
     >
       {display}
@@ -49,13 +49,17 @@ export function FitnessHeader({ whiteMode = false }: FitnessHeaderProps) {
     <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md ${headerBg} border-b`} style={{height: 90}}>
       <div className="max-w-7xl mx-auto px-6 relative" style={{height: 90}}>
         {/* Centered counter */}
-        <div className="absolute left-1/2 top-1/2 z-40" style={{position: "absolute", transform: 'translate(-32%, -50%)', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', columnGap: 10, }}>
-          <span style={{fontSize: 24, marginBottom: 2, fontWeight:400}} className="text-xl font-normal underline underline-offset-4">waitlisted</span>
-          <AnimatedNumber value={foundingUsers} />
+        <div className="absolute left-1/2 top-1/2 z-40" style={{position: "absolute", transform: 'translate(-52%, -50%)', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', columnGap: 10, }}>
+          <span style={{fontSize: 24, marginBottom: 2, fontWeight:400}} className={`text-xl font-normal underline underline-offset-4 ${whiteMode ? "text-white" : "text-black"}`}>waitlisted</span>
+          <AnimatedNumber value={foundingUsers}  colorClass={whiteMode ? "text-white" : "text-black"}/>
           <span className="flex flex-col text-left">
-            <span style={{fontSize: 24, marginBottom: 2, fontWeight:400}} className="text-xl font-normal underline underline-offset-4">users</span>
+            <span style={{fontSize: 24, marginBottom: 2, fontWeight:400}} className={`text-xl font-normal underline underline-offset-4 ${whiteMode ? "text-white" : "text-black"}`}>users</span>
           </span>
-          <Button onClick={() => setFoundingUsers(foundingUsers + 1)} className="ml-4 bg-green-600 text-white hover:bg-green-700">Test: Add User</Button>
+          {
+            /*         
+             <Button onClick={() => setFoundingUsers(foundingUsers + 1)} className="ml-4 bg-green-600 text-white hover:bg-green-700">Test: Add User</Button>
+              */
+          }
         </div>
         <div className="flex items-center justify-between h-auto" style = {{paddingBlock: 4, height: 90}}>
           <div className="hidden md:flex items-center gap-12">

@@ -18,7 +18,7 @@ export default function App() {
     footerInView: false,
     waitlistInView: false,
   });
-  const headerWhite = sectionVisibility.footerInView;
+  const headerWhite = sectionVisibility.waitlistInView || sectionVisibility.footerInView;
 
   return (
        
