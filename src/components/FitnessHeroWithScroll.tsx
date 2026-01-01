@@ -200,13 +200,13 @@ export function FitnessHeroWithScroll({
                       className="bg-black text-white hover:bg-black/90 rounded-lg px-12 h-14 text-lg"
                       onClick={() => {
                         document
-                          .getElementById("features")
+                          .getElementById("waitlist")
                           ?.scrollIntoView({
                             behavior: "smooth",
                           });
                       }}
                     >
-                      <span className="font-[\'Big_Caslon\',serif]">Joint our waitlist</span>
+                      <span className="font-[\'Big_Caslon\',serif]">Join our waitlist</span>
                     </Button>
                   </div>
                 ) : (

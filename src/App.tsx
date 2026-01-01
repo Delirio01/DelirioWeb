@@ -8,6 +8,10 @@ import { FitnessFooter } from './components/FitnessFooter';
 import TermsServices from './components/TermsServices';
 import PrivacyPolicy from './components/PrivacyPolicy';
 
+
+import DefaultState from "./imports/default"
+//import {ReactComponent as taregtState} from "./imports/deafault.svg"
+
 export default function App() {
   const [sectionVisibility, setSectionVisibility] = useState<SectionVisibility>({
     featuresInView: false,
@@ -37,10 +41,12 @@ export default function App() {
 
         <Route path="/terms" element={<TermsServices />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
+
+        
           
       </Routes>
- 
     </BrowserRouter>
+    
     
   );
 }

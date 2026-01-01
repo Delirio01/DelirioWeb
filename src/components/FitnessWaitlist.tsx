@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import '../styles/fitness-waitlist-fade.css';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 
@@ -24,6 +23,7 @@ function LogoCircles({color = 'white'}) {
 export function FitnessWaitlist() {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -34,9 +34,7 @@ export function FitnessWaitlist() {
   };
 
   return (
-    <section id="waitlist" className="bg-black py-32 relative overflow-hidden">
-      {/* Fade overlay at the top border */}
-      <div className="fitness-waitlist-fade" />
+    <section id="waitlist" className="bg-black py-32">
       <div className="max-w-7xs mx-auto px-6">
         <div className="max-w-2xl mx-auto" style = {{display:"flex", justifyContent:"center"}} >
     
@@ -64,22 +62,32 @@ export function FitnessWaitlist() {
             ) : (
               <form onSubmit={handleSubmit} className="flex flex-col gap-8">
                 <div className = "space-y-4"> 
-                <Input
-                  type="text"
-                  placeholder="Your name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  className="h-14 text-lg rounded-xl border-2"
-                />
-                <Input
-                  type="email"
-                  placeholder="Your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="h-14 text-lg rounded-xl border-2"
-                />
+                  <Input
+                  style = {{paddingInline: 25}}
+                    type="text"
+                    placeholder="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    className="h-14 text-lg rounded-xl border-2"
+                  />
+                  <Input
+                      style = {{paddingInline: 25}}
+                    type="email"
+                    placeholder="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="h-14 text-lg rounded-xl border-2"
+                  />
+                  <Input
+                      style = {{paddingInline: 25}}
+                    type="tel"
+                    placeholder="phone number"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="h-14 text-lg rounded-xl border-2"
+                  />
           </div>
                 <Button 
                   type="submit"
@@ -91,7 +99,9 @@ export function FitnessWaitlist() {
               </form>
             )}
           </div>
+       
         </div>
+        
       </div>
     </section>
   );
