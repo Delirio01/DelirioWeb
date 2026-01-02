@@ -1,7 +1,7 @@
 // Utility to fetch the waitlist count from SheetDB
 export async function fetchWaitlistCount(): Promise<number> {
   try {
-    const res = await fetch('ahttps://sheetdb.io/api/v1/xmuhjl9b6diln');
+    const res = await fetch('https://sheetdb.io/api/v1/wh2jyoj64jis3');
     const data = await res.json();
     if (Array.isArray(data)) {
       return data.length;

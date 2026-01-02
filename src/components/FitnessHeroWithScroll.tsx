@@ -6,6 +6,7 @@ import { FitnessWaitlist } from "./FitnessWaitlist";
 import IMessage from "../imports/imsg"
 import WhatsApp from "../imports/whatsApp"
 import Device from "../imports/device"
+import { CoachIcon, ClockIcon, VisionIcon, StartIcon } from "./FitnessSectionIcons";
 const typeWrittenTexts = [ 
   { 
     text: '',
@@ -35,41 +36,50 @@ const sections = [
     isHero: true,
   },
   {
-title: "Your personal fitness coach, available 24/7.",
+    title: "Your personal fitness coach, available 24/7.",
     color: "#FF6B35",
-       extraComponent: <>
-       {/*Video embed*/}
-<iframe
-        src="https://www.youtube.com/embed/2aZN-99-hn4"
-        title="YouTube video player"
-        frameBorder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-        style={{
-          aspectRatio: "16/9",
-          width: "84%",
+    extraComponent: (
+      <div className="flex flex-col items-center gap-4 mt-4">
+        <iframe
+          src="https://www.youtube.com/embed/2aZN-99-hn4"
+          title="YouTube video player"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          style={{ aspectRatio: "16/9", width: "84%" }}
+        />
 
-        }}
-      />
-       </>
+      </div>
+    ),
   },
   {
-    title:
-      "No schedule conflicts, no postponing. Workout anytime, anywhere.",
+    title: "No schedule conflicts, no postponing. Workout anytime, anywhere.",
     color: "#FF6B35",
+    extraComponent: (
+      <div className="flex flex-col items-center mt-4">
+        <ClockIcon height={100} width={100} />
+      </div>
+    ),
   },
   {
-    title:
-      "Get real-time form feedback from proprietary computer vision technology.",
+    title: "Get real-time form feedback from proprietary computer vision technology.",
     color: "#FF6B35",
+    extraComponent: (
+      <div className="flex flex-col items-center mt-4">
+        <VisionIcon height={100} width={100} />
+      </div>
+    ),
   },
-
   {
-    title:<>
+    title: <>
       Starting your fitness journey has never been easier.
     </>,
     color: "#FF6B35",
-    extraComponent: <></>
+    extraComponent: (
+      <div className="flex flex-col items-center mt-4">
+        <StartIcon height={100} width={100} />
+      </div>
+    ),
   },
 ];
 
@@ -181,13 +191,20 @@ export function FitnessHeroWithScroll({
         <div className="pt-8 md:pt-12 lg:pt-16">
           {sections.map((section, index) => (
             <div
-
               key={index}
               ref={el => { sectionRefs.current[index] = el; }}
-              className="min-h-screen flex items-center py-12 md:py-16 lg:py-20"
+              className={
+                section.isHero
+                  ? "min-h-screen flex items-center py-12 md:py-16 lg:py-20"
+                  : ""
+              }
+              style={
+                section.isHero
+                  ? undefined
+                  : { marginTop: 50, marginBottom: 360 } // 8rem = 128px, equivalent to mt-32 mb-32
+              }
             >
               <div
-
                 className={`transition-all duration-1000 w-full max-w-3xl ${
                   activeIndex === index
                     ? "opacity-100 translate-x-0"
@@ -195,7 +212,7 @@ export function FitnessHeroWithScroll({
                 }`}
               >
                 {section.isHero ? (
-                  <div   style = {{position:"relative", backgroundColor:"transpancy", top: -70}}>
+                  <div style={{ position: "relative", backgroundColor: "transpancy", top: -70 }}>
                     {/* Title */}
                     <h1 className="text-5xl md:text-6xl lg:text-7xl tracking-tight mb-10 leading-[1.1]">
                       {section.title}
