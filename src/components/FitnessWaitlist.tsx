@@ -73,7 +73,7 @@ export function FitnessWaitlist() {
                 <div className="flex flex-col items-center justify-center py-10 animate-fade-in-up">
                   <p className="text-lg text-white mb-6 text-center max-w-md">Thank you for joining. To get a head start, message <span style={{fontWeight: "bold"}}>GOAT</span>, your head coach at Delirio!</p>
                   <div style = {{paddingBlock: 12}} className="bg-black border border-white rounded-2xl p-8 text-center shadow-0xl w-full max-w-lg">
-                    <a style={{color: "white", textDecoration:"underline"}} className="underline text-2xl font-bold block " href="sms:123-456-7890">+1 (617) 404-4888</a>
+                    <a style={{color: "white", textDecoration:"underline"}} className="underline text-2xl font-bold block " href="sms:+16174044888">+1 (617) 404-4888</a>
                   </div>
                 </div>
               </>
