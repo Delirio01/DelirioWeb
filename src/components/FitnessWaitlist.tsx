@@ -33,7 +33,7 @@ export function FitnessWaitlist() {
     setError(null);
     try {
       //fetch with POST method via sheetDB free link to append google drive google sheet waitlist.sheet file 
-      const res = await fetch('https://sheetdb.io/api/v1/xmuhjl9b6diln', {
+      const res = await fetch('ahttps://sheetdb.io/api/v1/xmuhjl9b6diln', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

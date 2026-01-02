@@ -26,7 +26,7 @@ function FeatureCard({ feature }: { feature: Feature }) {
       <div className="w-10 h-10 mb-4 flex items-center justify-start">
         <Icon className="w-7 h-7 text-black" />
       </div>
-      <h3 className="font-semibold text-lg mb-2 text-left">{feature.title}</h3>
+      <h3 style={{fontWeight: "700"}} className="text-lg mb-2 text-left">{feature.title}</h3>
       <p className="text-base text-black/60 leading-snug text-left">{feature.description}</p>
     </div>
   );

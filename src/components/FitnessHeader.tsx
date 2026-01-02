@@ -36,6 +36,7 @@ function AnimatedNumber({ value, colorClass }: { value: number, colorClass?: str
 }
 
 export function FitnessHeader({ whiteMode = false, initialCount }: FitnessHeaderProps & { initialCount?: number }) {
+
   // Use whiteMode to determine color classes
   const navText = whiteMode ? 'text-white/80 hover:text-white' : 'text-black/75 hover:text-black';
   const headerBg = whiteMode ? 'bg-black/80 border-white/10' : 'bg-white/50 border-black/5';
@@ -49,7 +50,7 @@ export function FitnessHeader({ whiteMode = false, initialCount }: FitnessHeader
   useEffect(() => {
     async function fetchWaitlistCount() {
       try {
-        const res = await fetch('https://sheetdb.io/api/v1/5czb7k07maksm');
+        const res = await fetch('ahttps://sheetdb.io/api/v1/xmuhjl9b6diln');
         const data = await res.json();
         if (Array.isArray(data)) {
           setFoundingUsers(data.length);
