@@ -1,184 +1,182 @@
+import { useEffect } from "react";
 import { FitnessFooter } from "./FitnessFooter";
 import { FitnessHeader } from "./FitnessHeader";
 
-function Group() {
-  return (
-    <div className="absolute contents h-[72.207px] left-[143px] top-[13px] w-[71.212px]">
-      <div className="absolute flex items-center justify-center left-[175.18px] size-[27.679px] top-[25.71px]" style={{ "--transform-inner-width": "300", "--transform-inner-height": "150" } as React.CSSProperties}>
-        <div className="flex-none rotate-[201.302deg]">
-          <div className="relative size-[21.374px]">
-            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 21.3743 21.3743">
-              <circle cx="10.6872" cy="10.6872" fill="var(--fill-0, black)" id="Ellipse 425" r="8.18715" stroke="var(--stroke-0, black)" strokeWidth="5" />
-            </svg>
-          </div>
-        </div>
-      </div>
-      <div className="absolute flex items-center justify-center left-[181.09px] size-[16.816px] top-[51.03px]" style={{ "--transform-inner-width": "300", "--transform-inner-height": "150" } as React.CSSProperties}>
-        <div className="flex-none rotate-[201.302deg]">
-          <div className="relative size-[12.986px]">
-            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 12.9857 12.9857">
-              <circle cx="6.49287" cy="6.49287" fill="var(--fill-0, black)" id="Ellipse 427" r="3.99287" stroke="var(--stroke-0, black)" strokeWidth="5" />
-            </svg>
-          </div>
-        </div>
-      </div>
-      <div className="absolute flex items-center justify-center left-[159.58px] size-[16.733px] top-[30.07px]" style={{ "--transform-inner-width": "300", "--transform-inner-height": "150" } as React.CSSProperties}>
-        <div className="flex-none rotate-[201.302deg]">
-          <div className="relative size-[12.922px]">
-            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 12.9218 12.9218">
-              <circle cx="6.46088" cy="6.46088" fill="var(--fill-0, black)" id="Ellipse 428" r="3.96088" stroke="var(--stroke-0, black)" strokeWidth="5" />
-            </svg>
-          </div>
-        </div>
-      </div>
-      <div className="absolute flex items-center justify-center left-[153.72px] size-[29.735px] top-[42.8px]" style={{ "--transform-inner-width": "300", "--transform-inner-height": "150" } as React.CSSProperties}>
-        <div className="flex-none rotate-[201.302deg]">
-          <div className="relative size-[22.962px]">
-            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 22.9618 22.9618">
-              <circle cx="11.4809" cy="11.4809" fill="var(--fill-0, black)" id="Ellipse 426" r="8.98088" stroke="var(--stroke-0, black)" strokeWidth="5" />
-            </svg>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+export default function PrivacyPolicy() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
-function Group2() {
-  return (
-    <div className="absolute contents left-0 top-0">
-      <div className="absolute backdrop-blur-[5px] backdrop-filter bg-[rgba(255,255,255,0.5)] h-[96px] left-0 top-0 w-[1420px]" />
-      <Group />
-    </div>
-  );
-}
-
-function Group1() {
-  return (
-    <div className="absolute contents font-['Inter:Medium',sans-serif] font-medium leading-[normal] left-[242px] not-italic text-[16px] text-[rgba(0,0,0,0.75)] text-center text-nowrap top-[40px]">
-      <p className="absolute left-[272.5px] top-[40px] translate-x-[-50%]">Product</p>
-      <p className="absolute left-[374px] top-[40px] translate-x-[-50%]">Contact</p>
-    </div>
-  );
-}
-
-function Group3() {
-  return (
-    <div className="absolute contents left-[1183px] top-[18px]">
-      <div className="absolute bg-black h-[44px] left-[1183px] rounded-[10px] top-[18px] w-[162px]" />
-      <div className="absolute font-['Big_Caslon',serif] h-[20px] leading-[normal] left-[1263.5px] not-italic text-[16px] text-center text-white top-[30px] translate-x-[-50%] w-[121px]">
-        <p className="mb-0">Joint our waitlist</p>
-        <p>&nbsp;</p>
-      </div>
-    </div>
-  );
-}
-
-function Header() {
-  return (
-    <div className="absolute contents left-0 top-0" data-name="Header">
-      <Group2 />
-      <Group1 />
-      <Group3 />
-    </div>
-  );
-}
-
-function Section() {
-  return (
-    <div className="bg-white h-[4268px] overflow-clip relative shrink-0 w-full" data-name="Section1">
-      <Header />
-    </div>
-  );
-}
-
-export default function DelirioPrivacy() {
-  
   return (
     <>
-    <div style = {{paddingBlock: 200}}>
-    <FitnessHeader/>
+      <div style={{ paddingBlock: 200 }}>
+        <FitnessHeader />
     <div className="min-h-screen bg-white text-black">
       <div className="max-w-3xl mx-auto px-6 py-24">
         <h1 className="text-4xl font-bold mb-8">Privacy Policy</h1>
-        <p className="mb-2 text-sm text-gray-500">Last updated: November 26, 2025</p>
-        <p className="mb-4">This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.</p>
-        <p className="mb-4">We use Your Personal data to provide and improve the Service. By using the Service, You agree to the collection and use of information in accordance with this Privacy Policy.</p>
-        <h2 className="text-2xl font-semibold mb-4 mt-8">Interpretation and Definitions</h2>
-        <h3 className="text-xl font-semibold mb-2 mt-6">Interpretation</h3>
-        <p className="mb-4">The words whose initial letters are capitalized have meanings defined under the following conditions. The following definitions shall have the same meaning regardless of whether they appear in singular or in plural.</p>
-        <h3 className="text-xl font-semibold mb-2 mt-6">Definitions</h3>
-        <p className="mb-4">For the purposes of this Privacy Policy:</p>
+            <p className="mb-2 text-sm text-gray-500">Last updated: December 29, 2025</p>
+            <p className="mb-4">
+              Delirio ("we," "us," or "our") provides an AI-powered fitness coaching mobile application. This Privacy
+              Policy explains how we collect, use, and protect your information when you use our app.
+            </p>
+
+            <h2 className="text-2xl font-semibold mb-4 mt-8">Information We Collect</h2>
+
+            <h3 className="text-xl font-semibold mb-2 mt-6">Account Information</h3>
+            <p className="mb-4">When you create an account, we collect:</p>
+            <ul className="mb-4 list-disc pl-6">
+              <li>Name</li>
+              <li>Email address</li>
+              <li>Age</li>
+              <li>Height and weight</li>
+              <li>Fitness goals</li>
+              <li>Experience level</li>
+            </ul>
+            <p className="mb-4">You can sign in using Apple Sign-In, Google Sign-In, or email and password.</p>
+
+            <h3 className="text-xl font-semibold mb-2 mt-6">Workout Data</h3>
+            <p className="mb-4">We track your workout activity, including:</p>
+            <ul className="mb-4 list-disc pl-6">
+              <li>Workout duration</li>
+              <li>Exercise repetitions</li>
+              <li>Workout streaks and completion history</li>
+            </ul>
+            <p className="mb-4">
+              This data is stored on our servers to provide you with progress tracking and personalized coaching.
+            </p>
+
+            <h3 className="text-xl font-semibold mb-2 mt-6">Conversation Data</h3>
+            <p className="mb-4">
+              When you interact with our AI coaches (via text, SMS, WhatsApp, or voice), we store:
+            </p>
         <ul className="mb-4 list-disc pl-6">
-          <li><b>Account</b> means a unique account created for You to access our Service or parts of our Service.</li>
-          <li><b>Affiliate</b> means an entity that controls, is controlled by, or is under common control with a party, where "control" means ownership of 50% or more of the shares, equity interest or other securities entitled to vote for election of directors or other managing authority.</li>
-          <li><b>Application</b> refers to Delirio, the software program provided by the Company.</li>
-          <li><b>Company</b> (referred to as either "the Company", "We", "Us" or "Our" in this Agreement) refers to Amir Alsad, 119 Bay State Rd, Boston, MA, 02215.</li>
-          <li><b>Country</b> refers to: Massachusetts, United States</li>
-          <li><b>Device</b> means any device that can access the Service such as a computer, a cell phone or a digital tablet.</li>
-          <li><b>Personal Data</b> is any information that relates to an identified or identifiable individual.</li>
-          <li><b>Service</b> refers to the Application.</li>
-          <li><b>Service Provider</b> means any natural or legal person who processes the data on behalf of the Company. It refers to third-party companies or individuals employed by the Company to facilitate the Service, to provide the Service on behalf of the Company, to perform services related to the Service or to assist the Company in analyzing how the Service is used.</li>
-          <li><b>Usage Data</b> refers to data collected automatically, either generated by the use of the Service or from the Service infrastructure itself (for example, the duration of a page visit).</li>
-          <li><b>You</b> means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.</li>
+              <li>Your recent messages (up to 10 messages)</li>
+              <li>AI-generated summaries of your conversations</li>
+              <li>Memories about your preferences and goals, generated from your conversations</li>
         </ul>
-        <h2 className="text-2xl font-semibold mb-4 mt-8">Collecting and Using Your Personal Data</h2>
-        <h3 className="text-xl font-semibold mb-2 mt-6">Types of Data Collected</h3>
-        <h4 className="text-lg font-semibold mb-2 mt-4">Personal Data</h4>
-        <p className="mb-4">While using Our Service, We may ask You to provide Us with certain personally identifiable information that can be used to contact or identify You. Personally identifiable information may include, but is not limited to:</p>
+            <p className="mb-4">
+              This enables our AI coaches to remember your context and provide personalized guidance across sessions.
+            </p>
+
+            <h3 className="text-xl font-semibold mb-2 mt-6">Camera and Pose Data</h3>
+            <p className="mb-4">
+              Our app uses your device's camera to analyze your exercise form in real time.{" "}
+              <strong>
+                This analysis happens entirely on your device using Apple's Vision framework. We do not collect,
+                transmit, or store any video footage or pose data from your camera.
+              </strong>
+            </p>
+
+            <h2 className="text-2xl font-semibold mb-4 mt-8">How We Use Your Information</h2>
+            <p className="mb-4">We use your information to:</p>
         <ul className="mb-4 list-disc pl-6">
-          <li>Email address</li>
-          <li>First name and last name</li>
-          <li>Phone number</li>
-          <li>Address, State, Province, ZIP/Postal code, City</li>
-          <li>Usage Data</li>
+              <li>Provide personalized fitness coaching and real-time form feedback</li>
+              <li>Track your workout progress over time</li>
+              <li>Enable our AI coaches to remember your preferences and goals</li>
+              <li>Communicate with you about your fitness journey</li>
+              <li>Improve our app and services</li>
         </ul>
-        <h4 className="text-lg font-semibold mb-2 mt-4">Usage Data</h4>
-        <p className="mb-4">Usage Data is collected automatically when using the Service.</p>
-        <p className="mb-4">Usage Data may include information such as Your Device's Internet Protocol address (e.g. IP address), browser type, browser version, the pages of our Service that You visit, the time and date of Your visit, the time spent on those pages, unique device identifiers and other diagnostic data.</p>
-        <p className="mb-4">When You access the Service by or through a mobile device, We may collect certain information automatically, including, but not limited to, the type of mobile device You use, Your mobile device's unique ID, the IP address of Your mobile device, Your mobile operating system, the type of mobile Internet browser You use, unique device identifiers and other diagnostic data.</p>
-        <h3 className="text-xl font-semibold mb-2 mt-6">Use of Your Personal Data</h3>
-        <p className="mb-4">The Company may use Personal Data for the following purposes:</p>
+
+            <h2 className="text-2xl font-semibold mb-4 mt-8">How We Process Your Data</h2>
+
+            <h3 className="text-xl font-semibold mb-2 mt-6">On-Device Processing</h3>
+            <p className="mb-4">
+              Exercise form analysis is processed entirely on your device. Your camera feed and body position data
+              never leave your phone.
+            </p>
+
+            <h3 className="text-xl font-semibold mb-2 mt-6">Cloud Processing</h3>
+            <p className="mb-4">
+              Voice and text conversations with our AI coaches are processed using third-party AI service providers.
+              These providers process your messages to generate responses but do not retain your data for their own
+              purposes.
+            </p>
+            <p className="mb-4">We use the following categories of service providers:</p>
         <ul className="mb-4 list-disc pl-6">
-          <li>To provide and maintain our Service, including to monitor the usage of our Service.</li>
-          <li>To manage Your Account: to manage Your registration as a user of the Service.</li>
-          <li>For the performance of a contract: the development, compliance and undertaking of the purchase contract for the products, items or services You have purchased or of any other contract with Us through the Service.</li>
-          <li>To contact You: To contact You by email, telephone calls, SMS, or other equivalent forms of electronic communication.</li>
-          <li>To provide You with news, special offers, and general information about other goods, services and events which We offer.</li>
-          <li>To manage Your requests: To attend and manage Your requests to Us.</li>
-          <li>For business transfers: We may use Your information to evaluate or conduct a merger, divestiture, restructuring, reorganization, dissolution, or other sale or transfer of some or all of Our assets.</li>
-          <li>For other purposes: We may use Your information for other purposes, such as data analysis, identifying usage trends, determining the effectiveness of our promotional campaigns.</li>
+              <li>
+                <strong>Cloud infrastructure providers</strong> for data storage and authentication
+              </li>
+              <li>
+                <strong>AI service providers</strong> for conversation processing and voice synthesis
+              </li>
+              <li>
+                <strong>Memory services</strong> for storing conversation context and user preferences
+              </li>
+              <li>
+                <strong>Messaging providers</strong> for SMS and WhatsApp communication
+              </li>
         </ul>
-        <h3 className="text-xl font-semibold mb-2 mt-6">Retention of Your Personal Data</h3>
-        <p className="mb-4">The Company will retain Your Personal Data only for as long as is necessary for the purposes set out in this Privacy Policy. We will retain and use Your Personal Data to the extent necessary to comply with our legal obligations, resolve disputes, and enforce our legal agreements and policies.</p>
-        <h3 className="text-xl font-semibold mb-2 mt-6">Transfer of Your Personal Data</h3>
-        <p className="mb-4">Your information, including Personal Data, is processed at the Company's operating offices and in any other places where the parties involved in the processing are located. It means that this information may be transferred to — and maintained on — computers located outside of Your state, province, country or other governmental jurisdiction where the data protection laws may differ from those from Your jurisdiction.</p>
-        <h3 className="text-xl font-semibold mb-2 mt-6">Delete Your Personal Data</h3>
-        <p className="mb-4">You have the right to delete or request that We assist in deleting the Personal Data that We have collected about You.</p>
-        <p className="mb-4">Our Service may give You the ability to delete certain information about You from within the Service. You may also contact Us to request access to, correct, or delete any personal information that You have provided to Us.</p>
-        <h3 className="text-xl font-semibold mb-2 mt-6">Disclosure of Your Personal Data</h3>
-        <h4 className="text-lg font-semibold mb-2 mt-4">Business Transactions</h4>
-        <p className="mb-4">If the Company is involved in a merger, acquisition or asset sale, Your Personal Data may be transferred. We will provide notice before Your Personal Data is transferred and becomes subject to a different Privacy Policy.</p>
-        <h4 className="text-lg font-semibold mb-2 mt-4">Law enforcement</h4>
-        <p className="mb-4">Under certain circumstances, the Company may be required to disclose Your Personal Data if required to do so by law or in response to valid requests by public authorities (e.g. a court or a government agency).</p>
-        <h3 className="text-xl font-semibold mb-2 mt-6">Security of Your Personal Data</h3>
-        <p className="mb-4">The security of Your Personal Data is important to Us, but remember that no method of transmission over the Internet, or method of electronic storage is 100% secure. While We strive to use commercially reasonable means to protect Your Personal Data, We cannot guarantee its absolute security.</p>
-        <h3 className="text-xl font-semibold mb-2 mt-6">Children's Privacy</h3>
-        <p className="mb-4">Our Service does not address anyone under the age of 13. We do not knowingly collect personally identifiable information from anyone under the age of 13. If You are a parent or guardian and You are aware that Your child has provided Us with Personal Data, please contact Us.</p>
-        <h3 className="text-xl font-semibold mb-2 mt-6">Links to Other Websites</h3>
-        <p className="mb-4">Our Service may contain links to other websites that are not operated by Us. If You click on a third party link, You will be directed to that third party's site. We strongly advise You to review the Privacy Policy of every site You visit.</p>
-        <h3 className="text-xl font-semibold mb-2 mt-6">Changes to this Privacy Policy</h3>
-        <p className="mb-4">We may update Our Privacy Policy from time to time. We will notify You of any changes by posting the new Privacy Policy on this page.</p>
-        <p className="mb-4">You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.</p>
-        <h3 className="text-xl font-semibold mb-2 mt-6">Contact Us</h3>
-        <p className="mb-4">If you have any questions about this Privacy Policy, You can contact us:</p>
+
+            <h2 className="text-2xl font-semibold mb-4 mt-8">Data Retention</h2>
+            <p className="mb-4">
+              We retain your data for as long as your account is active. If you wish to delete your account and all
+              associated data, please contact us at{" "}
+              <a href="mailto:amir7alsad@gmail.com" className="text-blue-600 underline">
+                amir7alsad@gmail.com
+              </a>
+              . Upon receiving your request, we will delete your data from our systems and instruct our service
+              providers to do the same.
+            </p>
+
+            <h2 className="text-2xl font-semibold mb-4 mt-8">Data Security</h2>
+            <p className="mb-4">
+              We implement appropriate technical and organizational measures to protect your personal information.
+              However, no method of electronic transmission or storage is completely secure, and we cannot guarantee
+              absolute security.
+            </p>
+
+            <h2 className="text-2xl font-semibold mb-4 mt-8">Children's Privacy</h2>
+            <p className="mb-4">
+              Delirio is not intended for users under 16 years of age. We do not knowingly collect personal information
+              from children under 16. If you are a parent or guardian and believe your child has provided us with
+              personal information, please contact us.
+            </p>
+
+            <h2 className="text-2xl font-semibold mb-4 mt-8">Your Rights</h2>
+            <p className="mb-4">You have the right to:</p>
         <ul className="mb-4 list-disc pl-6">
-          <li>By visiting this page on our website: <a href="https://delirio.fit/privacy-policy" className="text-blue-600 underline">https://delirio.fit/privacy-policy</a></li>
+              <li>Access the personal information we hold about you</li>
+              <li>Request correction of inaccurate information</li>
+              <li>Request deletion of your account and data</li>
+              <li>Ask questions about our data practices</li>
         </ul>
+            <p className="mb-4">
+              To exercise these rights, contact us at{" "}
+              <a href="mailto:amir7alsad@gmail.com" className="text-blue-600 underline">
+                amir7alsad@gmail.com
+              </a>
+              .
+            </p>
+
+            <h2 className="text-2xl font-semibold mb-4 mt-8">Third-Party Links</h2>
+            <p className="mb-4">
+              Our app may contain links to third-party websites or services. We are not responsible for the privacy
+              practices of these external sites.
+            </p>
+
+            <h2 className="text-2xl font-semibold mb-4 mt-8">Changes to This Policy</h2>
+            <p className="mb-4">
+              We may update this Privacy Policy from time to time. We will notify you of significant changes by posting
+              the new policy in the app and updating the "Last updated" date above.
+            </p>
+
+            <h2 className="text-2xl font-semibold mb-4 mt-8">Contact Us</h2>
+            <p className="mb-4">
+              If you have questions about this Privacy Policy or our data practices, please contact us at:
+            </p>
+            <p className="mb-4">
+              <strong>Email:</strong>{" "}
+              <a href="mailto:amir7alsad@gmail.com" className="text-blue-600 underline">
+                amir7alsad@gmail.com
+              </a>
+            </p>
+
+            <hr className="my-8 border-gray-300" />
+            <p className="text-gray-500 text-sm">Delirio is based in Boston, Massachusetts, United States.</p>
       </div>
     </div>
     </div>
-    <FitnessFooter/>
+      <FitnessFooter />
 </>
   );
 }

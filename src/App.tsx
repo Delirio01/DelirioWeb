@@ -7,6 +7,7 @@ import { FitnessWaitlist } from './components/FitnessWaitlist';
 import { FitnessFooter } from './components/FitnessFooter';
 import TermsServices from './components/TermsServices';
 import PrivacyPolicy from './components/PrivacyPolicy';
+import MessagingOptIn from './components/MessagingOptIn';
 import { fetchWaitlistCount } from './utils/fetchWaitlistCount';
 
 
@@ -50,6 +51,7 @@ export default function App() {
         />
         <Route path="/terms" element={<TermsServices />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/sms-signup" element={<MessagingOptIn />} />
       </Routes>
     </BrowserRouter>
   );
