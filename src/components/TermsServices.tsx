@@ -10,7 +10,7 @@ export default function TermsServices() {
   return (
     <>
       <div id="terms-of-service" style={{ paddingBlock: 200 }}>
-        <FitnessHeader />
+        <FitnessHeader showCount={false} />
       <div className="max-w-3xl mx-auto px-6 py-24 pt-32">
                 <h1 className="text-4xl font-bold mb-8">Terms of Service</h1>
           <p className="mb-2 text-sm text-gray-500">Last updated: December 29, 2025</p>

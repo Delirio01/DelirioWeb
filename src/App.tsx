@@ -49,7 +49,7 @@ export default function App() {
             </div>
           }
         />
-        <Route path="/terms" element={<TermsServices />} />
+        <Route path="/terms" element={<TermsServices/>} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/sms-signup" element={<MessagingOptIn />} />
       </Routes>

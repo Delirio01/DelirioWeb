@@ -35,7 +35,7 @@ function AnimatedNumber({ value, colorClass }: { value: number, colorClass?: str
   );
 }
 
-export function FitnessHeader({ whiteMode = false, initialCount }: FitnessHeaderProps & { initialCount?: number }) {
+export function FitnessHeader({ whiteMode = false, initialCount, showCount = true }: FitnessHeaderProps & { initialCount?: number, showCount?:boolean }) {
 
   // Use whiteMode to determine color classes
   const navText = whiteMode ? 'text-white/80 hover:text-white' : 'text-black/75 hover:text-black';
@@ -102,6 +102,7 @@ export function FitnessHeader({ whiteMode = false, initialCount }: FitnessHeader
           </div>
           
               {/* Centered counter translate(-52%, -50%) RIGHT IN BETWEEN / INSIDE THE GAP!*/}
+       { showCount && (
         <div className="" style={{position: "relative", transform: '', display: 'flex', flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center', columnGap: 10, backgroundColor: "transparent", width: "100%", alignSelf:"center", alignContent:"center", textAlign:"center"}}>
           <span style={{fontSize: 24, marginBottom: 0, fontWeight:300, alignSelf: ""}} className={`text-xl font-normal underline underline-offset-4 ${whiteMode ? "text-white" : "text-black"}`}>waitlisted</span>
           <AnimatedNumber value={foundingUsers}  colorClass={whiteMode ? "text-white" : "text-black"}/>
@@ -113,7 +114,9 @@ export function FitnessHeader({ whiteMode = false, initialCount }: FitnessHeader
              <Button onClick={() => setFoundingUsers(foundingUsers + 1)} className="ml-4 bg-green-600 text-white hover:bg-green-700">Test: Add User</Button>
               */
           }
-        </div>
+        </div>)
+        }
+
           {/* CTA Button (hide on mobile) */}
           {!isMobile && (
             <Button

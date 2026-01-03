@@ -10,7 +10,7 @@ export default function PrivacyPolicy() {
   return (
     <>
       <div style={{ paddingBlock: 200 }}>
-        <FitnessHeader />
+        <FitnessHeader showCount = {false} />
     <div className="min-h-screen bg-white text-black">
       <div className="max-w-3xl mx-auto px-6 py-24">
         <h1 className="text-4xl font-bold mb-8">Privacy Policy</h1>
