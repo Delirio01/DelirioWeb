@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Logo } from './logo';
-
+import { FirestoreService } from '../utils/firebase';
 function LogoCircles({color = 'white', ...props}) {
   return (
     <svg width="47" height="56" viewBox="0 0 46.5068 55.2368" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ transform: 'rotate(45deg)' }} {...props}>
@@ -27,11 +27,16 @@ export function FitnessWaitlist() {
   const [phone, setPhone] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const firestoreService = new FirestoreService();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+ 
     try {
+      /*
+    //old sheetDB aproach: START
       //fetch with POST method via sheetDB free link to append google drive google sheet waitlist.sheet file 
       const res = await fetch('https://sheetdb.io/api/v1/wh2jyoj64jis3', {
         method: 'POST',
@@ -46,7 +51,24 @@ export function FitnessWaitlist() {
         })
       });
       if (!res.ok) throw new Error('Failed to submit');
+      */
+    //old sheetDB aproach: END
+
+
+    //new firestore aproach: START
+    
+    await firestoreService.addSubmissionDocument({
+      Timestamp: new Date().toISOString(),
+        Email: email,
+            Name: name,
+            Phone: phone
+    });
+    
+    //new firestore aproach: END  
+
+
       setSubmitted(true);
+
     } catch (err) {
       setError('There was a problem joining the waitlist. Please try again.');
       console.log("Error occured in appending the user submitted waitlist form data to to gogole sheets via sheetDB link: ", err)

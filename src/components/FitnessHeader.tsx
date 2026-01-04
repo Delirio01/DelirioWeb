@@ -6,7 +6,7 @@ import InstaIcon from '../imports/InstaIcon';
 import XIcon from '../imports/XIcon';
 import TikTokIcon from '../imports/TikTokIcon';
 import { Link } from 'react-router-dom';
-
+import { FirestoreService } from '../utils/firebase';
 interface FitnessHeaderProps {
   whiteMode?: boolean;
 }
@@ -36,7 +36,7 @@ function AnimatedNumber({ value, colorClass }: { value: number, colorClass?: str
 }
 
 export function FitnessHeader({ whiteMode = false, initialCount, showCount = true }: FitnessHeaderProps & { initialCount?: number, showCount?:boolean }) {
-
+  const firestoreService = new FirestoreService();
   // Use whiteMode to determine color classes
   const navText = whiteMode ? 'text-white/80 hover:text-white' : 'text-black/75 hover:text-black';
   const headerBg = whiteMode ? 'bg-black/80 border-white/10' : 'bg-white/50 border-black/5';
@@ -50,11 +50,8 @@ export function FitnessHeader({ whiteMode = false, initialCount, showCount = tru
   useEffect(() => {
     async function fetchWaitlistCount() {
       try {
-        const res = await fetch('https://sheetdb.io/api/v1/wh2jyoj64jis3');
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          setFoundingUsers(data.length);
-        }
+        const count = await firestoreService.getWaitlistSubmissionCount(); 
+        setFoundingUsers(count);
       } catch (err) {
         // Optionally handle error
       }

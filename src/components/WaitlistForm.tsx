@@ -21,7 +21,10 @@ export function WaitlistForm() {
     
     // Reset after 5 seconds
     setTimeout(() => setSubmitted(false), 5000);
+    console.log('Waitlist submitted')
   };
+
+
 
   return (
     <section id="waitlist" className="px-4 py-20 bg-gradient-to-br from-blue-50 to-purple-50">
