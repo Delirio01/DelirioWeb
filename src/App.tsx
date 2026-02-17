@@ -10,8 +10,8 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 import MessagingOptIn from './components/MessagingOptIn';
 import { fetchWaitlistCount } from './utils/fetchWaitlistCount';
 
-
 import DefaultState from "./imports/default"
+import Landing from './pages/landing';
 //import {ReactComponent as taregtState} from "./imports/deafault.svg"
 
 export default function App() {
@@ -36,23 +36,20 @@ export default function App() {
 
   return (
     <BrowserRouter>
+                <div className="min-h-screen bg-white" style = {{overflow: "hidden"}}>
+
       <Routes>
         <Route
           path="/"
           element={
-            <div className="min-h-screen bg-white" style = {{overflow: "hidden"}}>
-              <FitnessHeader whiteMode={headerWhite} initialCount={waitlistCount} />
-              <FitnessHeroWithScroll onSectionVisibilityChange={setSectionVisibility} />
-              <FitnessFeatures />
-              <FitnessWaitlist />
-              <FitnessFooter />
-            </div>
+            <Landing/>
           }
         />
         <Route path="/terms" element={<TermsServices/>} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/sms-signup" element={<MessagingOptIn />} />
       </Routes>
+      </div>
     </BrowserRouter>
   );
 }
