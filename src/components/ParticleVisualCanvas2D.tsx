@@ -3,6 +3,7 @@ import * as anime from "animejs";
 import { defaultParticlePositions } from "./particle-defaults";
 import deviceSVG from "../imports/device";
 import { svgPathProperties } from "svg-path-properties";
+import { Style } from "node:util";
 
 interface Particle2D {
   x: number;
@@ -22,6 +23,8 @@ interface ParticleVisualCanvas2DProps {
   color?: string;
   particleCount?: number;
   nodeScale?: number;
+  classNamePorp?:String;
+  style?: Style
   }
 
 // Helper to extract path data from the imported SVG React component
@@ -44,6 +47,8 @@ function extractPathDataFromDeviceSVG() {
     color = "#FF6B35",
     particleCount = 420,
     nodeScale = 1.0,
+    classNamePorp = "w-full h-full",
+    style={minHeight: "400px"}
   }: ParticleVisualCanvas2DProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const particlesRef = useRef<Particle2D[]>([]);
@@ -86,6 +91,26 @@ function extractPathDataFromDeviceSVG() {
       if (!ctx) return;
       let animationId: number;
       let t = 0;
+
+      // Convert any CSS color to rgba with a given alpha
+      const colorToRGBA = (cssColor: string, alpha: number): string => {
+        ctx.save();
+        ctx.fillStyle = cssColor;
+        const parsed = ctx.fillStyle; // browser normalizes to hex or rgb()
+        ctx.restore();
+        let r = 0, g = 0, b = 0;
+        if (parsed.startsWith('#')) {
+          const hex = parsed.slice(1);
+          r = parseInt(hex.slice(0, 2), 16);
+          g = parseInt(hex.slice(2, 4), 16);
+          b = parseInt(hex.slice(4, 6), 16);
+        } else {
+          const match = parsed.match(/(\d+)/g);
+          if (match) { r = +match[0]; g = +match[1]; b = +match[2]; }
+        }
+        return `rgba(${r},${g},${b},${alpha})`;
+      };
+
       const updateSize = () => {
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
         const rect = canvas.getBoundingClientRect();
@@ -117,7 +142,7 @@ function extractPathDataFromDeviceSVG() {
           const drawY = padY + normY * drawH;
           ctx.beginPath();
           ctx.arc(drawX, drawY, p.radius, 0, Math.PI * 2);
-          ctx.fillStyle = `${color}${Math.floor(p.opacity * 255).toString(16).padStart(2, '0')}`;
+          ctx.fillStyle = colorToRGBA(color, p.opacity);
           ctx.fill();
           particles.forEach((p2, j) => {
             if (i < j) {
@@ -131,7 +156,7 @@ function extractPathDataFromDeviceSVG() {
                 ctx.beginPath();
                 ctx.moveTo(p.x, p.y);
                 ctx.lineTo(p2.x, p2.y);
-                ctx.strokeStyle = `${color}${Math.floor(opacity * 255).toString(16).padStart(2, '0')}`;
+                ctx.strokeStyle = colorToRGBA(color, opacity);
                 ctx.lineWidth = 0.5;
                 ctx.stroke();
               }
@@ -181,11 +206,12 @@ function extractPathDataFromDeviceSVG() {
     }, [isInitialized, nodeScale]);
 
     return (
-      <div className="w-full h-full relative">
+      <div className={`${classNamePorp} relative`} >
         <canvas
           ref={canvasRef}
-          className="w-full h-full"
-          style={{ minHeight: "400px" }}
+          
+          className={classNamePorp}
+          style={style}
         />
         {/* Morph to Logo now triggers on load, button removed */}
       </div>

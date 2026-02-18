@@ -87,6 +87,7 @@ export type SectionVisibility = {
   featuresInView: boolean;
   footerInView: boolean;
   waitlistInView: boolean;
+  demoVoiceSessionInView: boolean;
 };
 
 export function FitnessHeroWithScroll({
@@ -125,20 +126,23 @@ export function FitnessHeroWithScroll({
   const featuresSection = document.getElementById("fitness-features");
     const footerSection = document.getElementById("footer");
     const waitListSection = document.getElementById("waitlist");
+    const demoVoiceSession = document.getElementById("demoVoiceSession")
     let featuresObserver: IntersectionObserver | null = null;
     let footerObserver: IntersectionObserver | null = null;
     let waitListObserver: IntersectionObserver | null = null;
+    let demoVoiceSessionObserver: IntersectionObserver | null = null;
 
 
     // Track visibility of all hiding sections
     let featuresInView = false;
     let footerInView = false;
     let waitlistInView = false;
+    let demoVoiceSessionInView = false;
 
     const updateParticles = () => {
-      setIsInView(!(featuresInView || footerInView || waitlistInView));
+      setIsInView(!(featuresInView || footerInView || waitlistInView || demoVoiceSessionInView));
       if (onSectionVisibilityChange) {
-        onSectionVisibilityChange({ featuresInView, footerInView, waitlistInView });
+        onSectionVisibilityChange({ featuresInView, footerInView, waitlistInView, demoVoiceSessionInView });
       }
     };
 
@@ -171,6 +175,15 @@ export function FitnessHeroWithScroll({
         { threshold: 0, rootMargin: "0px"}
       );
       waitListObserver.observe(waitListSection);
+    }
+
+    if (demoVoiceSession){
+      demoVoiceSessionObserver = new IntersectionObserver((entries) =>{
+        demoVoiceSessionInView =entries.some(e => e.isIntersecting); 
+        updateParticles(); 
+      }, {threshold: 0.0, rootMargin: "0px"})
+
+      demoVoiceSessionObserver.observe(demoVoiceSession)
     }
 
     return () => {
@@ -259,10 +272,10 @@ export function FitnessHeroWithScroll({
 
       {/* Single fixed particle system on the right side at midpoint */}
       <div
-        className="fixed right-12 top-1/2 -translate-y-1/2 hidden lg:block pointer-events-none z-10 transition-opacity duration-500"
+        className="fixed right-12 top-1/2 -translate-y-1/2  pointer-events-none z-10 transition-opacity duration-500"
         style={{ opacity: isInView ? 1 : 0 }}
       >
-        <div className="w-[450px] h-[450px] relative">
+        <div className="w-[450px] h-[450px] hidden lg:block relative" style = {{}}>
           <ParticleVisualCanvas2D color={sections[activeIndex].color} particleCount={defaultParticlePositions.length} nodeScale={0.7} />
 
           {/* Decorative gradient */}

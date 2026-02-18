@@ -1954,3 +1954,75 @@ html {
   syntax: "*";
   inherits: false
 }
+
+
+
+/* DemoVoiceSession : START*/
+.voiceSession_end_or_reconnect_sessionOptions{ 
+  color:rgb(255, 255, 255);
+  outline: none;
+  border-radius: 10px; 
+  border: none; 
+  padding: 10px 20px;
+  width: 150px; 
+   justify-content: center;
+   display: flex;
+   column-gap: 10px;
+}
+.voiceSession_end_or_reconnect_sessionOptions:nth-child(1){
+  background-color: red; 
+}
+
+.voiceSession_end_or_reconnect_sessionOptions:nth-child(2){
+  background-color: black; 
+}
+/* DemoVoiceSession : END*/
+
+
+/*fieldset in configurations in voiceSession page : START */
+
+#fieldset{
+ /* border: solid rgb(179, 179, 179) 1px; */
+}
+#fieldset div{
+  margin-block: 12px;
+  border: solid rgb(179, 179, 179) 1px; 
+  border-radius:8px;
+  padding: 10px 20px; 
+  width:auto; 
+  max-width: auto;
+  text-align:right; 
+  justify-content: space-between;
+
+}
+
+#fieldset input{ 
+  text-align: center;
+  text-align-last: center;
+ width: 200px;
+  
+
+}
+
+#fieldset select{
+ width: 200px;
+   text-align: center;
+  text-align-last: center;
+
+}
+
+
+
+
+/*fieldset in configurations in voiceSession page : START */ 
+
+/* voiceChatOptions : START */
+
+#voiceChatOptions button{
+  cursor: pointer;
+}
+#voiceChatOptions button:active{
+  opacity: 0.75;
+}
+
+/* voiceChatOptions : END*/
