@@ -7,14 +7,35 @@ import MicOffIcon from '@mui/icons-material/MicOff';
 import CallEndIcon from '@mui/icons-material/CallEnd';
 import "../index.css"
 import { ParticleVisualCanvas2D } from "./ParticleVisualCanvas2D";
+import { useVoiceSession } from "../hooks/useVoiceSession";
 export default function DemoVoiceSession(){
-    const [volume, setVolume] = useState(0 as Number); 
+    const [volume, setVolume] = useState(0 as Number);
     const [inputDevices, setInputDevices] = useState([] as Object)
     const [outputDevices, setoutputDevices] = useState([] as Object)
 
+    const [selectedPersonality, setSelectedPersonality] = useState("goat");
+    const [selectedInputId, setSelectedInputId] = useState("");
+    const [selectedOutputId, setSelectedOutputId] = useState("");
 
-    const [speakerVolumeIsZero_or_muted, set_speakerVolumeIsZero_or_muted] = useState(false) 
-    const [micIs_muted, set_micIs_muted] = useState(false) 
+    const {
+        sessionState,
+        isMicMuted,
+        isBotSpeaking,
+        isUserSpeaking,
+        botTranscript,
+        userTranscript,
+        error,
+        connect,
+        disconnect,
+        toggleMic,
+        updateMic,
+        updateSpeaker,
+    } = useVoiceSession({ personality: selectedPersonality });
+
+    const isVoiceSessionAcitve = sessionState === "connected";
+    const isConnecting = sessionState === "connecting";
+
+    const [speakerVolumeIsZero_or_muted, set_speakerVolumeIsZero_or_muted] = useState(false)
 
 
     useEffect(() =>{
@@ -64,10 +85,10 @@ export default function DemoVoiceSession(){
 
         <div style = {{columnGap: 20, display: "flex", flexDirection:"row"}}>
         <label>Personality</label>
-        <select>
-            <option defaultChecked value = "GOAT">GOAT</option>
-            <option value = "Reed">Reed</option>
-            <option value = "Iris">Iris</option>
+        <select value={selectedPersonality} onChange={(e) => setSelectedPersonality(e.target.value)}>
+            <option value = "goat">GOAT</option>
+            <option value = "reed">Reed</option>
+            <option value = "iris">Iris</option>
         </select>
         </div>
 
@@ -83,10 +104,13 @@ export default function DemoVoiceSession(){
 
         <div style = {{columnGap: 20, display: "flex", flexDirection:"row"}}>
         <label>Input</label>
-        <select>
+        <select value={selectedInputId} onChange={(e) => {
+            setSelectedInputId(e.target.value);
+            updateMic(e.target.value);
+        }}>
             {
                 inputDevices.map((itm, idx) =>(
-                        <option key={idx} value = {itm.label}>{itm.label}</option>
+                        <option key={idx} value = {itm.deviceId}>{itm.label}</option>
                 ))
             }
         </select>
@@ -96,10 +120,13 @@ export default function DemoVoiceSession(){
 
         <div style = {{columnGap: 20, display: "flex", flexDirection:"row"}}>
         <label>Output</label>
-        <select>
+        <select value={selectedOutputId} onChange={(e) => {
+            setSelectedOutputId(e.target.value);
+            updateSpeaker(e.target.value);
+        }}>
             {
                 outputDevices.map((itm, idx) =>(
-                        <option key={idx} value = {itm.label}>{itm.label}</option>
+                        <option key={idx} value = {itm.deviceId}>{itm.label}</option>
                 ))
             }
         </select>
@@ -114,21 +141,28 @@ export default function DemoVoiceSession(){
 
 
     const endChatButton = (
-        <button class = "voiceSession_end_or_reconnect_sessionOptions">
+        <button className = "voiceSession_end_or_reconnect_sessionOptions" onClick={disconnect}>
             <CallEndIcon/>
             End Call
         </button>
     )
 
     const ReconectButton = (
-        <button class = "voiceSession_end_or_reconnect_sessionOptions">
+        <button className = "voiceSession_end_or_reconnect_sessionOptions" onClick={async () => {
+            await disconnect();
+            connect();
+        }}>
             Reconnect
         </button>
     )
 
+    const StartVocieSessionButton = (
+        <button className = "startVoiceSession" onClick={connect} disabled={isConnecting}>
+            {isConnecting ? "Connecting..." : "Start Session"}
+        </button>
+    )
 
     const iconDimension = 28
-
     const voiceChatOptions = (
         <div id = "voiceChatOptions" style = {{
             display: "flex",
@@ -156,11 +190,11 @@ export default function DemoVoiceSession(){
 
  
         {
-                //microphone icon: 
-                micIs_muted ?
-                         <MicOffIcon style = {{cursor: "pointer", width: iconDimension, height: iconDimension }} onClick = {() => {set_micIs_muted(false)}}/>
+                //microphone icon:
+                isMicMuted ?
+                         <MicOffIcon style = {{cursor: "pointer", width: iconDimension, height: iconDimension }} onClick = {toggleMic}/>
                          :
-                <KeyboardVoiceIcon style = {{cursor: "pointer", width: iconDimension, height: iconDimension }} onClick = {() =>{set_micIs_muted(true)}}/>
+                <KeyboardVoiceIcon style = {{cursor: "pointer", width: iconDimension, height: iconDimension }} onClick = {toggleMic}/>
             }
 
 
@@ -180,8 +214,18 @@ export default function DemoVoiceSession(){
 
         }}>
 
-            {endChatButton}
-            {ReconectButton}
+            {
+                isVoiceSessionAcitve ?
+                <>
+                {endChatButton}
+                {ReconectButton}
+                </>
+                :
+                <>
+                {StartVocieSessionButton}
+                </>
+            }
+
 
 
         </div>
@@ -227,8 +271,18 @@ useEffect(() => {
 
             {voiceChatOptions}
 
+            {error && (
+                <p style={{ color: "red", textAlign: "center" }}>{error}</p>
+            )}
 
-            
+            {isVoiceSessionAcitve && (
+                <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 8 }}>
+                    {isBotSpeaking && <p style={{ fontStyle: "italic", color: "#555" }}>Agent is speaking...</p>}
+                    {isUserSpeaking && <p style={{ fontStyle: "italic", color: "#555" }}>Listening...</p>}
+                    {botTranscript && <p><strong>Agent:</strong> {botTranscript}</p>}
+                    {userTranscript && <p><strong>You:</strong> {userTranscript}</p>}
+                </div>
+            )}
 
         </div>
     )

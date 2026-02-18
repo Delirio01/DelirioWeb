@@ -1958,7 +1958,7 @@ html {
 
 
 /* DemoVoiceSession : START*/
-.voiceSession_end_or_reconnect_sessionOptions{ 
+.voiceSession_end_or_reconnect_sessionOptions, .startVoiceSession{ 
   color:rgb(255, 255, 255);
   outline: none;
   border-radius: 10px; 
@@ -1976,13 +1976,16 @@ html {
 .voiceSession_end_or_reconnect_sessionOptions:nth-child(2){
   background-color: black; 
 }
+.startVoiceSession{
+  background-color: green;
+}
 /* DemoVoiceSession : END*/
 
 
 /*fieldset in configurations in voiceSession page : START */
 
 #fieldset{
- /* border: solid rgb(179, 179, 179) 1px; */
+  border: solid rgb(179, 179, 179) 1px; 
 }
 #fieldset div{
   margin-block: 12px;
