@@ -19,20 +19,24 @@ export default function DemoVoiceSession(){
 
     useEffect(() =>{
 
-        async function getDevices(){ 
-            const device = await navigator.mediaDevices.enumerateDevices() 
-            device.map((itm, idx) =>{
-                console.log(itm)
-                if (itm.kind == "audioinput"){
-
-                    setInputDevices((val) => [val, itm])
+        async function getDevices(){
+            const devices = await navigator.mediaDevices.enumerateDevices()
+            const inputs: MediaDeviceInfo[] = []
+            const outputs: MediaDeviceInfo[] = []
+            const seenInputIds = new Set<string>()
+            const seenOutputIds = new Set<string>()
+            devices.forEach((itm) =>{
+                if (itm.kind == "audioinput" && !seenInputIds.has(itm.groupId)){
+                    seenInputIds.add(itm.groupId)
+                    inputs.push(itm)
                 }
-                
-                if (itm.kind == "audiooutput"){
-                    setoutputDevices((val) => [val, itm])
+                if (itm.kind == "audiooutput" && !seenOutputIds.has(itm.groupId)){
+                    seenOutputIds.add(itm.groupId)
+                    outputs.push(itm)
                 }
             })
-
+            setInputDevices(inputs)
+            setoutputDevices(outputs)
         }
 
         navigator.mediaDevices.getUserMedia({audio: true, video: false})
@@ -81,14 +85,9 @@ export default function DemoVoiceSession(){
         <label>Input</label>
         <select>
             {
-                inputDevices.map((itm, idx) =>{
-                    if (idx > 0){
-                    return(
-                        <option value = {itm.label}>{itm.label}</option>
-                    )
-                }
-
-                })
+                inputDevices.map((itm, idx) =>(
+                        <option key={idx} value = {itm.label}>{itm.label}</option>
+                ))
             }
         </select>
         </div>
@@ -99,14 +98,9 @@ export default function DemoVoiceSession(){
         <label>Output</label>
         <select>
             {
-                outputDevices.map((itm, idx) =>{
-                    if (idx > 0){
-                    return(
-                        <option value = {itm.label}>{itm.label}</option>
-                    )
-                }
-
-                })
+                outputDevices.map((itm, idx) =>(
+                        <option key={idx} value = {itm.label}>{itm.label}</option>
+                ))
             }
         </select>
         </div>
