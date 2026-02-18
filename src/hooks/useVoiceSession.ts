@@ -9,10 +9,20 @@ interface UseVoiceSessionOptions {
   personality?: string;
   userId?: string;
   context?: string;
+  /** Connection timeout in ms (default: 30000) */
+  timeout?: number;
+  /** Max retry attempts on connection failure (default: 3) */
+  maxRetries?: number;
 }
 
 export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
-  const { personality = "goat", userId = "web-user", context = "onboarding" } = options;
+  const {
+    personality = "goat",
+    userId = "web-user",
+    context = "onboarding",
+    timeout = 30000,
+    maxRetries = 3,
+  } = options;
 
   const [sessionState, setSessionState] = useState<VoiceSessionState>("idle");
   const [isMicMuted, setIsMicMuted] = useState(false);
@@ -21,9 +31,12 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
   const [botTranscript, setBotTranscript] = useState("");
   const [userTranscript, setUserTranscript] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [transportState, setTransportState] = useState<string>("idle");
 
   const clientRef = useRef<PipecatClient | null>(null);
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
+  const retryCountRef = useRef(0);
+  const isConnectingRef = useRef(false);
 
   // Create audio element for bot output
   useEffect(() => {
@@ -36,9 +49,42 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
     };
   }, []);
 
-  const connect = useCallback(async () => {
-    if (clientRef.current?.connected) return;
+  // Use refs to avoid circular dependency issues with retry logic
+  const connectWithRetryRef = useRef<(attempt: number) => Promise<void>>();
 
+  const handleConnectionError = useCallback((errorMsg: string, attempt: number) => {
+    isConnectingRef.current = false;
+
+    // Check if this is a retriable error
+    const isRetriable =
+      errorMsg.toLowerCase().includes("temporarily unavailable") ||
+      errorMsg.toLowerCase().includes("timeout") ||
+      errorMsg.toLowerCase().includes("network") ||
+      errorMsg.toLowerCase().includes("failed to fetch") ||
+      errorMsg.toLowerCase().includes("connection") ||
+      errorMsg.toLowerCase().includes("503") ||
+      errorMsg.toLowerCase().includes("502");
+
+    if (isRetriable && attempt < maxRetries - 1) {
+      const delay = Math.min(1000 * Math.pow(2, attempt), 10000); // Exponential backoff, max 10s
+      console.log(`[VoiceSession] Retrying in ${delay}ms (attempt ${attempt + 2}/${maxRetries})...`);
+
+      retryCountRef.current = attempt + 1;
+      setTimeout(() => {
+        connectWithRetryRef.current?.(attempt + 1);
+      }, delay);
+    } else {
+      console.error(`[VoiceSession] Connection failed after ${attempt + 1} attempts: ${errorMsg}`);
+      setError(errorMsg);
+      setSessionState("error");
+      retryCountRef.current = 0;
+    }
+  }, [maxRetries]);
+
+  const connectWithRetry = useCallback(async (attempt: number = 0): Promise<void> => {
+    if (clientRef.current?.connected || isConnectingRef.current) return;
+
+    isConnectingRef.current = true;
     setSessionState("connecting");
     setError(null);
 
@@ -48,12 +94,27 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
         transport,
         enableMic: true,
         enableCam: false,
+        timeout,
         callbacks: {
-          onConnected: () => setSessionState("connected"),
+          onConnected: () => {
+            console.log("[VoiceSession] Connected to transport");
+          },
           onDisconnected: () => {
+            console.log("[VoiceSession] Disconnected");
             setSessionState("idle");
             setIsBotSpeaking(false);
             setIsUserSpeaking(false);
+            isConnectingRef.current = false;
+          },
+          onTransportStateChanged: (state: TransportState) => {
+            console.log("[VoiceSession] Transport state:", state);
+            setTransportState(state);
+          },
+          onBotReady: () => {
+            console.log("[VoiceSession] Bot ready - session fully connected");
+            setSessionState("connected");
+            retryCountRef.current = 0;
+            isConnectingRef.current = false;
           },
           onBotStartedSpeaking: () => setIsBotSpeaking(true),
           onBotStoppedSpeaking: () => setIsBotSpeaking(false),
@@ -67,7 +128,6 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
           },
           onTrackStarted: (track, participant) => {
             if (track.kind === "audio" && participant && !participant.local) {
-              // Attach bot audio to audio element
               const stream = new MediaStream([track]);
               if (audioElementRef.current) {
                 audioElementRef.current.srcObject = stream;
@@ -75,14 +135,17 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
             }
           },
           onError: (message) => {
-            console.error("Pipecat error:", message);
-            setError(message?.data?.toString() ?? "Connection error");
-            setSessionState("error");
+            console.error("[VoiceSession] Pipecat error:", message);
+            const errorMsg = message?.data?.toString() ?? message?.toString() ?? "Connection error";
+            handleConnectionError(errorMsg, attempt);
           },
         },
       });
 
       clientRef.current = client;
+
+      console.log(`[VoiceSession] Attempting connection (attempt ${attempt + 1}/${maxRetries})...`);
+      console.log(`[VoiceSession] Endpoint: ${PIPECAT_BACKEND_URL}/connect`);
 
       await client.startBotAndConnect({
         endpoint: `${PIPECAT_BACKEND_URL}/connect`,
@@ -93,21 +156,34 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
         },
       });
     } catch (err) {
-      console.error("Failed to connect:", err);
-      setError(err instanceof Error ? err.message : "Failed to connect");
-      setSessionState("error");
+      console.error("[VoiceSession] Connection error:", err);
+      const errorMsg = err instanceof Error ? err.message : "Failed to connect";
+      handleConnectionError(errorMsg, attempt);
     }
-  }, [personality, userId, context]);
+  }, [personality, userId, context, timeout, maxRetries, handleConnectionError]);
+
+  // Keep the ref updated
+  useEffect(() => {
+    connectWithRetryRef.current = connectWithRetry;
+  }, [connectWithRetry]);
+
+  const connect = useCallback(async () => {
+    retryCountRef.current = 0;
+    await connectWithRetry(0);
+  }, [connectWithRetry]);
 
   const disconnect = useCallback(async () => {
+    isConnectingRef.current = false;
+    retryCountRef.current = 0;
     if (!clientRef.current) return;
     try {
       await clientRef.current.disconnect();
     } catch (err) {
-      console.error("Disconnect error:", err);
+      console.error("[VoiceSession] Disconnect error:", err);
     }
     clientRef.current = null;
     setSessionState("idle");
+    setTransportState("idle");
   }, []);
 
   const toggleMic = useCallback(() => {
@@ -136,6 +212,7 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
 
   return {
     sessionState,
+    transportState,
     isMicMuted,
     isBotSpeaking,
     isUserSpeaking,
