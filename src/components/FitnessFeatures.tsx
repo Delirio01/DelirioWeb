@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { ReactElement } from 'react';
 import {
   ShieldCheck,
@@ -8,6 +8,7 @@ import {
   Award,
   Lightbulb,
 } from "lucide-react";
+import DemoVoiceSession from './DemoVoiceSession';
 
 // FeatureCard component for rendering each feature
 type Feature = {
@@ -68,13 +69,28 @@ const features = [
 function FitnessFeatures() {
   // Grid settings
   const gridSize = 40;
-  const width = 1200;
-  const height = 800;
+  const width = 800;
+  const [height, setHeight] = useState(2000);
   const cols = Math.floor(width / gridSize) + 1;
   const rows = Math.floor(height / gridSize) + 1;
 
   const [mouse, setMouse] = useState<{ x: number; y: number } | null>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
+
+  // Dynamically track section height so the grid covers the full section
+  useEffect(() => {
+    if (!sectionRef.current) return;
+    const ro = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const sectionHeight = entry.contentRect.height;
+        // Scale viewBox height proportionally to the aspect ratio
+        const scaled = Math.round((sectionHeight / entry.contentRect.width) * width);
+        setHeight(Math.max(scaled*1.25, 2000));
+      }
+    });
+    ro.observe(sectionRef.current);
+    return () => ro.disconnect();
+  }, []);
 
   // Mouse move handler for interactive grid
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -149,10 +165,11 @@ function FitnessFeatures() {
     <section
   id="fitness-features"
       className="bg-white py-32 relative overflow-hidden"
+
       ref={sectionRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      style={{ zIndex: 1 }}
+      style={{ zIndex: 1}}
     >
       {/* Interactive 3D Hill Grid Background */}
       <div
@@ -164,6 +181,8 @@ function FitnessFeatures() {
           {gridLines}
         </svg>
       </div>
+
+
       <div className="max-w-7xl mx-auto px-6 relative" style={{ zIndex: 1 }}>
         {/* Heading */}
         <h2 className="text-5xl md:text-6xl lg:text-7xl tracking-tight mb-20 leading-[1.1] text-center max-w-4xl mx-auto">
@@ -178,14 +197,23 @@ function FitnessFeatures() {
             ))}
           </div>
 
+          
+
           {/* Bottom Row - 2 cards centered */}
           <div className="flex flex-wrap justify-center gap-12">
             {features.slice(3, 5).map((feature, idx) => (
               <FeatureCard key={idx + 3} feature={feature} />
             ))}
           </div>
+
+          
         </div>
+
       </div>
+
+
+
+
     </section>
   );
 }

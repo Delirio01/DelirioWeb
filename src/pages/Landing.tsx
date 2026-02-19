@@ -22,6 +22,7 @@ const [sectionVisibility, setSectionVisibility] = useState<SectionVisibility>({
     featuresInView: false,
     footerInView: false,
     waitlistInView: false,
+    demoVoiceSessionInView: false,
   });
   const headerWhite = sectionVisibility.waitlistInView || sectionVisibility.footerInView;
 
@@ -43,7 +44,7 @@ const [sectionVisibility, setSectionVisibility] = useState<SectionVisibility>({
               <FitnessHeader whiteMode={headerWhite} initialCount={waitlistCount} />
               <FitnessHeroWithScroll onSectionVisibilityChange={setSectionVisibility} />
               <FitnessFeatures />
-              <DemoVoiceSession/>   
+         <DemoVoiceSession/> 
               <FitnessWaitlist />
               <FitnessFooter />
         </>

@@ -19,6 +19,7 @@ export default function App() {
     featuresInView: false,
     footerInView: false,
     waitlistInView: false,
+    demoVoiceSessionInView: false,
   });
   const headerWhite = sectionVisibility.waitlistInView || sectionVisibility.footerInView;
 

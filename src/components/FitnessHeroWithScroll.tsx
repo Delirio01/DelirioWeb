@@ -123,7 +123,7 @@ export function FitnessHeroWithScroll({
     });
 
     // Observer for FitnessFeatures section to hide particle system when it comes into view
-  const featuresSection = document.getElementById("fitness-features");
+    const featuresSection = document.getElementById("fitness-features");
     const footerSection = document.getElementById("footer");
     const waitListSection = document.getElementById("waitlist");
     const demoVoiceSession = document.getElementById("demoVoiceSession")
@@ -152,7 +152,7 @@ export function FitnessHeroWithScroll({
           featuresInView = entries.some(e => e.isIntersecting);
           updateParticles();
         },
-        { threshold: 0.2, rootMargin: "0px" }
+        { threshold: 0.05, rootMargin: "0px" }
       );
       featuresObserver.observe(featuresSection);
     }
@@ -177,11 +177,13 @@ export function FitnessHeroWithScroll({
       waitListObserver.observe(waitListSection);
     }
 
+    // Hide the hero particle system once DemoVoiceSession reaches the visibility threshold.
+    const demoVoiceThreshold = 0.25; // threshold: 0.25
     if (demoVoiceSession){
       demoVoiceSessionObserver = new IntersectionObserver((entries) =>{
-        demoVoiceSessionInView =entries.some(e => e.isIntersecting); 
-        updateParticles(); 
-      }, {threshold: 0.0, rootMargin: "0px"})
+        demoVoiceSessionInView = entries.some(e => e.isIntersecting);
+        updateParticles();
+      }, { threshold: demoVoiceThreshold, rootMargin: "0px" })
 
       demoVoiceSessionObserver.observe(demoVoiceSession)
     }
@@ -191,6 +193,7 @@ export function FitnessHeroWithScroll({
       featuresObserver?.disconnect();
       footerObserver?.disconnect();
       waitListObserver?.disconnect();
+      demoVoiceSessionObserver?.disconnect();
     };
   }, []);
 
