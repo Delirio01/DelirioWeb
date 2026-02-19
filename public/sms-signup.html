@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SMS Sign Up - Delirio</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #000; background: #fff; line-height: 1.6; }
+    a { color: #000; text-decoration: underline; }
+    a:hover { color: rgba(0,0,0,0.7); }
+    .page { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem 1.5rem; }
+    .card { width: 100%; max-width: 28rem; border: 2px solid #000; border-radius: 1.5rem; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+    h1 { font-size: 2rem; font-weight: 700; text-align: center; margin-bottom: 0.75rem; letter-spacing: -0.025em; }
+    .subtitle { color: rgba(0,0,0,0.6); text-align: center; margin-bottom: 2rem; }
+    .form-group { margin-bottom: 1.5rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+    label { display: block; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.875rem; }
+    input[type="text"], input[type="email"], input[type="tel"] {
+      width: 100%; height: 3.5rem; font-size: 1rem; padding: 0 1rem;
+      border: 2px solid rgba(0,0,0,0.2); border-radius: 0.75rem; background: #fff;
+      transition: border-color 0.2s;
+    }
+    input:focus { outline: none; border-color: #000; }
+    input::placeholder { color: rgba(0,0,0,0.4); }
+    .consent-row { display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 1.5rem; }
+    .consent-row input[type="checkbox"] { margin-top: 0.25rem; flex-shrink: 0; width: 1rem; height: 1rem; accent-color: #000; }
+    .consent-text { font-size: 0.875rem; color: rgba(0,0,0,0.7); line-height: 1.5; }
+    .error-msg { background: #fef2f2; border: 2px solid #fecaca; color: #b91c1c; padding: 0.75rem 1rem; border-radius: 0.75rem; font-size: 0.875rem; margin-bottom: 1.5rem; display: none; }
+    .field-error { color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem; display: none; }
+    button[type="submit"] {
+      width: 100%; height: 3.5rem; font-size: 1.125rem; font-weight: 500;
+      background: #000; color: #fff; border: none; border-radius: 0.75rem; cursor: pointer;
+      transition: background 0.2s;
+    }
+    button[type="submit"]:hover { background: rgba(0,0,0,0.9); }
+    button[type="submit"]:disabled { opacity: 0.5; cursor: not-allowed; }
+    .back-link { display: block; text-align: center; margin-top: 2rem; font-size: 0.875rem; color: rgba(0,0,0,0.6); }
+    .back-link:hover { color: #000; }
+    .success { text-align: center; padding: 3rem 0; display: none; }
+    .success .icon { display: inline-flex; align-items: center; justify-content: center; width: 4rem; height: 4rem; border: 2px solid #22c55e; border-radius: 50%; background: #f0fdf4; margin-bottom: 1.5rem; }
+    .success .icon svg { width: 2rem; height: 2rem; color: #16a34a; }
+    .success h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; }
+    .success p { color: rgba(0,0,0,0.7); margin-bottom: 1.5rem; }
+    .success a.btn { display: inline-block; padding: 0.75rem 2rem; border: 2px solid #000; border-radius: 0.75rem; color: #000; text-decoration: none; font-weight: 500; transition: all 0.2s; }
+    .success a.btn:hover { background: #000; color: #fff; }
+    @media (max-width: 640px) { .form-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="card">
+      <!-- Form -->
+      <div id="form-section">
+        <h1>Get SMS Updates</h1>
+        <p class="subtitle">Sign up to receive coaching messages, workout reminders, and progress updates directly to your phone.</p>
+
+        <form id="sms-form" novalidate>
+          <div class="form-row">
+            <div>
+              <label for="firstName">First Name *</label>
+              <input type="text" id="firstName" placeholder="John" required />
+            </div>
+            <div>
+              <label for="lastName">Last Name *</label>
+              <input type="text" id="lastName" placeholder="Doe" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" placeholder="john@example.com" required />
+            <p class="field-error" id="email-error">Please enter a valid email address</p>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number *</label>
+            <input type="tel" id="phone" placeholder="(555) 123-4567" required />
+            <p class="field-error" id="phone-error">Please enter a valid US phone number (10 digits)</p>
+          </div>
+
+          <div class="consent-row">
+            <input type="checkbox" id="consent" />
+            <label for="consent" class="consent-text">
+              I agree to receive recurring automated text messages at the phone number provided. Msg &amp; data rates may apply. Msg frequency varies. Reply HELP for help and STOP to end. View our
+              <a href="/terms">Terms of Service</a> and
+              <a href="/privacy">Privacy Policy</a>.
+            </label>
+          </div>
+
+          <div class="error-msg" id="submit-error"></div>
+
+          <button type="submit" id="submit-btn">Sign Up for SMS Updates</button>
+        </form>
+      </div>
+
+      <!-- Success -->
+      <div class="success" id="success-section">
+        <div class="icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <h2>Success!</h2>
+        <p>You'll receive a welcome message shortly. Get ready to transform your fitness journey with Delirio!</p>
+        <a href="/" class="btn">Return to Home</a>
+      </div>
+    </div>
+
+    <a href="/" class="back-link">&larr; Back to Home</a>
+  </div>
+
+  <script>
+    (function() {
+      var form = document.getElementById('sms-form');
+      var submitBtn = document.getElementById('submit-btn');
+      var emailInput = document.getElementById('email');
+      var phoneInput = document.getElementById('phone');
+      var consentInput = document.getElementById('consent');
+      var emailError = document.getElementById('email-error');
+      var phoneError = document.getElementById('phone-error');
+      var submitError = document.getElementById('submit-error');
+      var formSection = document.getElementById('form-section');
+      var successSection = document.getElementById('success-section');
+
+      function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      }
+
+      function isValidPhone(phone) {
+        var digits = phone.replace(/\D/g, '');
+        return digits.length === 10 || (digits.length === 11 && digits.charAt(0) === '1');
+      }
+
+      function normalizePhone(phone) {
+        var digits = phone.replace(/\D/g, '');
+        if (digits.length === 11 && digits.charAt(0) === '1') return '+' + digits;
+        if (digits.length === 10) return '+1' + digits;
+        return '+' + digits;
+      }
+
+      emailInput.addEventListener('blur', function() {
+        emailError.style.display = emailInput.value && !isValidEmail(emailInput.value) ? 'block' : 'none';
+      });
+
+      phoneInput.addEventListener('blur', function() {
+        phoneError.style.display = phoneInput.value && !isValidPhone(phoneInput.value) ? 'block' : 'none';
+      });
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var firstName = document.getElementById('firstName').value.trim();
+        var lastName = document.getElementById('lastName').value.trim();
+        var email = emailInput.value.trim();
+        var phone = phoneInput.value.trim();
+
+        if (!firstName || !lastName || !isValidEmail(email) || !isValidPhone(phone) || !consentInput.checked) {
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+        submitError.style.display = 'none';
+
+        fetch('https://sheetdb.io/api/v1/wh2jyoj64jis3', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            data: [{
+              Timestamp: new Date().toISOString(),
+              FirstName: firstName,
+              LastName: lastName,
+              Email: email.toLowerCase(),
+              Phone: normalizePhone(phone),
+              ConsentTimestamp: new Date().toISOString(),
+              Source: 'SMS Opt-In Form'
+            }]
+          })
+        }).then(function(response) {
+          if (!response.ok) throw new Error('Failed to submit consent.');
+          formSection.style.display = 'none';
+          successSection.style.display = 'block';
+        }).catch(function(err) {
+          submitError.textContent = err.message || 'An error occurred. Please try again.';
+          submitError.style.display = 'block';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Sign Up for SMS Updates';
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
