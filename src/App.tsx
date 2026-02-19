@@ -11,7 +11,7 @@ import MessagingOptIn from './components/MessagingOptIn';
 import { fetchWaitlistCount } from './utils/fetchWaitlistCount';
 
 import DefaultState from "./imports/default"
-import Landing from './pages/landing';
+import Landing from './pages/Landing';
 //import {ReactComponent as taregtState} from "./imports/deafault.svg"
 
 export default function App() {
