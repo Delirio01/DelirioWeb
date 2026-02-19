@@ -197,7 +197,7 @@ export default function DemoVoiceSession(){
                 <p className="demo-voice-note">
                     {isVoiceSessionAcitve
                         ? "Session is live. Use mute when you need privacy."
-                        : "Connect to begin a live coaching session."}
+                        : "Start session to speak to GOAT"}
                 </p>
             </div>
 
