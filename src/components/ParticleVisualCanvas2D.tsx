@@ -130,6 +130,7 @@ function extractPathDataFromDeviceSVG() {
         const padY = rect.height * paddingRatio;
         const drawW = rect.width - padX * 2;
         const drawH = rect.height - padY * 2;
+        
         particles.forEach((p, i) => {
           const breathing = Math.sin(t * 0.5 + p.phaseOffset) * 0.03;
           p.angle += p.speed * 0.01;
