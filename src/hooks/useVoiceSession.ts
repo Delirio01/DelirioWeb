@@ -18,8 +18,8 @@ interface UseVoiceSessionOptions {
 export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
   const {
     personality = "goat",
-    userId = "web-user",
-    context = "onboarding",
+    userId = "28238472308780",
+    context = "discovery",
     timeout = 30000,
     maxRetries = 3,
   } = options;
