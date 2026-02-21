@@ -23,7 +23,8 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
     timeout = 30000,
     maxRetries = 3,
 
-  } = options;
+  } = options; 
+  
 
   const [sessionState, setSessionState] = useState<VoiceSessionState>("idle");
   const [isMicMuted, setIsMicMuted] = useState(false);
