@@ -13,3 +13,6 @@ export const CHAT_ENGINE_URL =
   "https://text-messaging-production.up.railway.app";
 
 export const BOT_SPEAKING_DEBOUNCE_MS = 700;
+
+export const generateDiscoveryId = () =>
+  `discovery_${crypto.randomUUID()}`;

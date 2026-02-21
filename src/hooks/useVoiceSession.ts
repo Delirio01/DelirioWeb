@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PipecatClient, RTVIEvent, TransportState } from "@pipecat-ai/client-js";
 import { DailyTransport } from "@pipecat-ai/daily-transport";
-import { PIPECAT_BACKEND_URL } from "../utils/pipecatConfig";
+import { generateDiscoveryId } from "../utils/pipecatConfig";
 
 export type VoiceSessionState = "idle" | "connecting" | "connected" | "error";
 
@@ -17,11 +17,12 @@ interface UseVoiceSessionOptions {
 
 export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
   const {
-    personality = "goat",
-    userId = "28238472308780",
-    context = "discovery",
+    personality = "goat", // within default_app context, "reed" and "iris" are funcitonal 
+    userId = generateDiscoveryId(),
+    context = "discovery", //default_app is funcitonal 
     timeout = 30000,
     maxRetries = 3,
+
   } = options;
 
   const [sessionState, setSessionState] = useState<VoiceSessionState>("idle");
@@ -38,14 +39,23 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
   const retryCountRef = useRef(0);
   const isConnectingRef = useRef(false);
 
-  // Create audio element for bot output
+  // Lazily create the audio element (reused across reconnects)
+  const getAudioElement = useCallback(() => {
+    if (!audioElementRef.current) {
+      const audio = new Audio();
+      audio.autoplay = true;
+      audioElementRef.current = audio;
+    }
+    return audioElementRef.current;
+  }, []);
+
+  // Cleanup on unmount
   useEffect(() => {
-    const audio = new Audio();
-    audio.autoplay = true;
-    audioElementRef.current = audio;
     return () => {
-      audio.pause();
-      audio.srcObject = null;
+      if (audioElementRef.current) {
+        audioElementRef.current.pause();
+        audioElementRef.current.srcObject = null;
+      }
     };
   }, []);
 
@@ -88,6 +98,17 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
     setSessionState("connecting");
     setError(null);
 
+    // Prime audio element inside user gesture so browsers allow playback
+    const audio = getAudioElement();
+    audio.play().catch(() => {});
+
+    const t0 = Date.now();
+    const ms = () => `+${Date.now() - t0}ms`;
+    const sessionTag = `personality="${personality}" context="${context}" userId="${userId}"`;
+
+    console.log(`[VoiceSession] ---- NEW SESSION ----`);
+    console.log(`[VoiceSession] Config: ${sessionTag}`);
+
     try {
       const transport = new DailyTransport();
       const client = new PipecatClient({
@@ -97,46 +118,71 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
         timeout,
         callbacks: {
           onConnected: () => {
-            console.log("[VoiceSession] Connected to transport");
+            console.log(`[VoiceSession] (${ms()}) Connected to transport`);
           },
           onDisconnected: () => {
-            console.log("[VoiceSession] Disconnected");
+            console.warn(`[VoiceSession] (${ms()}) Disconnected — ${sessionTag}`);
             setSessionState("idle");
             setIsBotSpeaking(false);
             setIsUserSpeaking(false);
             isConnectingRef.current = false;
           },
           onTransportStateChanged: (state: TransportState) => {
-            console.log("[VoiceSession] Transport state:", state);
+            console.log(`[VoiceSession] (${ms()}) Transport: ${state}`);
             setTransportState(state);
           },
           onBotReady: () => {
-            console.log("[VoiceSession] Bot ready - session fully connected");
+            console.log(`[VoiceSession] (${ms()}) Bot ready — session fully connected`);
             setSessionState("connected");
             retryCountRef.current = 0;
             isConnectingRef.current = false;
           },
-          onBotStartedSpeaking: () => setIsBotSpeaking(true),
-          onBotStoppedSpeaking: () => setIsBotSpeaking(false),
+          onBotStartedSpeaking: () => {
+            console.log(`[VoiceSession] (${ms()}) Bot started speaking`);
+            setIsBotSpeaking(true);
+          },
+          onBotStoppedSpeaking: () => {
+            console.log(`[VoiceSession] (${ms()}) Bot stopped speaking`);
+            setIsBotSpeaking(false);
+          },
           onUserStartedSpeaking: () => setIsUserSpeaking(true),
           onUserStoppedSpeaking: () => setIsUserSpeaking(false),
           onBotTranscript: (data) => {
+            console.log(`[VoiceSession] (${ms()}) Bot transcript:`, data);
             if (data.text) setBotTranscript(data.text);
           },
           onUserTranscript: (data) => {
             if (data.text && data.final) setUserTranscript(data.text);
           },
           onTrackStarted: (track, participant) => {
+            console.log(`[VoiceSession] (${ms()}) Track: ${track.kind}, local=${participant?.local}`);
             if (track.kind === "audio" && participant && !participant.local) {
+              const audio = getAudioElement();
               const stream = new MediaStream([track]);
-              if (audioElementRef.current) {
-                audioElementRef.current.srcObject = stream;
-              }
+              audio.srcObject = stream;
+              audio.play().catch((e) =>
+                console.warn("[VoiceSession] Audio play blocked:", e)
+              );
+              console.log("[VoiceSession] Remote audio track attached");
             }
           },
           onError: (message) => {
-            console.error("[VoiceSession] Pipecat error:", message);
-            const errorMsg = message?.data?.toString() ?? message?.toString() ?? "Connection error";
+            //log General message: 
+            console.log("General error message: ", message)
+            console.error(`[VoiceSession] (${ms()}) ERROR — ${sessionTag}`);
+            console.error("[VoiceSession] Error payload:", {
+              label: message?.label,
+              type: message?.type,
+              data: message?.data,
+              id: message?.id,
+            });
+            const data = message?.data;
+            const errorMsg =
+              (typeof data === "object" && data !== null ? (data as any).message : null)
+              ?? (typeof data === "string" ? data : null)
+              ?? (typeof message === "string" ? message : JSON.stringify(message))
+              ?? "Connection error";
+            console.error(`[VoiceSession] Extracted error: "${errorMsg}"`);
             handleConnectionError(errorMsg, attempt);
           },
         },
@@ -144,23 +190,24 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
 
       clientRef.current = client;
 
+      const connectUrl = `${"https://pipecat-backend-production-6460.up.railway.app"}/connect`;
+      const requestBody = { user_id: userId, personality, context };
+
       console.log(`[VoiceSession] Attempting connection (attempt ${attempt + 1}/${maxRetries})...`);
-      console.log(`[VoiceSession] Endpoint: ${"https://pipecat-backend-production-6460.up.railway.app"}/connect`);
+      console.log(`[VoiceSession] Endpoint: ${connectUrl}`);
+      console.log(`[VoiceSession] Request body:`, requestBody);
 
       await client.startBotAndConnect({
-        endpoint: `${"https://pipecat-backend-production-6460.up.railway.app"}/connect`,
-        requestData: {
-          user_id: userId,
-          personality,
-          context,
-        },
+        endpoint: connectUrl,
+        requestData: requestBody,
       });
+      console.log("Endpoint in use: ", connectUrl) //logging 
     } catch (err) {
       console.error("[VoiceSession] Connection error:", err);
       const errorMsg = err instanceof Error ? err.message : "Failed to connect";
       handleConnectionError(errorMsg, attempt);
     }
-  }, [personality, userId, context, timeout, maxRetries, handleConnectionError]);
+  }, [personality, userId, context, timeout, maxRetries, handleConnectionError, getAudioElement]);
 
   // Keep the ref updated
   useEffect(() => {

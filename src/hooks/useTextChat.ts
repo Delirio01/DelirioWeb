@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react";
-import { CHAT_ENGINE_URL } from "../utils/pipecatConfig";
+import { CHAT_ENGINE_URL, generateDiscoveryId } from "../utils/pipecatConfig";
 
 const isDev = (import.meta as any).env?.DEV;
 const CHAT_ENDPOINT = isDev
@@ -17,14 +17,11 @@ interface UseTextChatOptions {
   context?: string;
 }
 
-const generateDiscoveryId = () =>
-  `discovery_${crypto.randomUUID()}`;
-
 export function useTextChat(options: UseTextChatOptions = {}) {
   const {
-    personality = "goat",
+    personality = "goat", 
     userId = generateDiscoveryId(),
-    context = "discovery",
+    context = "discovery", 
   } = options;
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
