@@ -145,10 +145,10 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
       clientRef.current = client;
 
       console.log(`[VoiceSession] Attempting connection (attempt ${attempt + 1}/${maxRetries})...`);
-      console.log(`[VoiceSession] Endpoint: ${PIPECAT_BACKEND_URL}/connect`);
+      console.log(`[VoiceSession] Endpoint: ${"https://pipecat-backend-production-6460.up.railway.app"}/connect`);
 
       await client.startBotAndConnect({
-        endpoint: `${PIPECAT_BACKEND_URL}/connect`,
+        endpoint: `${"https://pipecat-backend-production-6460.up.railway.app"}/connect`,
         requestData: {
           user_id: userId,
           personality,

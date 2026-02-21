@@ -56,5 +56,12 @@
     server: {
       port: 3000,
       open: true,
+      proxy: {
+        '/api/chat': {
+          target: 'https://text-messaging-production.up.railway.app',
+          changeOrigin: true,
+          rewrite: (p) => p.replace(/^\/api\/chat/, '/chat'),
+        },
+      },
     },
   });
