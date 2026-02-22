@@ -24,7 +24,7 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
     maxRetries = 3,
 
   } = options; 
-  
+
 
   const [sessionState, setSessionState] = useState<VoiceSessionState>("idle");
   const [isMicMuted, setIsMicMuted] = useState(false);
@@ -148,12 +148,33 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
           },
           onUserStartedSpeaking: () => setIsUserSpeaking(true),
           onUserStoppedSpeaking: () => setIsUserSpeaking(false),
+          onBotLlmText: (data: any) => {
+            // Streams LLM output token by token — accumulate for live preview
+            const text = typeof data === "string" ? data : data?.text ?? "";
+            if (text) {
+              setBotTranscript((prev) => prev + text);
+              console.log(text)
+            }
+          },
+          onBotTtsText: (data: any) => {
+            // Complete sentence sent to TTS — use as the definitive transcript
+            const text = typeof data === "string" ? data : data?.text ?? "";
+            console.log("[VoiceSession] Bot TTS text (final):", text);
+            if (text) setBotTranscript(text);
+          },
+          onBotLlmStarted: () => {
+            // New LLM response starting — clear previous partial transcript
+            setBotTranscript("");
+          },
           onBotTranscript: (data) => {
-            console.log(`[VoiceSession] (${ms()}) Bot transcript:`, data);
-            if (data.text) setBotTranscript(data.text);
+            // Deprecated fallback — only fires if above events don't
+          //  if (data.text) setBotTranscript(data.text);
           },
           onUserTranscript: (data) => {
-            if (data.text && data.final) setUserTranscript(data.text);
+            if (data.text && data.final) {
+              console.log("[VoiceSession] User transcript (final):", data.text);
+              setUserTranscript(data.text);
+            }
           },
           onTrackStarted: (track, participant) => {
             console.log(`[VoiceSession] (${ms()}) Track: ${track.kind}, local=${participant?.local}`);
@@ -201,6 +222,19 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
       await client.startBotAndConnect({
         endpoint: connectUrl,
         requestData: requestBody,
+        config:[
+          {
+            service: "llm", 
+            options:[
+              {
+                name: "messages",
+                 value: [
+                  {role: "system", content: "Always refer to the user as ANDY"}
+                 ]
+              }
+            ]
+          }
+        ]
       });
       console.log("Endpoint in use: ", connectUrl) //logging 
     } catch (err) {

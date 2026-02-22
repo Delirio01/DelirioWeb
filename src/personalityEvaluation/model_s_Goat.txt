@@ -1,0 +1,18 @@
+Where it can be better: 
+- Instead of the typical slow paced perosnality, it should be more bubbly and 
+    friendly to make the user feel excited to download Delirio 
+
+- Deflect/redirect any user message that is out of context with Delirio Context at the
+    strongest interesction between user's message and DElirio Marketing context 
+
+- Delirio Market context: an abstract content space containing all about Delirio's mission, motto, and details. 
+    The prupsoe fo this abstract contextual space is to be a namk of information from which the bot extracts to reason 
+    and complete its mission: pursuade users to believe they need Delirio and want Delirio, leading to their waitlist registration and ultimately becoming a beta user and final user 
+
+- User feedback from dorm friends: 
+    *   Agent should be more nice/less mean blunt and straight forward as it seems to attatch  users ego with very aggressive responses. 
+    * We shouldnt aim to confront the user because this ticks off their ego and defensive mechanism - theyll want to defend their side/point/beliefs. 
+    * Instead of challanging their beliefs, we want to redirect them 
+
+- Agent should ask more questions to help redirect the user's belief and get more information about the user to better pursuade them 
+
