@@ -142,6 +142,7 @@ export default function DelirioPrivacy() {
           <li>For business transfers: We may use Your information to evaluate or conduct a merger, divestiture, restructuring, reorganization, dissolution, or other sale or transfer of some or all of Our assets.</li>
           <li>For other purposes: We may use Your information for other purposes, such as data analysis, identifying usage trends, determining the effectiveness of our promotional campaigns.</li>
         </ul>
+        <p className="mb-4">We will not share, sell, or distribute your mobile phone number or any information collected through our SMS program to third parties for marketing or promotional purposes.</p>
         <h3 className="text-xl font-semibold mb-2 mt-6">Retention of Your Personal Data</h3>
         <p className="mb-4">The Company will retain Your Personal Data only for as long as is necessary for the purposes set out in this Privacy Policy. We will retain and use Your Personal Data to the extent necessary to comply with our legal obligations, resolve disputes, and enforce our legal agreements and policies.</p>
         <h3 className="text-xl font-semibold mb-2 mt-6">Transfer of Your Personal Data</h3>

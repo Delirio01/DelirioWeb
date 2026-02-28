@@ -39,6 +39,8 @@ When you interact with our AI coaches (via text, SMS, WhatsApp, or voice), we st
 
 This enables our AI coaches to remember your context and provide personalized guidance across sessions.
 
+We will not share, sell, or distribute your mobile phone number or any information collected through our SMS program to third parties for marketing or promotional purposes.
+
 ### Camera and Pose Data
 
 Our app uses your device's camera to analyze your exercise form in real time. **This analysis happens entirely on your device using Apple's Vision framework. We do not collect, transmit, or store any video footage or pose data from your camera.**

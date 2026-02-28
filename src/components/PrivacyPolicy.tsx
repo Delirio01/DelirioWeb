@@ -57,6 +57,10 @@ export default function PrivacyPolicy() {
             <p className="mb-4">
               This enables our AI coaches to remember your context and provide personalized guidance across sessions.
             </p>
+            <p className="mb-4">
+              We will not share, sell, or distribute your mobile phone number or any information collected through our
+              SMS program to third parties for marketing or promotional purposes.
+            </p>
 
             <h3 className="text-xl font-semibold mb-2 mt-6">Camera and Pose Data</h3>
             <p className="mb-4">
