@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import { Card } from './ui/card';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { Star, Quote, ArrowRight } from 'lucide-react';
@@ -32,7 +33,7 @@ const testimonials = [
   },
 ];
 
-export function Testimonials() {
+export function Testimonials(){
   return (
     <section id="testimonials" className="px-6 py-40 bg-gradient-to-b from-white via-gray-50/30 to-white">
       <div className="max-w-7xl mx-auto">
@@ -103,5 +104,7 @@ export function Testimonials() {
         </div>
       </div>
     </section>
+
+
   );
 }

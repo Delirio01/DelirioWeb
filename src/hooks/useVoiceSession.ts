@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { PipecatClient, RTVIEvent, TransportState } from "@pipecat-ai/client-js";
+import { PipecatClient, TransportState } from "@pipecat-ai/client-js";
 import { DailyTransport } from "@pipecat-ai/daily-transport";
-import { generateDiscoveryId } from "../utils/pipecatConfig";
+import { generateDiscoveryId, PIPECAT_BACKEND_URL } from "../utils/pipecatConfig";
 
 export type VoiceSessionState = "idle" | "connecting" | "connected" | "error";
 
@@ -28,9 +28,11 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
 
   const [sessionState, setSessionState] = useState<VoiceSessionState>("idle");
   const [isMicMuted, setIsMicMuted] = useState(false);
+  const [isSpeakerMuted, setIsSpeakerMuted] = useState(false);
   const [isBotSpeaking, setIsBotSpeaking] = useState(false);
   const [isUserSpeaking, setIsUserSpeaking] = useState(false);
   const [botTranscript, setBotTranscript] = useState("");
+  const [botTurns, setBotTurns] = useState<string[]>([]);
   const [userTranscript, setUserTranscript] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [transportState, setTransportState] = useState<string>("idle");
@@ -39,6 +41,11 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
   const retryCountRef = useRef(0);
   const isConnectingRef = useRef(false);
+  const pendingBotTurnRef = useRef("");
+  const pendingBotTurnSourceRef = useRef<"none" | "llm" | "tts">("none");
+  const botMarkupTagOpenRef = useRef(false);
+  const pendingUserTranscriptRef = useRef("");
+  const userMarkupTagOpenRef = useRef(false);
 
   // Lazily create the audio element (reused across reconnects)
   const getAudioElement = useCallback(() => {
@@ -59,6 +66,145 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (audioElementRef.current) {
+      audioElementRef.current.muted = isSpeakerMuted;
+    }
+  }, [isSpeakerMuted]);
+
+  const resetPendingBotTurn = useCallback(() => {
+    pendingBotTurnRef.current = "";
+    pendingBotTurnSourceRef.current = "none";
+    botMarkupTagOpenRef.current = false;
+    setBotTranscript("");
+  }, []);
+
+  const resetPendingUserTranscript = useCallback(() => {
+    pendingUserTranscriptRef.current = "";
+    userMarkupTagOpenRef.current = false;
+    setUserTranscript("");
+  }, []);
+
+  const stripInlineMarkup = useCallback((text: string) => text.replace(/<[^>]*>/g, ""), []);
+
+  const stripStreamingMarkupChunk = useCallback((text: string, channel: "bot" | "user" = "bot") => {
+    if (!text) {
+      return "";
+    }
+
+    let cleaned = "";
+    const tagStateRef = channel === "bot" ? botMarkupTagOpenRef : userMarkupTagOpenRef;
+    let insideTag = tagStateRef.current;
+
+    for (const character of text) {
+      if (insideTag) {
+        if (character === ">") {
+          insideTag = false;
+        }
+        continue;
+      }
+
+      if (character === "<") {
+        insideTag = true;
+        continue;
+      }
+
+      cleaned += character;
+    }
+
+    tagStateRef.current = insideTag;
+    return cleaned;
+  }, []);
+
+  const commitPendingBotTurn = useCallback((reason: "stopped" | "rolled" | "disconnected") => {
+    const finalized = pendingBotTurnRef.current.trim();
+    if (!finalized) {
+      return;
+    }
+
+    // Keep only the latest completed bot turn in the rendered transcript.
+    setBotTurns([finalized]);
+    console.log(`[VoiceSession] Committed bot turn (${reason}):`, finalized);
+    resetPendingBotTurn();
+  }, [resetPendingBotTurn]);
+
+  const appendPendingBotTurn = useCallback((source: "llm" | "tts", incomingText: string) => {
+    const sanitizedIncomingText = stripStreamingMarkupChunk(incomingText, "bot");
+    if (!sanitizedIncomingText) {
+      return;
+    }
+
+    const currentSource = pendingBotTurnSourceRef.current;
+    if (currentSource === "none") {
+      pendingBotTurnSourceRef.current = source;
+    } else if (currentSource !== source) {
+      // Avoid duplicated transcript streams when both LLM and TTS callbacks fire.
+      return;
+    }
+
+    const currentText = pendingBotTurnRef.current;
+    let nextText = currentText;
+
+    if (source === "llm") {
+      nextText = currentText + sanitizedIncomingText;
+    } else {
+      const trimmedIncoming = sanitizedIncomingText.trim();
+      const trimmedCurrent = currentText.trim();
+
+      if (trimmedIncoming.length === 0) {
+        return;
+      }
+
+      if (trimmedCurrent && trimmedIncoming.startsWith(trimmedCurrent)) {
+        nextText = trimmedIncoming;
+      } else if (trimmedCurrent.endsWith(trimmedIncoming)) {
+        return;
+      } else if (currentText && !/\s$/.test(currentText) && !/^\s/.test(sanitizedIncomingText)) {
+        nextText = `${currentText} ${sanitizedIncomingText}`;
+      } else {
+        nextText = currentText + sanitizedIncomingText;
+      }
+    }
+
+    pendingBotTurnRef.current = nextText;
+    setBotTranscript(nextText);
+  }, [stripStreamingMarkupChunk]);
+
+  const appendPendingUserTranscript = useCallback((incomingText: string) => {
+    const sanitizedIncomingText = stripStreamingMarkupChunk(incomingText, "user");
+    if (!sanitizedIncomingText) {
+      return;
+    }
+
+    const currentText = pendingUserTranscriptRef.current;
+    const trimmedIncoming = sanitizedIncomingText.trim();
+    const trimmedCurrent = currentText.trim();
+
+    if (trimmedIncoming.length === 0) {
+      return;
+    }
+
+    let nextText = currentText;
+    if (trimmedCurrent && trimmedIncoming.startsWith(trimmedCurrent)) {
+      nextText = trimmedIncoming;
+    } else if (trimmedCurrent.endsWith(trimmedIncoming)) {
+      return;
+    } else if (currentText && !/\s$/.test(currentText) && !/^\s/.test(sanitizedIncomingText)) {
+      nextText = `${currentText} ${sanitizedIncomingText}`;
+    } else {
+      nextText = currentText + sanitizedIncomingText;
+    }
+
+    pendingUserTranscriptRef.current = nextText;
+    setUserTranscript(nextText);
+  }, [stripStreamingMarkupChunk]);
+
+  useEffect(() => {
+    setBotTurns([]);
+    resetPendingBotTurn();
+    resetPendingUserTranscript();
+  }, [personality, resetPendingBotTurn, resetPendingUserTranscript]);
 
   // Use refs to avoid circular dependency issues with retry logic
   const connectWithRetryRef = useRef<(attempt: number) => Promise<void>>();
@@ -123,6 +269,7 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
           },
           onDisconnected: () => {
             console.warn(`[VoiceSession] (${ms()}) Disconnected — ${sessionTag}`);
+            commitPendingBotTurn("disconnected");
             setSessionState("idle");
             setIsBotSpeaking(false);
             setIsUserSpeaking(false);
@@ -140,40 +287,54 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
           },
           onBotStartedSpeaking: () => {
             console.log(`[VoiceSession] (${ms()}) Bot started speaking`);
+            commitPendingBotTurn("rolled");
+            resetPendingBotTurn();
             setIsBotSpeaking(true);
           },
           onBotStoppedSpeaking: () => {
             console.log(`[VoiceSession] (${ms()}) Bot stopped speaking`);
             setIsBotSpeaking(false);
+            commitPendingBotTurn("stopped");
           },
-          onUserStartedSpeaking: () => setIsUserSpeaking(true),
+          onUserStartedSpeaking: () => {
+            resetPendingUserTranscript();
+            setIsUserSpeaking(true);
+          },
           onUserStoppedSpeaking: () => setIsUserSpeaking(false),
           onBotLlmText: (data: any) => {
-            // Streams LLM output token by token — accumulate for live preview
+            // Streaming bot output during the active turn.
             const text = typeof data === "string" ? data : data?.text ?? "";
             if (text) {
-              setBotTranscript((prev) => prev + text);
-              console.log(text)
+              appendPendingBotTurn("llm", text);
             }
           },
           onBotTtsText: (data: any) => {
-            // Complete sentence sent to TTS — use as the definitive transcript
+            // TTS text stream; used when no LLM token stream is available.
             const text = typeof data === "string" ? data : data?.text ?? "";
-            console.log("[VoiceSession] Bot TTS text (final):", text);
-            if (text) setBotTranscript(text);
+            if (text) {
+              appendPendingBotTurn("tts", text);
+            }
           },
           onBotLlmStarted: () => {
-            // New LLM response starting — clear previous partial transcript
-            setBotTranscript("");
+            // Start a fresh turn; preserve any text from an unclosed previous turn.
+            commitPendingBotTurn("rolled");
+            resetPendingBotTurn();
           },
           onBotTranscript: (data) => {
             // Deprecated fallback — only fires if above events don't
           //  if (data.text) setBotTranscript(data.text);
           },
           onUserTranscript: (data) => {
-            if (data.text && data.final) {
-              console.log("[VoiceSession] User transcript (final):", data.text);
-              setUserTranscript(data.text);
+            const text = typeof data === "string" ? data : data?.text ?? "";
+            if (text) {
+              appendPendingUserTranscript(text);
+            }
+
+            if (data?.text && data?.final) {
+              const cleanUserText = stripInlineMarkup(data.text);
+              console.log("[VoiceSession] User transcript (final):", cleanUserText);
+              pendingUserTranscriptRef.current = cleanUserText;
+              setUserTranscript(cleanUserText);
             }
           },
           onTrackStarted: (track, participant) => {
@@ -182,6 +343,7 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
               const audio = getAudioElement();
               const stream = new MediaStream([track]);
               audio.srcObject = stream;
+              audio.muted = isSpeakerMuted;
               audio.play().catch((e) =>
                 console.warn("[VoiceSession] Audio play blocked:", e)
               );
@@ -212,7 +374,7 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
 
       clientRef.current = client;
 
-      const connectUrl = `${"https://pipecat-backend-production-6460.up.railway.app"}/connect`;
+      const connectUrl = `${PIPECAT_BACKEND_URL}/connect`;
       const requestBody = { user_id: userId, personality, context };
 
       console.log(`[VoiceSession] Attempting connection (attempt ${attempt + 1}/${maxRetries})...`);
@@ -242,7 +404,22 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
       const errorMsg = err instanceof Error ? err.message : "Failed to connect";
       handleConnectionError(errorMsg, attempt);
     }
-  }, [personality, userId, context, timeout, maxRetries, handleConnectionError, getAudioElement]);
+  }, [
+    personality,
+    userId,
+    context,
+    timeout,
+    maxRetries,
+    handleConnectionError,
+    getAudioElement,
+    isSpeakerMuted,
+    appendPendingBotTurn,
+    appendPendingUserTranscript,
+    commitPendingBotTurn,
+    resetPendingBotTurn,
+    resetPendingUserTranscript,
+    stripInlineMarkup,
+  ]);
 
   // Keep the ref updated
   useEffect(() => {
@@ -251,12 +428,16 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
 
   const connect = useCallback(async () => {
     retryCountRef.current = 0;
+    setBotTurns([]);
+    resetPendingBotTurn();
+    resetPendingUserTranscript();
     await connectWithRetry(0);
-  }, [connectWithRetry]);
+  }, [connectWithRetry, resetPendingBotTurn, resetPendingUserTranscript]);
 
   const disconnect = useCallback(async () => {
     isConnectingRef.current = false;
     retryCountRef.current = 0;
+    commitPendingBotTurn("disconnected");
     if (!clientRef.current) return;
     try {
       await clientRef.current.disconnect();
@@ -266,7 +447,7 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
     clientRef.current = null;
     setSessionState("idle");
     setTransportState("idle");
-  }, []);
+  }, [commitPendingBotTurn]);
 
   const toggleMic = useCallback(() => {
     if (!clientRef.current) return;
@@ -274,6 +455,16 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
     clientRef.current.enableMic(!newState);
     setIsMicMuted(newState);
   }, [isMicMuted]);
+
+  const toggleSpeakerMute = useCallback(() => {
+    setIsSpeakerMuted((currentState) => {
+      const nextState = !currentState;
+      if (audioElementRef.current) {
+        audioElementRef.current.muted = nextState;
+      }
+      return nextState;
+    });
+  }, []);
 
   const updateMic = useCallback((deviceId: string) => {
     clientRef.current?.updateMic(deviceId);
@@ -296,14 +487,17 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
     sessionState,
     transportState,
     isMicMuted,
+    isSpeakerMuted,
     isBotSpeaking,
     isUserSpeaking,
     botTranscript,
+    botTurns,
     userTranscript,
     error,
     connect,
     disconnect,
     toggleMic,
+    toggleSpeakerMute,
     updateMic,
     updateSpeaker,
   };
