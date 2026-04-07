@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { Link } from 'react-router-dom';
 import {
   ChevronLeft,
   ChevronRight,
@@ -11,10 +10,9 @@ import {
   Volume2,
 } from 'lucide-react';
 import { Logo } from '../components/logo';
+import { LandingSiteFooter } from '../components/LandingSiteFooter';
+import { LandingSiteHeader } from '../components/LandingSiteHeader';
 import LandingBackgroundLines from '../components/LandingBackgroundLines';
-import InstaIcon from '../imports/InstaIcon';
-import TikTokIcon from '../imports/TikTokIcon';
-import XIcon from '../imports/XIcon';
 import appStoreBadge from '../images/appleOfficialBadges/Mobile app store badge.svg';
 import irisDefault from '../images/emojis/Iris/Iris_default_1.png';
 import irisSpeaking from '../images/emojis/Iris/Iris_botSpeaking_1.png';
@@ -691,29 +689,12 @@ export default function Landing() {
         travelBlue={travelBlue}
         travelPink={travelPink}
       />
-      <header className={`landing-header ${isScrolled ? 'landing-header--scrolled' : ''}`}>
-        <div className="landing-container landing-header-inner">
-          <Link className="landing-header-brand" to="/" aria-label="Delirio home">
-            <Logo width="30" height="40" />
-          </Link>
-
-          <nav className="landing-header-nav" aria-label="Primary">
-            <button type="button" onClick={() => scrollToSection('features')}>
-              Features
-            </button>
-            <button type="button" className="landing-header-nav-item--with-icon" onClick={() => scrollToSection('personalities')}>
-              <img src={irisDefault} alt="" aria-hidden="true" loading="eager" fetchPriority="high" decoding="async" />
-              <span>Personalities</span>
-              <img src={reedDefault} alt="" aria-hidden="true" loading="eager" fetchPriority="high" decoding="async" />
-            </button>
-            <button type="button" onClick={() => scrollToSection('subscription')}>
-              Subscription
-            </button>
-          </nav>
-
-          <div className="landing-header-spacer" aria-hidden="true" />
-        </div>
-      </header>
+      <LandingSiteHeader
+        isScrolled={isScrolled}
+        onFeaturesClick={() => scrollToSection('features')}
+        onPersonalitiesClick={() => scrollToSection('personalities')}
+        onSubscriptionClick={() => scrollToSection('subscription')}
+      />
 
       <main className="landing-main">
         <section id="hero" data-wave-section="hero" className="landing-section landing-section--hero">
@@ -1260,47 +1241,7 @@ export default function Landing() {
         </section>
       </main>
 
-      <footer id="footer" className="landing-footer">
-        <div className="landing-container landing-footer-panel">
-          <div className="landing-footer-top">
-            <div className="landing-footer-brand-block">
-              <div className="landing-footer-brand">
-                <Logo color="white" width="34" height="46" />
-              </div>
-              <p className="landing-footer-tagline">A new way of shipping personal training for all</p>
-              <div className="landing-footer-socials">
-                <a href="https://x.com/Delirio1_" target="_blank" rel="noreferrer" aria-label="X">
-                  <XIcon color="white" />
-                </a>
-                <a href="https://www.instagram.com/delirio__official/" target="_blank" rel="noreferrer" aria-label="Instagram">
-                  <InstaIcon color="white" />
-                </a>
-                <a href="https://www.tiktok.com/@delirio__official" target="_blank" rel="noreferrer" aria-label="TikTok">
-                  <TikTokIcon color="white" />
-                </a>
-              </div>
-            </div>
-
-            <div className="landing-footer-contact">
-              <h2>Contact</h2>
-              <a href="mailto:Delirio.0fficial0@gmail.com">Delirio.0fficial0@gmail.com</a>
-              <a href="https://calendly.com/amiralsad/rush-advice" target="_blank" rel="noreferrer">
-                Schedule Calendly meet
-              </a>
-            </div>
-          </div>
-
-          <div className="landing-footer-divider" />
-
-          <div className="landing-footer-bottom">
-            <p>&copy; 2026 Delirio</p>
-            <div className="landing-footer-legal">
-              <Link to="/terms">Terms of Services</Link>
-              <Link to="/privacy">Privacy Policy</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <LandingSiteFooter />
     </div>
   );
 }

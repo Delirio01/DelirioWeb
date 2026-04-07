@@ -1,6 +1,5 @@
 import { useEffect } from "react";
-import { FitnessHeader } from "./FitnessHeader";
-import { FitnessFooter } from "./FitnessFooter";
+import { LandingLegalShell } from "./LandingLegalShell";
 
 export default function TermsServices() {
   useEffect(() => {
@@ -8,11 +7,9 @@ export default function TermsServices() {
   }, []);
 
   return (
-    <>
-      <div id="terms-of-service" style={{ paddingBlock: 200 }}>
-        <FitnessHeader showCount={false} />
-      <div className="max-w-3xl mx-auto px-6 py-24 pt-32">
-                <h1 className="text-4xl font-bold mb-8">Terms of Service</h1>
+    <LandingLegalShell>
+      <div id="terms-of-service" className="max-w-3xl mx-auto px-6 py-10 md:py-16">
+        <h1 className="text-4xl font-bold mb-8">Terms of Service</h1>
           <p className="mb-2 text-sm text-gray-500">Last updated: December 29, 2025</p>
 
           <h2 className="text-2xl font-semibold mb-4 mt-8">Agreement to Terms</h2>
@@ -241,8 +238,6 @@ export default function TermsServices() {
           <hr className="my-8 border-gray-300" />
           <p className="text-gray-500 text-sm">Delirio is based in Boston, Massachusetts, United States.</p>
         </div>
-      </div>
-      <FitnessFooter />
-        </>
+    </LandingLegalShell>
   );
 }

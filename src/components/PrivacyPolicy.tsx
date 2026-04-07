@@ -1,6 +1,5 @@
 import { useEffect } from "react";
-import { FitnessFooter } from "./FitnessFooter";
-import { FitnessHeader } from "./FitnessHeader";
+import { LandingLegalShell } from "./LandingLegalShell";
 
 export default function PrivacyPolicy() {
   useEffect(() => {
@@ -8,11 +7,8 @@ export default function PrivacyPolicy() {
   }, []);
 
   return (
-    <>
-      <div style={{ paddingBlock: 200 }}>
-        <FitnessHeader showCount = {false} />
-    <div className="min-h-screen bg-white text-black">
-      <div className="max-w-3xl mx-auto px-6 py-24">
+    <LandingLegalShell>
+      <div className="max-w-3xl mx-auto px-6 py-10 md:py-16 min-h-screen bg-white text-black">
         <h1 className="text-4xl font-bold mb-8">Privacy Policy</h1>
             <p className="mb-2 text-sm text-gray-500">Last updated: December 29, 2025</p>
             <p className="mb-4">
@@ -178,9 +174,6 @@ export default function PrivacyPolicy() {
             <hr className="my-8 border-gray-300" />
             <p className="text-gray-500 text-sm">Delirio is based in Boston, Massachusetts, United States.</p>
       </div>
-    </div>
-    </div>
-      <FitnessFooter />
-</>
+    </LandingLegalShell>
   );
 }
