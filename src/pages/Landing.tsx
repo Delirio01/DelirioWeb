@@ -345,7 +345,15 @@ function scrollToSection(sectionId: string) {
   });
 }
 
-function FloatingCluster({ nodes, className = '' }: { nodes: ClusterNode[]; className?: string }) {
+function FloatingCluster({
+  nodes,
+  className = '',
+  eagerCount = 0,
+}: {
+  nodes: ClusterNode[];
+  className?: string;
+  eagerCount?: number;
+}) {
   return (
     <div className={`landing-floating-cluster ${className}`}>
       {nodes.map((node, index) => {
@@ -368,9 +376,16 @@ function FloatingCluster({ nodes, className = '' }: { nodes: ClusterNode[]; clas
           );
         }
 
+        const shouldEagerLoad = index < eagerCount;
         return (
           <span key={`${node.src}-${index}`} className="landing-floating-node" style={style} aria-hidden="true">
-            <img src={node.src} alt="" />
+            <img
+              src={node.src}
+              alt=""
+              loading={shouldEagerLoad ? 'eager' : 'lazy'}
+              fetchPriority={shouldEagerLoad && index < 2 ? 'high' : 'auto'}
+              decoding="async"
+            />
           </span>
         );
       })}
@@ -382,14 +397,18 @@ function PhoneMock({
   src,
   alt,
   className = '',
+  loading = 'lazy',
+  fetchPriority = 'auto',
 }: {
   src: string;
   alt: string;
   className?: string;
+  loading?: 'lazy' | 'eager';
+  fetchPriority?: 'auto' | 'high' | 'low';
 }) {
   return (
     <figure className={`landing-phone ${className}`}>
-      <img src={src} alt={alt} />
+      <img src={src} alt={alt} loading={loading} fetchPriority={fetchPriority} decoding="async" />
     </figure>
   );
 }
@@ -683,9 +702,9 @@ export default function Landing() {
               Features
             </button>
             <button type="button" className="landing-header-nav-item--with-icon" onClick={() => scrollToSection('personalities')}>
-              <img src={irisDefault} alt="" aria-hidden="true" />
+              <img src={irisDefault} alt="" aria-hidden="true" loading="eager" fetchPriority="high" decoding="async" />
               <span>Personalities</span>
-              <img src={reedDefault} alt="" aria-hidden="true" />
+              <img src={reedDefault} alt="" aria-hidden="true" loading="eager" fetchPriority="high" decoding="async" />
             </button>
             <button type="button" onClick={() => scrollToSection('subscription')}>
               Subscription
@@ -720,7 +739,7 @@ export default function Landing() {
             </div>
 
             <div className="landing-eyecatcher-visual">
-              <FloatingCluster nodes={heroNodes} className="landing-floating-cluster--hero" />
+              <FloatingCluster nodes={heroNodes} className="landing-floating-cluster--hero" eagerCount={6} />
             </div>
           </div>
         </section>
@@ -744,11 +763,15 @@ export default function Landing() {
                 src={coachSelectionReed}
                 alt="Coach selection screen featuring Reed"
                 className="landing-phone--feature-main"
+                loading="eager"
+                fetchPriority="high"
               />
               <PhoneMock
                 src={coachSelectionIris}
                 alt="Coach selection screen featuring Iris"
                 className="landing-phone--feature-side"
+                loading="eager"
+                fetchPriority="high"
               />
             </div>
           </div>
