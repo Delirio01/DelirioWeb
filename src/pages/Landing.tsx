@@ -1157,8 +1157,9 @@ export default function Landing() {
                 </div>
 
                 <div className="landing-pricing-stat">
-                  <span>-90%</span>
-                  <span>of average prices</span>
+                  <span>90% </span>
+
+                  <span>the cost of <br/>  personal trainers</span>
                 </div>
 
                 <div className="landing-pricing-actions">
