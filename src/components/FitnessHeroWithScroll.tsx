@@ -31,7 +31,7 @@ const sections = [
         THE <span className="text-[#FF6B35]">COACH</span> TOO
       </>
     ),
-    description: "Receive seamless feedback, know your body better, act with insights. Gain a true life long coach",
+    description: "Receive seamless feedback, know your body better, and act on insights. Gain a true lifelong coach.",
     color: "#FF6B35",
     isHero: true,
   },

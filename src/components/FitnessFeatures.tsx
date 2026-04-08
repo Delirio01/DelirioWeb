@@ -186,7 +186,7 @@ function FitnessFeatures() {
       <div className="max-w-7xl mx-auto px-6 relative" style={{ zIndex: 1 }}>
         {/* Heading */}
         <h2 className="text-5xl md:text-6xl lg:text-7xl tracking-tight mb-20 leading-[1.1] text-center max-w-4xl mx-auto">
-          Feedback has never been more accesible
+          Feedback has never been more accessible
         </h2>
         {/* Features Grid - 3 on top, 2 on bottom */}
         <div className="flex flex-col gap-12 max-w-6xl mx-auto">

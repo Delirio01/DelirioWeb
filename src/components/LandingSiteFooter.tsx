@@ -31,7 +31,7 @@ export function LandingSiteFooter() {
             <h2>Contact</h2>
             <a href="mailto:Delirio.0fficial0@gmail.com">Delirio.0fficial0@gmail.com</a>
             <a href="https://calendly.com/amiralsad/rush-advice" target="_blank" rel="noreferrer">
-              Schedule Calendly meet
+              Schedule a Calendly meeting
             </a>
           </div>
         </div>
@@ -41,7 +41,7 @@ export function LandingSiteFooter() {
         <div className="landing-footer-bottom">
           <p>&copy; 2026 Delirio</p>
           <div className="landing-footer-legal">
-            <Link to="/terms">Terms of Services</Link>
+            <Link to="/terms">Terms of Service</Link>
             <Link to="/privacy">Privacy Policy</Link>
           </div>
         </div>

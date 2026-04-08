@@ -30,11 +30,12 @@ import coachSelectionIris from '../images/iMocksImages/iMockup - iPhone 14-1.png
 import splitRest from '../images/iMocksImages/iMockup - iPhone 14-2.png';
 import exerciseLibrary from '../images/iMocksImages/iMockup - iPhone 14-3.png';
 import activityList from '../images/iMocksImages/iMockup - iPhone 14-4.png';
-import messagingLeft from '../images/iMocksImages/iMockup - iPhone 15.png';
-import messagingRight from '../images/iMocksImages/iMockup - iPhone 16.png';
+import messagingLeft from '../images/iMocksImages/blueChat_iMsg_iMock.png';
+import messagingRight from '../images/iMocksImages/inApp_msging_iMock.png';
 import { useTextChat } from '../hooks/useTextChat';
 import { useVoiceSession } from '../hooks/useVoiceSession';
 import { generateDiscoveryId } from '../utils/pipecatConfig';
+import { FirestoreService } from '../utils/firebase';
 import '../styles/landing-redesign.css';
 
 type ClusterNode = {
@@ -146,7 +147,7 @@ const coachProfiles: Record<CoachId, CoachProfile> = {
     accent: 'pink',
     avatar: irisDefault,
     blurb: 'Cheerful and energetic guidance with expressive feedback and momentum-focused coaching.',
-    voicePrompt: 'Start session to speak with Iris.',
+    voicePrompt: 'Start a session to speak with Iris.',
     textPrompt: 'Send a message to chat with Iris.',
   },
   reed: {
@@ -154,7 +155,7 @@ const coachProfiles: Record<CoachId, CoachProfile> = {
     accent: 'blue',
     avatar: reedDefault,
     blurb: 'Direct and grounded coaching designed for cleaner structure and no-nonsense execution.',
-    voicePrompt: 'Start session to speak with Reed.',
+    voicePrompt: 'Start a session to speak with Reed.',
     textPrompt: 'Send a message to chat with Reed.',
   },
 };
@@ -447,6 +448,7 @@ function ComparisonColumn({
 }
 
 export default function Landing() {
+  const firestoreServiceRef = useRef<FirestoreService | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeCoach, setActiveCoach] = useState<CoachId>('iris');
   const [interactionMode, setInteractionMode] = useState<InteractionMode>('voice');
@@ -457,6 +459,12 @@ export default function Landing() {
   const [activeWaveSection, setActiveWaveSection] = useState<WaveSection>('hero');
   const [sessionUserId] = useState(() => generateDiscoveryId());
   const [chatInput, setChatInput] = useState('');
+  const [warmName, setWarmName] = useState('');
+  const [warmEmail, setWarmEmail] = useState('');
+  const [warmPhone, setWarmPhone] = useState('');
+  const [isWarmSubmitting, setIsWarmSubmitting] = useState(false);
+  const [warmSubmitError, setWarmSubmitError] = useState<string | null>(null);
+  const [isWarmSubmitSuccess, setIsWarmSubmitSuccess] = useState(false);
 
   const chatEndRef = useRef<HTMLDivElement | null>(null);
   const chatInputRef = useRef<HTMLInputElement | null>(null);
@@ -599,6 +607,78 @@ export default function Landing() {
     setOpenFaqQuestion(faqItems[category][0].question);
   }
 
+  async function handleWarmNetworkSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (isWarmSubmitting) {
+      return;
+    }
+
+    try {
+      const name = warmName.trim();
+      const email = warmEmail.trim().toLowerCase();
+      const phone = warmPhone.trim();
+
+      if (!name || !email || !phone) {
+        setWarmSubmitError('Please complete all fields before joining.');
+        setIsWarmSubmitSuccess(false);
+        return;
+      }
+
+      setIsWarmSubmitting(true);
+      setWarmSubmitError(null);
+      setIsWarmSubmitSuccess(false);
+      console.log("[WarmNetwork] submit started");
+
+      let timeoutId: number | undefined;
+      try {
+        const firestoreService = firestoreServiceRef.current ?? new FirestoreService();
+        firestoreServiceRef.current = firestoreService;
+
+        const savePromise = firestoreService.addWarmNetworkSubmissionDocument({
+          Timestamp: new Date().toISOString(),
+          Name: name,
+          Email: email,
+          Phone: phone,
+        });
+
+        const timeoutPromise = new Promise<never>((_, reject) => {
+          timeoutId = window.setTimeout(() => reject(new Error('warm_network_submit_timeout')), 15000);
+        });
+
+        await Promise.race([savePromise, timeoutPromise]);
+      } finally {
+        if (timeoutId !== undefined) {
+          window.clearTimeout(timeoutId);
+        }
+      }
+
+      setWarmName('');
+      setWarmEmail('');
+      setWarmPhone('');
+      setIsWarmSubmitSuccess(true);
+      console.log("[WarmNetwork] submit successful");
+    } catch (error) {
+      console.error("[WarmNetwork] submit failed", error);
+      const firebaseErrorCode = typeof error === 'object' && error && 'code' in error
+        ? String((error as { code?: string }).code ?? '')
+        : '';
+
+      if (error instanceof Error && error.message.startsWith('missing_firebase_env_vars:')) {
+        setWarmSubmitError('Firebase config is missing. Check your VITE_FIREBASE_* variables and restart the dev server.');
+      } else if (firebaseErrorCode === 'permission-denied') {
+        setWarmSubmitError('Firestore rules are blocking this write. Ask admin to allow create on warmNetwork.');
+      } else if (error instanceof Error && error.message === 'warm_network_submit_timeout') {
+        setWarmSubmitError('Request timed out. Please try again.');
+      } else {
+        setWarmSubmitError('There was a problem joining. Please try again.');
+      }
+      setIsWarmSubmitSuccess(false);
+    } finally {
+      setIsWarmSubmitting(false);
+    }
+  }
+
   function switchCoach(direction: 1 | -1) {
     setCoachSlideDirection(direction);
     setActiveCoach((currentCoach) => {
@@ -711,7 +791,7 @@ export default function Landing() {
               </h1>
               <div className="landing-eyecatcher-body">
                 <p>Receive seamless feedback from your very own personal trainer</p>
-                <p>Know your body better, act with insights</p>
+                <p>Know your body better, and act on insights</p>
               </div>
               <button className="landing-outline-button" type="button" onClick={() => scrollToSection('personalities')}>
                 <span>Talk to a personal trainer</span>
@@ -796,7 +876,7 @@ export default function Landing() {
 
                 <ul className="landing-check-list landing-check-list--pink">
                   <li>GENERATE WORKOUT PLANS &amp; SPLITS</li>
-                  <li>REFLECT ON YOUR PROGRESS WITH TRAINER</li>
+                  <li>REFLECT ON YOUR PROGRESS WITH YOUR TRAINER</li>
                   <li>FEELS NATURAL</li>
                 </ul>
 
@@ -825,7 +905,7 @@ export default function Landing() {
                 </span>
               </h2>
               <p className="landing-section-body">
-                Use splits or strict calendar based schedule to execute your plan and keep consistent
+                Use splits or a strict calendar-based schedule to execute your plan and stay consistent
               </p>
             </div>
           </div>
@@ -839,7 +919,7 @@ export default function Landing() {
                   OUR <span className="landing-display-blue">TESTIMONIALS</span>
                 </span>
               </h2>
-              <p className="landing-section-body">
+              <p className="landing-section-body landing-subheading-match">
                 Real customers, real results from everyday people at different stages of their fitness journeys
               </p>
             </div>
@@ -871,7 +951,7 @@ export default function Landing() {
             <h2 className="landing-heading landing-heading--center">
               <span className="landing-display-blue">FLEXIBLE</span> COACHING
             </h2>
-            <p className="landing-comparison-subtitle">
+            <p className="landing-comparison-subtitle landing-subheading-match">
               Compare rigid coaching models with Delirio&apos;s adaptive structure built for consistency and daily accessibility.
             </p>
 
@@ -1139,7 +1219,7 @@ export default function Landing() {
             <div className="landing-subscription-copy">
               <h2 className="landing-display landing-display--section">
                 <span>
-                  A <span className="landing-display-blue">LIFE-STYLE</span> WORTH
+                  A <span className="landing-display-blue">LIFESTYLE</span> WORTH
                 </span>
                 <span>PAYING FOR</span>
               </h2>
@@ -1159,15 +1239,15 @@ export default function Landing() {
                 <div className="landing-pricing-stat">
                   <span>90% </span>
 
-                  <span>the cost of <br/>  personal trainers</span>
+                  <span>of the cost of <br/> personal trainers</span>
                 </div>
 
                 <div className="landing-pricing-actions">
                   <ul className="landing-check-list landing-check-list--blue landing-check-list--pricing">
-                    <li>Personal trainer</li>
-                    <li>Real time feedback</li>
-                    <li>Voice sessions</li>
-                    <li>Automated workout routines</li>
+                    <li>Personalized workout plans</li>
+                    <li>Nutrition guidance</li>
+                    <li>24/7 coach availability</li>
+                    <li>Progress tracking</li>
                   </ul>
 
                   <a className="landing-outline-button landing-outline-button--full" href="mailto:Delirio.0fficial0@gmail.com">
@@ -1236,6 +1316,69 @@ export default function Landing() {
                 <a className="landing-faq-more" href="mailto:Delirio.0fficial0@gmail.com">
                   IS YOUR QUESTION NOT LISTED?
                 </a>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="warm-network" className="landing-section landing-section--warm-network">
+          <div className="landing-container landing-warm-network">
+            <div className="landing-warm-copy">
+              <h2 className="landing-display landing-display--section landing-warm-title">
+                <span>JOIN OUR WARM</span>
+                <span className="landing-display-blue">NETWORK</span>
+              </h2>
+              <p className="landing-section-body landing-warm-body landing-subheading-match">
+                Get exclusive and early news on upcoming features, opportunities to work closely with us, perks, and
+                discounts
+              </p>
+            </div>
+
+            <div className={`landing-warm-card ${isWarmSubmitSuccess ? 'is-success' : ''}`.trim()}>
+              <div className="landing-warm-form-shell" aria-hidden={isWarmSubmitSuccess}>
+                <Logo width="44" height="62" />
+                <form className="landing-warm-form" onSubmit={handleWarmNetworkSubmit}>
+                  <label>
+                    <span>Name</span>
+                    <input
+                      type="text"
+                      placeholder="Jane Doe"
+                      value={warmName}
+                      onChange={(event) => setWarmName(event.target.value)}
+                      disabled={isWarmSubmitting}
+                      required
+                    />
+                  </label>
+                  <label>
+                    <span>Email</span>
+                    <input
+                      type="email"
+                      placeholder="you@example.com"
+                      value={warmEmail}
+                      onChange={(event) => setWarmEmail(event.target.value)}
+                      disabled={isWarmSubmitting}
+                      required
+                    />
+                  </label>
+                  <label>
+                    <span>Phone Number</span>
+                    <input
+                      type="tel"
+                      placeholder="+1 (555) 123-4567"
+                      value={warmPhone}
+                      onChange={(event) => setWarmPhone(event.target.value)}
+                      disabled={isWarmSubmitting}
+                      required
+                    />
+                  </label>
+                  <button className = "joinButton" type="submit" disabled={isWarmSubmitting}>{isWarmSubmitting ? 'Joining...' : 'Join'}</button>
+                  {warmSubmitError && <p className="landing-warm-form-status landing-warm-form-status--error">{warmSubmitError}</p>}
+                </form>
+              </div>
+
+              <div className="landing-warm-success" aria-live="polite" aria-hidden={!isWarmSubmitSuccess}>
+                <span className="landing-warm-success-ring">
+                  <span className="landing-warm-success-check" aria-hidden="true">✓</span>
+                </span>
               </div>
             </div>
           </div>

@@ -64,7 +64,7 @@ function Group3() {
     <div className="absolute contents left-[1183px] top-[18px]">
       <div className="absolute bg-black h-[44px] left-[1183px] rounded-[10px] top-[18px] w-[162px]" />
       <div className="absolute font-['Big_Caslon',serif] h-[20px] leading-[normal] left-[1263.5px] not-italic text-[16px] text-center text-white top-[30px] translate-x-[-50%] w-[121px]">
-        <p className="mb-0">Joint our waitlist</p>
+        <p className="mb-0">Join our waitlist</p>
         <p>&nbsp;</p>
       </div>
     </div>
