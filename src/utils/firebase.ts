@@ -86,10 +86,10 @@ class FirestoreService {
   async addWarmNetworkSubmissionDocument(data: object): Promise<string> {
     try {
       const docRef = await addDoc(collection(this.getDb(), "warmNetwork"), data);
-      console.log("Warm network form successfully saved to firestore", "docRef id:", docRef.id);
+      console.log("Info capture form successfully saved to firestore", "docRef id:", docRef.id);
       return docRef.id;
     } catch (e: any) {
-      console.error("Error saving warm network form to firestore:", e?.message ?? e);
+      console.error("Error saving info capture form to firestore:", e?.message ?? e);
       throw e;
     }
   }

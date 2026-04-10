@@ -2,12 +2,14 @@ import { Link } from "react-router-dom";
 import { Logo } from "./logo";
 import irisDefault from "../images/emojis/Iris/Iris_default_1.png";
 import reedDefault from "../images/emojis/Reed/Reed_default_1.png";
+import appStoreBadge from "../images/appleOfficialBadges/Mobile app store badge.svg";
 
 interface LandingSiteHeaderProps {
   isScrolled?: boolean;
   onFeaturesClick: () => void;
   onPersonalitiesClick: () => void;
   onSubscriptionClick: () => void;
+  downloadUrl?: string;
 }
 
 export function LandingSiteHeader({
@@ -15,6 +17,7 @@ export function LandingSiteHeader({
   onFeaturesClick,
   onPersonalitiesClick,
   onSubscriptionClick,
+  downloadUrl = "https://apps.apple.com/us/search?term=delirio%20fit",
 }: LandingSiteHeaderProps) {
   return (
     <header className={`landing-header ${isScrolled ? "landing-header--scrolled" : ""}`}>
@@ -25,11 +28,11 @@ export function LandingSiteHeader({
 
         <nav className="landing-header-nav" aria-label="Primary">
           <button type="button" onClick={onFeaturesClick}>
-            Features
+            Personal Trainers
           </button>
           <button type="button" className="landing-header-nav-item--with-icon" onClick={onPersonalitiesClick}>
             <img src={irisDefault} alt="" aria-hidden="true" loading="eager" fetchPriority="high" decoding="async" />
-            <span>Personalities</span>
+            <span>Realtime-Feedback</span>
             <img src={reedDefault} alt="" aria-hidden="true" loading="eager" fetchPriority="high" decoding="async" />
           </button>
           <button type="button" onClick={onSubscriptionClick}>
@@ -38,6 +41,19 @@ export function LandingSiteHeader({
         </nav>
 
         <div className="landing-header-spacer" aria-hidden="true" />
+      </div>
+
+      <div
+        className={`landing-header-download-strip ${isScrolled ? "is-visible" : ""}`}
+        role="region"
+        aria-label="App download"
+      >
+        <div className="landing-container landing-header-download-inner">
+          <p className="landing-header-download-copy">Download Delirio on the App Store</p>
+          <a className="landing-header-download-cta" href={downloadUrl} target="_blank" rel="noreferrer">
+            <img className="landing-header-badge" src={appStoreBadge} alt="Download on the App Store" />
+          </a>
+        </div>
       </div>
     </header>
   );

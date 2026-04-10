@@ -16,6 +16,7 @@ type LandingBackgroundLinesProps = {
   pinkRotate?: number;
   travelBlue?: boolean;
   travelPink?: boolean;
+  waveBehaviour?: boolean;
 };
 
 const defaultBluePath =
@@ -25,16 +26,21 @@ const defaultPinkPath =
   'M-80 760C190 910 460 914 760 730C1010 580 1286 466 1562 540C1740 588 1886 690 2000 792';
 
 const pathNumberPattern = /-?\d*\.?\d+/g;
-const pathMorphDurationMs = 760;
+const pathMorphDurationMs = 1000;
 const waveWavelengthPx = 600;
-const waveTravelCycleMs = 2800;
-const waveEnvelopeCycleMs = 5200;
-const waveSmoothing = 0.1;
-const maxWaveAmplitudePx = 42;
+const waveTravelCycleMs = 4200;
+const waveEnvelopeCycleMs = 9000;
+const waveSmoothing = 0.065;
+const maxWaveAmplitudePx = 100;
+const idleWaveStrength = 0.28;
+const activeWaveStrength = 1;
 
-const waveNumber = (2 * Math.PI) / waveWavelengthPx;
+const waveNumber = (1 * Math.PI) / waveWavelengthPx;
 const waveAngularVelocity = (2 * Math.PI) / waveTravelCycleMs;
 const waveEnvelopeAngularVelocity = (2 * Math.PI) / waveEnvelopeCycleMs;
+const waveSamplesPerSegment = 48;
+const sampledPathCache = new Map<string, { x: number; y: number }[]>();
+const maxSampledPathCacheEntries = 24;
 
 function getPathNumbers(path: string): number[] {
   const matches = path.match(pathNumberPattern);
@@ -59,6 +65,108 @@ function easeInOutCubic(progress: number): number {
 
   const shifted = -2 * progress + 2;
   return 1 - (shifted * shifted * shifted) / 2;
+}
+
+function cubicBezierPoint(
+  p0: { x: number; y: number },
+  p1: { x: number; y: number },
+  p2: { x: number; y: number },
+  p3: { x: number; y: number },
+  t: number,
+) {
+  const inverseT = 1 - t;
+  const inverseT2 = inverseT * inverseT;
+  const inverseT3 = inverseT2 * inverseT;
+  const t2 = t * t;
+  const t3 = t2 * t;
+
+  return {
+    x:
+      inverseT3 * p0.x +
+      3 * inverseT2 * t * p1.x +
+      3 * inverseT * t2 * p2.x +
+      t3 * p3.x,
+    y:
+      inverseT3 * p0.y +
+      3 * inverseT2 * t * p1.y +
+      3 * inverseT * t2 * p2.y +
+      t3 * p3.y,
+  };
+}
+
+function sampleCubicPath(path: string): { x: number; y: number }[] | null {
+  const values = getPathNumbers(path);
+
+  if (values.length < 8) {
+    return null;
+  }
+
+  const remaining = values.length - 2;
+  if (remaining % 6 !== 0) {
+    return null;
+  }
+
+  const startPoint = { x: values[0], y: values[1] };
+  const sampledPoints = [startPoint];
+  let anchorPoint = startPoint;
+  let cursor = 2;
+
+  while (cursor + 5 < values.length) {
+    const controlA = { x: values[cursor], y: values[cursor + 1] };
+    const controlB = { x: values[cursor + 2], y: values[cursor + 3] };
+    const endPoint = { x: values[cursor + 4], y: values[cursor + 5] };
+
+    for (let index = 1; index <= waveSamplesPerSegment; index += 1) {
+      const t = index / waveSamplesPerSegment;
+      sampledPoints.push(cubicBezierPoint(anchorPoint, controlA, controlB, endPoint, t));
+    }
+
+    anchorPoint = endPoint;
+    cursor += 6;
+  }
+
+  return sampledPoints;
+}
+
+function getSampledPath(path: string): { x: number; y: number }[] | null {
+  const cachedPoints = sampledPathCache.get(path);
+  if (cachedPoints) {
+    return cachedPoints;
+  }
+
+  const sampledPoints = sampleCubicPath(path);
+  if (!sampledPoints) {
+    return null;
+  }
+
+  sampledPathCache.set(path, sampledPoints);
+
+  if (sampledPathCache.size > maxSampledPathCacheEntries) {
+    const oldestKey = sampledPathCache.keys().next().value;
+    if (typeof oldestKey === 'string') {
+      sampledPathCache.delete(oldestKey);
+    }
+  }
+
+  return sampledPoints;
+}
+
+function composePolylinePath(points: { x: number; y: number }[]): string {
+  if (!points.length) {
+    return '';
+  }
+
+  const firstPoint = points[0];
+  let result = `M${Math.round(firstPoint.x * 1000) / 1000} ${Math.round(firstPoint.y * 1000) / 1000}`;
+
+  for (let index = 1; index < points.length; index += 1) {
+    const point = points[index];
+    const roundedX = Math.round(point.x * 1000) / 1000;
+    const roundedY = Math.round(point.y * 1000) / 1000;
+    result += `L${roundedX} ${roundedY}`;
+  }
+
+  return result;
 }
 
 function morphPath({
@@ -129,32 +237,28 @@ function applyTravelingWave({
     return path;
   }
 
-  const values = getPathNumbers(path);
-
-  if (values.length < 4) {
+  const points = getSampledPath(path);
+  if (!points || points.length < 4) {
     return path;
   }
 
-  const templateParts = path.split(pathNumberPattern);
   const envelopeAmplitude = Math.sin(timeMs * waveEnvelopeAngularVelocity + envelopePhaseOffset);
   const signedAmplitude = amplitude * strength * envelopeAmplitude;
+  const lastPointIndex = points.length - 1;
+  const warpedPoints = points.map((point, pointIndex) => {
+    const edgeProgress = pointIndex / lastPointIndex;
+    const edgeFade = Math.pow(Math.sin(edgeProgress * Math.PI), 0.9);
+    const travelPhase = point.x * waveNumber - timeMs * waveAngularVelocity + phaseOffset;
+    const harmonic = Math.sin(travelPhase);
+    const yOffset = signedAmplitude * edgeFade * harmonic;
 
-  for (let index = 1; index < values.length; index += 2) {
-    const x = values[index - 1];
-    const originalY = values[index];
+    return {
+      x: point.x,
+      y: point.y + yOffset,
+    };
+  });
 
-    // Right-traveling wave with a signed amplitude envelope:
-    // high -> zero -> negative -> zero -> high.
-    const travelPhase = x * waveNumber - timeMs * waveAngularVelocity + phaseOffset;
-    const spatialEnvelope = 0.64 + 0.36 * Math.sin(x * waveNumber * 0.52 + phaseOffset);
-    const harmonic =
-      (Math.sin(travelPhase) + 0.24 * Math.sin(travelPhase * 0.5 + phaseOffset * 0.35)) / 1.24;
-    const yOffset = signedAmplitude * spatialEnvelope * harmonic;
-
-    values[index] = originalY + yOffset;
-  }
-
-  return composePath(templateParts, values);
+  return composePolylinePath(warpedPoints);
 }
 
 export default function LandingBackgroundLines({
@@ -173,6 +277,7 @@ export default function LandingBackgroundLines({
   pinkRotate = 0,
   travelBlue = false,
   travelPink = false,
+  waveBehaviour = true,
 }: LandingBackgroundLinesProps) {
   const [animatedBluePath, setAnimatedBluePath] = useState(bluePath);
   const [animatedPinkPath, setAnimatedPinkPath] = useState(pinkPath);
@@ -182,12 +287,12 @@ export default function LandingBackgroundLines({
   const pinkPathRef = useRef(pinkPath);
   const blueMorphRafRef = useRef<number | null>(null);
   const pinkMorphRafRef = useRef<number | null>(null);
-  const blueWaveRafRef = useRef<number | null>(null);
-  const pinkWaveRafRef = useRef<number | null>(null);
+  const waveRafRef = useRef<number | null>(null);
   const blueWaveStrengthRef = useRef(0);
   const pinkWaveStrengthRef = useRef(0);
   const travelBlueRef = useRef(travelBlue);
   const travelPinkRef = useRef(travelPink);
+  const waveBehaviourRef = useRef(waveBehaviour);
 
   useEffect(() => {
     travelBlueRef.current = travelBlue;
@@ -196,6 +301,10 @@ export default function LandingBackgroundLines({
   useEffect(() => {
     travelPinkRef.current = travelPink;
   }, [travelPink]);
+
+  useEffect(() => {
+    waveBehaviourRef.current = waveBehaviour;
+  }, [waveBehaviour]);
 
   useEffect(() => {
     if (bluePathRef.current === bluePath) {
@@ -240,118 +349,98 @@ export default function LandingBackgroundLines({
   }, [pinkPath]);
 
   useEffect(() => {
-    if (blueWaveRafRef.current === null && !travelBlueRef.current) {
+    if ((waveRafRef.current === null || !waveBehaviourRef.current) && !travelBlueRef.current) {
       setDisplayBluePath(animatedBluePath);
     }
   }, [animatedBluePath]);
 
   useEffect(() => {
-    if (pinkWaveRafRef.current === null && !travelPinkRef.current) {
+    if ((waveRafRef.current === null || !waveBehaviourRef.current) && !travelPinkRef.current) {
       setDisplayPinkPath(animatedPinkPath);
     }
   }, [animatedPinkPath]);
 
   useEffect(() => {
-    if (!travelBlue && blueWaveRafRef.current === null) {
+    if (!waveBehaviour) {
+      if (waveRafRef.current !== null) {
+        cancelAnimationFrame(waveRafRef.current);
+        waveRafRef.current = null;
+      }
+
       blueWaveStrengthRef.current = 0;
+      pinkWaveStrengthRef.current = 0;
       setDisplayBluePath(bluePathRef.current);
+      setDisplayPinkPath(pinkPathRef.current);
       return;
     }
 
-    if (!travelBlue || blueWaveRafRef.current !== null) {
+    if (waveRafRef.current !== null) {
       return;
     }
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       blueWaveStrengthRef.current = 0;
+      pinkWaveStrengthRef.current = 0;
       setDisplayBluePath(bluePathRef.current);
+      setDisplayPinkPath(pinkPathRef.current);
       return;
     }
 
     const tick = (timestamp: number) => {
-      const target = travelBlueRef.current ? 1 : 0;
-      const current = blueWaveStrengthRef.current;
-      const nextStrength = current + (target - current) * waveSmoothing;
-      blueWaveStrengthRef.current = nextStrength;
+      if (!waveBehaviourRef.current) {
+        blueWaveStrengthRef.current = 0;
+        pinkWaveStrengthRef.current = 0;
+        waveRafRef.current = null;
+        setDisplayBluePath(bluePathRef.current);
+        setDisplayPinkPath(pinkPathRef.current);
+        return;
+      }
 
-      const basePath = bluePathRef.current;
-      const nextPath =
-        nextStrength <= 0.001
-          ? basePath
+      const blueTarget = travelBlueRef.current ? activeWaveStrength : idleWaveStrength;
+      const blueCurrent = blueWaveStrengthRef.current;
+      const blueNextStrength = blueCurrent + (blueTarget - blueCurrent) * waveSmoothing;
+      blueWaveStrengthRef.current = blueNextStrength;
+
+      const pinkTarget = travelPinkRef.current ? activeWaveStrength : idleWaveStrength;
+      const pinkCurrent = pinkWaveStrengthRef.current;
+      const pinkNextStrength = pinkCurrent + (pinkTarget - pinkCurrent) * waveSmoothing;
+      pinkWaveStrengthRef.current = pinkNextStrength;
+
+      const blueBasePath = bluePathRef.current;
+      const pinkBasePath = pinkPathRef.current;
+
+      const nextBluePath =
+        blueNextStrength <= 0.001
+          ? blueBasePath
           : applyTravelingWave({
-              path: basePath,
+              path: blueBasePath,
               timeMs: timestamp,
-              strength: nextStrength,
+              strength: blueNextStrength,
               amplitude: maxWaveAmplitudePx,
               phaseOffset: 0,
               envelopePhaseOffset: 0,
             });
 
-      setDisplayBluePath(nextPath);
-
-      if (target > 0 || nextStrength > 0.002) {
-        blueWaveRafRef.current = requestAnimationFrame(tick);
-        return;
-      }
-
-      blueWaveStrengthRef.current = 0;
-      blueWaveRafRef.current = null;
-      setDisplayBluePath(basePath);
-    };
-
-    blueWaveRafRef.current = requestAnimationFrame(tick);
-  }, [travelBlue]);
-
-  useEffect(() => {
-    if (!travelPink && pinkWaveRafRef.current === null) {
-      pinkWaveStrengthRef.current = 0;
-      setDisplayPinkPath(pinkPathRef.current);
-      return;
-    }
-
-    if (!travelPink || pinkWaveRafRef.current !== null) {
-      return;
-    }
-
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      pinkWaveStrengthRef.current = 0;
-      setDisplayPinkPath(pinkPathRef.current);
-      return;
-    }
-
-    const tick = (timestamp: number) => {
-      const target = travelPinkRef.current ? 1 : 0;
-      const current = pinkWaveStrengthRef.current;
-      const nextStrength = current + (target - current) * waveSmoothing;
-      pinkWaveStrengthRef.current = nextStrength;
-
-      const basePath = pinkPathRef.current;
-      const nextPath =
-        nextStrength <= 0.001
-          ? basePath
+      const nextPinkPath =
+        pinkNextStrength <= 0.001
+          ? pinkBasePath
           : applyTravelingWave({
-              path: basePath,
+              path: pinkBasePath,
               timeMs: timestamp,
-              strength: nextStrength,
+              strength: pinkNextStrength,
               amplitude: maxWaveAmplitudePx,
               phaseOffset: Math.PI / 3,
               envelopePhaseOffset: Math.PI / 2,
             });
 
-      setDisplayPinkPath(nextPath);
+      setDisplayBluePath(nextBluePath);
+      setDisplayPinkPath(nextPinkPath);
 
-      if (target > 0 || nextStrength > 0.002) {
-        pinkWaveRafRef.current = requestAnimationFrame(tick);
-        return;
-      }
-
-      pinkWaveStrengthRef.current = 0;
-      pinkWaveRafRef.current = null;
-      setDisplayPinkPath(basePath);
+      waveRafRef.current = requestAnimationFrame(tick);
     };
 
-    pinkWaveRafRef.current = requestAnimationFrame(tick);
-  }, [travelPink]);
+    waveRafRef.current = requestAnimationFrame(tick);
+  }, [waveBehaviour]);
 
   useEffect(() => {
     return () => {
@@ -363,12 +452,8 @@ export default function LandingBackgroundLines({
         cancelAnimationFrame(pinkMorphRafRef.current);
       }
 
-      if (blueWaveRafRef.current !== null) {
-        cancelAnimationFrame(blueWaveRafRef.current);
-      }
-
-      if (pinkWaveRafRef.current !== null) {
-        cancelAnimationFrame(pinkWaveRafRef.current);
+      if (waveRafRef.current !== null) {
+        cancelAnimationFrame(waveRafRef.current);
       }
     };
   }, []);

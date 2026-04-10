@@ -13,7 +13,7 @@ export function LandingSiteFooter() {
             <div className="landing-footer-brand">
               <Logo color="white" width="34" height="46" />
             </div>
-            <p className="landing-footer-tagline">A new way of shipping personal training for all</p>
+            <p className="landing-footer-tagline">Training alone is over.</p>
             <div className="landing-footer-socials">
               <a href="https://x.com/Delirio1_" target="_blank" rel="noreferrer" aria-label="X">
                 <XIcon color="white" />
@@ -29,9 +29,9 @@ export function LandingSiteFooter() {
 
           <div className="landing-footer-contact">
             <h2>Contact</h2>
-            <a href="mailto:Delirio.0fficial0@gmail.com">Delirio.0fficial0@gmail.com</a>
-            <a href="https://calendly.com/amiralsad/rush-advice" target="_blank" rel="noreferrer">
-              Schedule a Calendly meeting
+            <a href="mailto:contact@delirio.fit">contact@delirio.fit</a>
+            <a href="https://apps.apple.com/us/search?term=delirio%20fit" target="_blank" rel="noreferrer">
+              Download the app
             </a>
           </div>
         </div>

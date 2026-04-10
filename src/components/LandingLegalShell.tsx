@@ -37,8 +37,9 @@ export function LandingLegalShell({
       <LandingSiteHeader
         isScrolled={isScrolled}
         onFeaturesClick={() => goToHomeSection("features")}
-        onPersonalitiesClick={() => goToHomeSection("personalities")}
+        onPersonalitiesClick={() => goToHomeSection("form-feedback")}
         onSubscriptionClick={() => goToHomeSection("subscription")}
+        downloadUrl="https://apps.apple.com/us/search?term=delirio%20fit"
       />
 
       <main className="landing-main">

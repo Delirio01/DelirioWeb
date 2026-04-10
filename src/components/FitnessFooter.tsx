@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 export function FitnessFooter({ onNavigate }: { onNavigate?: (page: 'main' | 'terms' | 'privacy') => void }) {
   const [copied, setCopied] = useState(false);
   const handleCopyEmail = () => {
-    navigator.clipboard.writeText('Delirio.0fficial0@gmail.com');
+    navigator.clipboard.writeText('contact@delirio.fit');
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
@@ -45,7 +45,7 @@ export function FitnessFooter({ onNavigate }: { onNavigate?: (page: 'main' | 'te
                     <div className="space-y-2">
                 <p className="text-white/40 uppercase tracking-wider text-xs">Contacts</p>
                 <a
-                href="mailto:Delirio.0fficial0@gmail.com"
+                href="mailto:contact@delirio.fit"
                 //  type="button"
                  // onClick={handleCopyEmail}
                   className="block text-white/80 hover:text-white transition-colors underline cursor-pointer focus:outline-none"

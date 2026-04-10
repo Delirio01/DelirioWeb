@@ -1,5 +1,7 @@
 .landing-shell {
   --landing-header-height: 84px;
+  --landing-download-strip-height: 56px;
+  --landing-header-stack-height: calc(var(--landing-header-height) + var(--landing-download-strip-height));
   --landing-panel-height: 100vh;
   --landing-content-max: 1120px;
   --landing-inline-pad: 10vw;
@@ -13,8 +15,12 @@
   --landing-line: rgba(15, 23, 42, 0.12);
   --landing-card: rgba(255, 255, 255, 0.9);
   --landing-shadow: 0 26px 60px rgba(72, 99, 163, 0.12);
+  --landing-font-heading: "Avenir Next Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+  --landing-font-subhead: "Manrope", "Avenir Next", "Helvetica Neue", sans-serif;
+  --landing-font-body: "Source Sans 3", "Avenir Next", "Helvetica Neue", sans-serif;
   background: #fff;
   color: var(--landing-black);
+  font-family: var(--landing-font-body);
   isolation: isolate;
   min-height: 100vh;
   position: relative;
@@ -39,13 +45,13 @@
 
 .landing-main {
   overflow-x: clip;
-  padding-top: var(--landing-header-height);
+  padding-top: var(--landing-header-stack-height);
   position: relative;
   z-index: 2;
 }
 
 .landing-background-lines {
-  inset: var(--landing-header-height) 0 0;
+  inset: var(--landing-header-stack-height) 0 0;
   overflow: hidden;
   pointer-events: none;
   position: fixed;
@@ -152,7 +158,7 @@
 .landing-header-nav {
   align-items: center;
   display: flex;
-  gap: 38px;
+  gap: 26px;
   justify-self: center;
 }
 
@@ -161,9 +167,10 @@
   border: 0;
   color: rgba(10, 10, 10, 0.8);
   cursor: pointer;
-  font-size: 1.25rem;
-  font-weight: 400;
-  letter-spacing: -0.02em;
+  font-family: var(--landing-font-subhead);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
   padding: 0;
   transition: color 160ms ease;
   white-space: nowrap;
@@ -191,6 +198,79 @@
   width: 30px;
 }
 
+.landing-header-download-strip {
+  -webkit-backdrop-filter: blur(28px) saturate(150%);
+  backdrop-filter: blur(28px) saturate(150%);
+  background: rgba(255, 255, 255, 0.54);
+  border-bottom: 1px solid rgba(10, 10, 10, 0.08);
+  left: 0;
+  opacity: 0;
+  pointer-events: none;
+  position: fixed;
+  right: 0;
+  top: var(--landing-header-height);
+  transform: translateY(-10px);
+  transition:
+    opacity 220ms ease,
+    transform 220ms ease,
+    visibility 0ms linear 220ms;
+  visibility: hidden;
+  z-index: 39;
+}
+
+.landing-header-download-strip.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+  transition:
+    opacity 220ms ease,
+    transform 220ms ease,
+    visibility 0ms linear 0ms;
+  visibility: visible;
+}
+
+.landing-header-download-inner {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  min-height: var(--landing-download-strip-height);
+  padding-block: 8px;
+}
+
+.landing-header-download-copy {
+  color: rgba(10, 10, 10, 0.68);
+  font-family: var(--landing-font-subhead);
+  font-size: 1.2rem;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  margin: 0;
+}
+
+.landing-header-download-cta {
+  align-items: center;
+  cursor: pointer;
+  display: inline-flex;
+  flex-shrink: 0;
+  justify-content: center;
+  line-height: 0;
+  text-decoration: none;
+  transition: opacity 140ms ease;
+}
+
+.landing-header-download-cta:hover {
+  opacity: 0.94;
+  transform: none;
+}
+
+.landing-header-badge {
+  cursor: pointer;
+  display: block;
+  height: calc(var(--landing-download-strip-height) * 0.75);
+  width: auto;
+}
+
 .landing-section {
   align-items: center;
   box-sizing: border-box;
@@ -200,7 +280,7 @@
   overflow: hidden;
   padding: 0;
   position: relative;
-  scroll-margin-top: var(--landing-header-height);
+  scroll-margin-top: var(--landing-header-stack-height);
 }
 
 .landing-section .landing-container {
@@ -209,7 +289,20 @@
 }
 
 .landing-section--hero {
-  margin-top: calc(var(--landing-header-height) * -0.78);
+  margin-top: calc(var(--landing-header-stack-height) * -0.76);
+}
+
+.landing-section--messaging,
+.landing-section--faq {
+  align-items: flex-start;
+  height: auto;
+  min-height: var(--landing-panel-height);
+  overflow: visible;
+  padding-block: clamp(56px, 9vh, 108px);
+}
+
+.landing-section--messaging .landing-comparison-subtitle {
+  margin-top: 0;
 }
 
 .landing-section--testimonials::before {
@@ -223,7 +316,7 @@
 
 .landing-display,
 .landing-heading {
-  font-family: "Avenir Next Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+  font-family: var(--landing-font-heading);
   font-weight: 700;
   letter-spacing: -0.065em;
   line-height: 0.88;
@@ -264,11 +357,13 @@
 .landing-testimonial-profile p,
 .landing-testimonial-body,
 .landing-personality-session-note,
-.landing-personality-stage-meta p:last-child,
+.landing-personality-stage-blurb,
+.landing-personality-stage-approach,
 .landing-footer-contact a,
 .landing-footer-bottom p,
 .landing-footer-legal a {
   color: var(--landing-copy);
+  font-family: var(--landing-font-body);
   font-size: 1.12rem;
   line-height: 1.2;
 }
@@ -279,11 +374,13 @@
 }
 
 .landing-section-body--feature-intro {
+  font-family: var(--landing-font-subhead);
   font-size: 1.288rem;
+  font-weight: 600;
 }
 
 .landing-overline {
-  font-family: "Avenir Next Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+  font-family: var(--landing-font-subhead);
   font-size: clamp(2rem, 3vw, 3rem);
   font-weight: 700;
   letter-spacing: -0.05em;
@@ -304,6 +401,7 @@
   color: var(--landing-blue);
   cursor: pointer;
   display: inline-flex;
+  font-family: var(--landing-font-subhead);
   font-size: 1.1rem;
   font-weight: 700;
   gap: 12px;
@@ -324,6 +422,40 @@
 
 .landing-outline-button--full {
   width: 100%;
+}
+
+.landing-outline-button--centered {
+  margin-inline: auto;
+}
+
+.landing-outline-button--hero {
+  background: transparent;
+  border-color: var(--landing-blue);
+  border-radius: 14px;
+  box-shadow: none;
+  color: var(--landing-blue);
+  min-height: 54px;
+  padding: 0 26px;
+}
+
+.landing-outline-button--hero:hover {
+  background: transparent;
+  border-color: #2f82eb;
+  box-shadow: none;
+  color: #2f82eb;
+}
+
+.landing-outline-button--hero svg {
+  transition: transform 160ms ease;
+}
+
+.landing-outline-button--hero:hover svg {
+  transform: translateX(2px);
+}
+
+.landing-outline-button--hero:focus-visible {
+  outline: 3px solid rgba(58, 144, 255, 0.36);
+  outline-offset: 3px;
 }
 
 .landing-floating-cluster {
@@ -446,6 +578,75 @@
   max-width: 460px;
 }
 
+.landing-feature-intro-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  margin-top: 26px;
+}
+
+.landing-coach-cards {
+  display: grid;
+  gap: 16px;
+}
+
+.landing-coach-card {
+  appearance: none;
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 16px;
+  color: inherit;
+  cursor: pointer;
+  display: block;
+  font: inherit;
+  margin: 0;
+  padding: 14px 16px;
+  text-align: left;
+  transition: border-color 220ms ease;
+  width: 100%;
+}
+
+.landing-coach-card.is-active {
+  border-width: 2px;
+}
+
+.landing-coach-card--blue.is-active {
+  border-color: var(--landing-blue);
+}
+
+.landing-coach-card--pink.is-active {
+  border-color: var(--landing-pink);
+}
+
+.landing-coach-card:focus-visible {
+  outline: 2px solid rgba(15, 23, 42, 0.26);
+  outline-offset: 2px;
+}
+
+.landing-coach-card h3 {
+  font-family: var(--landing-font-subhead);
+  font-size: 1.38rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 0 0 8px;
+}
+
+.landing-coach-card p {
+  color: var(--landing-copy);
+  font-size: 0.98rem;
+  font-weight: 520;
+  line-height: 1.28;
+  margin: 0;
+}
+
+.landing-coach-card--blue h3 {
+  color: var(--landing-blue);
+}
+
+.landing-coach-card--pink h3 {
+  color: var(--landing-pink);
+}
+
 .landing-feature-intro-visual {
   min-height: 620px;
   position: relative;
@@ -478,6 +679,59 @@
   width: 154px;
 }
 
+.landing-form-feedback {
+  align-items: center;
+  display: grid;
+  gap: clamp(44px, 6vw, 86px);
+  grid-template-columns: minmax(0, 0.96fr) minmax(0, 1.04fr);
+  width: 100%;
+}
+
+.landing-form-feedback-copy {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(32px, 3vw, 44px);
+  max-width: 520px;
+}
+
+.landing-check-list--feedback {
+  margin: 0;
+}
+
+.landing-form-feedback-copy .landing-section-body {
+  margin-top: 0;
+}
+
+.landing-form-feedback-visual {
+  min-height: 560px;
+  position: relative;
+}
+
+.landing-phone--feedback-main {
+  bottom: 0;
+  left: 52%;
+  position: absolute;
+  transform: translateX(-50%);
+  width: 248px;
+  z-index: 2;
+}
+
+.landing-phone--feedback-side {
+  left: 9%;
+  position: absolute;
+  top: 8%;
+  width: 168px;
+  z-index: 1;
+}
+
+.landing-phone--feedback-right {
+  position: absolute;
+  right: 9%;
+  top: 8%;
+  width: 168px;
+  z-index: 1;
+}
+
 .landing-messaging,
 .landing-testimonials,
 .landing-comparison,
@@ -497,7 +751,7 @@
 
 .landing-messaging-column {
   display: grid;
-  gap: 22px;
+  gap: clamp(32px, 2.8vw, 48px);
   justify-items: start;
   margin-inline: auto;
   max-width: 460px;
@@ -521,7 +775,7 @@
   align-items: center;
   color: var(--landing-black);
   display: inline-flex;
-  font-family: "Avenir Next Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+  font-family: var(--landing-font-subhead);
   font-size: clamp(1.3rem, 2vw, 1.75rem);
   font-weight: 700;
   gap: 12px;
@@ -563,7 +817,7 @@
 
 .landing-check-list li {
   color: var(--landing-black);
-  font-family: "Avenir Next Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+  font-family: var(--landing-font-subhead);
   font-size: clamp(1.25rem, 1.8vw, 1.65rem);
   font-weight: 700;
   letter-spacing: -0.04em;
@@ -605,7 +859,7 @@
 
 .landing-phone--messaging {
   justify-self: center;
-  margin-top: 4px;
+  margin-top: clamp(10px, 1.4vw, 18px);
   width: 228px;
 }
 
@@ -702,11 +956,70 @@
 
 .landing-comparison-subtitle {
   color: var(--landing-copy);
+  font-family: var(--landing-font-subhead);
   font-size: clamp(1.04rem, 1.45vw, 1.2rem);
+  font-weight: 600;
   line-height: 1.24;
   margin: -18px auto 0;
   max-width: 760px;
   text-align: center;
+}
+
+.landing-comparison-matrix {
+  align-self: center;
+  background: var(--landing-card);
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 22px;
+  box-shadow: var(--landing-shadow);
+  justify-self: center;
+  margin-inline: auto;
+  overflow: hidden;
+  width: min(1180px, 100%);
+}
+
+.landing-comparison-row {
+  display: grid;
+  grid-template-columns: minmax(170px, 0.9fr) repeat(3, minmax(0, 1fr));
+}
+
+.landing-comparison-row + .landing-comparison-row {
+  border-top: 1px solid rgba(15, 23, 42, 0.1);
+}
+
+.landing-comparison-row--head {
+  background: rgba(15, 23, 42, 0.04);
+}
+
+.landing-comparison-cell {
+  color: rgba(10, 10, 10, 0.76);
+  font-size: 0.98rem;
+  line-height: 1.34;
+  padding: 14px 14px;
+}
+
+.landing-comparison-cell + .landing-comparison-cell {
+  border-left: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.landing-comparison-row--head .landing-comparison-cell {
+  font-family: var(--landing-font-subhead);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.landing-comparison-cell--label {
+  color: rgba(10, 10, 10, 0.82);
+  font-family: var(--landing-font-subhead);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.landing-comparison-cell--delirio {
+  background: rgba(58, 144, 255, 0.08);
+  color: rgba(10, 10, 10, 0.88);
 }
 
 .landing-comparison-column {
@@ -733,7 +1046,7 @@
 }
 
 .landing-comparison-column h3 {
-  font-family: "Avenir Next Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+  font-family: var(--landing-font-subhead);
   font-size: clamp(2rem, 3vw, 2.8rem);
   font-weight: 700;
   letter-spacing: -0.05em;
@@ -950,7 +1263,7 @@
   border-radius: 0;
   color: rgba(10, 10, 10, 0.58);
   display: inline-flex;
-  font-family: "Avenir Next Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+  font-family: var(--landing-font-subhead);
   font-size: clamp(1.18rem, 1.7vw, 1.56rem);
   font-weight: 700;
   height: auto;
@@ -1012,7 +1325,7 @@
   border-radius: 999px;
   color: rgba(10, 10, 10, 0.56);
   cursor: pointer;
-  font-family: "Avenir Next Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+  font-family: var(--landing-font-subhead);
   font-size: 1.12rem;
   font-weight: 700;
   letter-spacing: 0.14em;
@@ -1063,7 +1376,7 @@
   border-radius: 999px;
   color: rgba(10, 10, 10, 0.7);
   display: inline-flex;
-  font-family: "Avenir Next Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+  font-family: var(--landing-font-subhead);
   font-size: 0.95rem;
   font-weight: 700;
   letter-spacing: 0.18em;
@@ -1095,9 +1408,25 @@
   color: #b62525;
 }
 
+.landing-personality-session-state:not(.landing-personality-session-state--live):not(.landing-personality-session-state--busy):not(.landing-personality-session-state--error) {
+  background: transparent;
+  min-height: 0;
+  padding: 0;
+}
+
+.landing-personality-session-state:not(.landing-personality-session-state--live):not(.landing-personality-session-state--busy):not(.landing-personality-session-state--error)::after {
+  background: currentColor;
+  border-radius: 999px;
+  content: '';
+  display: inline-block;
+  height: 0.42em;
+  margin-left: 8px;
+  width: 0.42em;
+}
+
 .landing-personality-session-channel {
   color: rgba(10, 10, 10, 0.52);
-  font-family: "Avenir Next Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+  font-family: var(--landing-font-subhead);
   font-size: 1.05rem;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -1164,7 +1493,7 @@
   background: var(--landing-black) !important;
   border-color: var(--landing-black) !important;
   color: #fff !important;
-  font-family: "Avenir Next Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+  font-family: var(--landing-font-subhead);
   font-size: 1.26rem;
   font-weight: 700;
   height: 52px !important;
@@ -1315,7 +1644,7 @@
   color: rgba(10, 10, 10, 0.68);
   cursor: pointer;
   display: none;
-  font-family: "Avenir Next Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+  font-family: var(--landing-font-subhead);
   font-size: 1.06rem;
   font-weight: 700;
   justify-content: space-between;
@@ -1570,12 +1899,24 @@
   color: var(--landing-blue);
 }
 
-.landing-personality-stage-meta p:last-child {
+.landing-personality-stage-blurb {
   color: var(--landing-copy);
   font-size: clamp(1rem, 1.34vw, 1.16rem);
   line-height: 1.2;
   margin: 0;
   max-width: 470px;
+}
+
+.landing-personality-stage-approach {
+  color: var(--landing-copy);
+  font-size: 0.96rem;
+  line-height: 1.32;
+  margin: 0;
+  max-width: 510px;
+}
+
+.landing-personality-stage-meta .landing-outline-button {
+  margin-top: 10px;
 }
 
 .landing-pricing-card {
@@ -1622,7 +1963,7 @@
 .landing-pricing-stat {
   display: grid;
   gap: 8px;
-  margin: 34px 0 30px;
+  margin: 10px 0 18px;
   text-align: center;
 }
 
@@ -1638,6 +1979,14 @@
   color: var(--landing-black);
   font-size: 1.26rem;
   font-weight: 600;
+}
+
+.landing-pricing-context {
+  color: var(--landing-copy);
+  font-size: 1.02rem;
+  line-height: 1.34;
+  margin: 0 0 24px;
+  text-align: center;
 }
 
 .landing-pricing-actions {
@@ -1674,18 +2023,25 @@
   width: 220px;
 }
 
+.landing-app-badge-link {
+  display: inline-flex;
+}
+
 .landing-faq-title {
-  max-width: 240px;
+  max-width: 100%;
 }
 
 .landing-faq-layout {
   align-items: start;
   display: grid;
-  gap: 84px;
-  grid-template-columns: 136px minmax(0, 1fr);
+  gap: clamp(42px, 6vw, 84px);
+  grid-template-columns: clamp(160px, 18vw, 230px) minmax(0, 1fr);
 }
 
+
+
 .landing-faq-categories {
+  align-content: start;
   display: grid;
   gap: 18px;
 }
@@ -1695,19 +2051,26 @@
   border: 0;
   color: rgba(10, 10, 10, 0.42);
   cursor: pointer;
-  font-family: "Avenir Next Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
-  font-size: 1.35rem;
-  font-weight: 700;
-  letter-spacing: -0.04em;
+  font-family: var(--landing-font-subhead);
+  font-size: clamp(1.5rem, 2.2vw, 2.2rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  opacity: 0.44;
   padding: 0;
   text-align: left;
   text-transform: uppercase;
-  transition: color 160ms ease;
+  transition: color 160ms ease, opacity 160ms ease;
+  white-space: nowrap;
 }
 
 .landing-faq-categories button.is-active,
 .landing-faq-categories button:hover {
   color: var(--landing-black);
+  opacity: 1;
+}
+
+.landing-faq-categories button:not(.is-active):hover {
+  opacity: 0.64;
 }
 
 .landing-faq-list {
@@ -1725,14 +2088,15 @@
   color: var(--landing-black);
   cursor: pointer;
   display: flex;
-  font-family: "Avenir Next Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
-  font-size: clamp(1.4rem, 2vw, 2rem);
-  font-weight: 700;
+  font-family: var(--landing-font-subhead);
+  font-size: clamp(1.02rem, 1.36vw, 1.2rem);
+  font-weight: 600;
   justify-content: space-between;
-  letter-spacing: -0.05em;
-  padding: 18px 0 16px;
+  letter-spacing: -0.01em;
+  line-height: 1.34;
+  padding: 16px 0 14px;
   text-align: left;
-  text-transform: uppercase;
+  text-transform: none;
   width: 100%;
 }
 
@@ -1765,7 +2129,7 @@
 
 .landing-faq-answer p {
   color: var(--landing-copy);
-  font-size: 1rem;
+  font-size: 0.98rem;
   line-height: 1.45;
   margin: 0;
   max-width: 720px;
@@ -1781,13 +2145,13 @@
 .landing-faq-more {
   color: var(--landing-blue);
   display: inline-flex;
-  font-family: "Avenir Next Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
-  font-size: clamp(1.55rem, 2vw, 2rem);
-  font-weight: 700;
-  letter-spacing: -0.05em;
+  font-family: var(--landing-font-subhead);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0;
   margin-top: 18px;
   text-decoration: none;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .landing-footer {
@@ -1848,6 +2212,7 @@
 
 .landing-footer-contact h2 {
   color: #fff;
+  font-family: var(--landing-font-subhead);
   font-size: 1.9rem;
   font-weight: 700;
   margin: 0 0 14px;
@@ -1978,7 +2343,7 @@
 
 .landing-warm-form label span {
   color: rgba(10, 10, 10, 0.58);
-  font-family: "Avenir Next Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+  font-family: var(--landing-font-subhead);
   font-size: 1.03rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -2013,7 +2378,7 @@
   box-shadow: 0 12px 24px rgba(58, 144, 255, 0.2);
   color: #fff;
   cursor: pointer;
-  font-family: "Avenir Next Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+  font-family: var(--landing-font-subhead);
   font-size: 0.98rem;
   font-weight: 700;
   align-self: center;
@@ -2060,6 +2425,8 @@
 .landing-warm-success {
   align-items: center;
   display: flex;
+  flex-direction: column;
+  gap: 18px;
   inset: 0;
   justify-content: center;
   opacity: 0;
@@ -2097,7 +2464,7 @@
 
 .landing-warm-success-check {
   color: var(--landing-blue);
-  font-family: "Avenir Next Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+  font-family: var(--landing-font-subhead);
   font-size: clamp(2.4rem, 3.6vw, 3.2rem);
   font-weight: 700;
   line-height: 1;
@@ -2115,6 +2482,13 @@
   transform: translateY(0) scale(1);
 }
 
+.landing-warm-success-text {
+  color: rgba(10, 10, 10, 0.72);
+  font-size: 1rem;
+  margin: 0;
+  text-align: center;
+}
+
 
 @keyframes landingFloat {
   0%,
@@ -2129,11 +2503,20 @@
 
 @media (max-width: 1120px) {
   .landing-shell {
+    --landing-download-strip-height: 52px;
     --landing-inline-pad: 16px;
   }
 
   .landing-header-nav {
-    gap: 24px;
+    gap: 14px;
+  }
+
+  .landing-header-nav button {
+    font-size: 0.92rem;
+  }
+
+  .landing-header-download-copy {
+    font-size: 0.88rem;
   }
 
   .landing-section {
@@ -2143,19 +2526,24 @@
   }
 
   .landing-section--hero {
-    margin-top: calc(var(--landing-header-height) * -0.18);
+    margin-top: calc(var(--landing-header-stack-height) * -0.62);
   }
 
   .landing-eyecatcher,
   .landing-feature-intro,
+  .landing-form-feedback,
   .landing-subscription,
   .landing-messaging-grid,
   .landing-testimonial-track,
   .landing-personality-experience-shell,
   .landing-warm-network,
-  .landing-footer-top,
-  .landing-faq-layout {
+  .landing-footer-top {
     grid-template-columns: 1fr;
+  }
+
+  .landing-faq-layout {
+    gap: clamp(28px, 4.2vw, 52px);
+    grid-template-columns: clamp(140px, 24vw, 190px) minmax(0, 1fr);
   }
 
   .landing-workouts {
@@ -2167,6 +2555,15 @@
   .landing-comparison-grid {
     gap: 28px;
     grid-template-columns: 1fr;
+  }
+
+  .landing-comparison-matrix {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .landing-comparison-row {
+    min-width: 920px;
   }
 
   .landing-comparison-column-head::after {
@@ -2204,9 +2601,26 @@
 
   .landing-eyecatcher-visual,
   .landing-feature-intro-visual,
+  .landing-form-feedback-visual,
   .landing-subscription-visual,
   .landing-workouts-visual {
     min-height: 500px;
+  }
+
+  .landing-phone--feedback-main {
+    width: 220px;
+  }
+
+  .landing-phone--feedback-side {
+    left: 12%;
+    top: 10%;
+    width: 146px;
+  }
+
+  .landing-phone--feedback-right {
+    right: 12%;
+    top: 10%;
+    width: 146px;
   }
 
   .landing-phone--feature-main {
@@ -2269,6 +2683,7 @@
 @media (max-width: 720px) {
   .landing-shell {
     --landing-header-height: 72px;
+    --landing-download-strip-height: 46px;
     --landing-inline-pad: 12px;
     --landing-mobile-section-gap: clamp(200px, 16vh, 220px);
     --landing-mobile-font-xs: clamp(0.72rem, 2.2vw, 0.86rem);
@@ -2279,16 +2694,19 @@
 
   .landing-header-inner {
     gap: 14px;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto 1fr auto;
   }
 
   .landing-header-nav {
-    gap: 14px;
-    justify-content: flex-end;
+    display: none;
   }
 
-  .landing-header-nav button {
-    font-size: var(--landing-mobile-font-xs);
+  .landing-header-download-inner {
+    justify-content: center;
+  }
+
+  .landing-header-download-copy {
+    display: none;
   }
 
   .landing-header-spacer {
@@ -2302,7 +2720,7 @@
   }
 
   .landing-section--hero {
-    margin-top: 0;
+    margin-top: calc(var(--landing-download-strip-height) * -0.5);
   }
 
   .landing-main .landing-section + .landing-section {
@@ -2321,7 +2739,8 @@
   .landing-eyecatcher-body p,
   .landing-section-body,
   .landing-personality-session-note,
-  .landing-personality-stage-meta p:last-child,
+  .landing-personality-stage-blurb,
+  .landing-personality-stage-approach,
   .landing-footer-contact a,
   .landing-footer-bottom p,
   .landing-footer-legal a {
@@ -2340,6 +2759,7 @@
 
   .landing-eyecatcher-visual,
   .landing-feature-intro-visual,
+  .landing-form-feedback-visual,
   .landing-subscription-visual,
   .landing-workouts-visual {
     min-height: 420px;
@@ -2399,6 +2819,22 @@
     width: clamp(144px, 42vw, 186px);
   }
 
+  .landing-phone--feedback-main {
+    width: clamp(124px, 38vw, 168px);
+  }
+
+  .landing-phone--feedback-side {
+    left: 3%;
+    top: 10%;
+    width: clamp(86px, 27vw, 120px);
+  }
+
+  .landing-phone--feedback-right {
+    right: 3%;
+    top: 10%;
+    width: clamp(86px, 27vw, 120px);
+  }
+
   .landing-workouts-visual {
     gap: 14px;
     min-height: 420px;
@@ -2419,7 +2855,7 @@
 
   .landing-check-list li,
   .landing-messaging-label,
-  .landing-comparison-item,
+  .landing-comparison-cell,
   .landing-faq-question {
     font-size: var(--landing-mobile-font-md);
   }
@@ -2432,6 +2868,27 @@
   .landing-comparison-column--blue,
   .landing-comparison-column--mirrored {
     text-align: left;
+  }
+
+  .landing-comparison-row {
+    min-width: 760px;
+  }
+
+  .landing-comparison-cell {
+    padding: 10px 10px;
+  }
+
+  .landing-faq-layout {
+    gap: 20px;
+    grid-template-columns: 1fr;
+  }
+
+  .landing-faq-categories {
+    gap: 12px;
+  }
+
+  .landing-faq-categories button {
+    font-size: clamp(1.25rem, 5.6vw, 1.75rem);
   }
 
   .landing-comparison-column--muted .landing-comparison-column-head,
@@ -2594,10 +3051,6 @@
 
   .landing-app-badge {
     width: 180px;
-  }
-
-  .landing-faq-categories {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .landing-footer {
