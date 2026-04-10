@@ -1204,7 +1204,6 @@ export default function Landing() {
 
             <div className="landing-form-feedback-visual">
               <PhoneMock src={splitRest} alt="Live form feedback during workout session" className="landing-phone--feedback-main" />
-              <PhoneMock src={exerciseLibrary} alt="Exercise view with coaching context" className="landing-phone--feedback-side" />
               <PhoneMock src={activityList} alt="Activity view with live coaching context" className="landing-phone--feedback-right" />
             </div>
           </div>

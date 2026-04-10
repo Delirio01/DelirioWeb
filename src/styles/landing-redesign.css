@@ -172,12 +172,21 @@
   font-weight: 500;
   letter-spacing: -0.01em;
   padding: 0;
-  transition: color 160ms ease;
+  transition: color 220ms ease, opacity 220ms ease, font-weight 220ms ease;
   white-space: nowrap;
 }
 
-.landing-header-nav button:hover {
+.landing-header-nav button:hover,
+.landing-header-nav button:focus-visible,
+.landing-header-nav button:active,
+.landing-header-nav button.is-active {
   color: var(--landing-black);
+  font-weight: 700;
+  opacity: 1;
+}
+
+.landing-header-nav button:not(:hover):not(:focus-visible):not(:active):not(.is-active) {
+  opacity: 0.88;
 }
 
 .landing-header-nav-item--with-icon {
@@ -390,6 +399,10 @@
 
 .landing-overline--blue {
   color: var(--landing-blue);
+}
+
+.landing-workouts-copy .landing-overline {
+  font-weight: 800;
 }
 
 .landing-outline-button {
@@ -703,6 +716,7 @@
 }
 
 .landing-form-feedback-visual {
+  left: clamp(-28px, -2.2vw, -12px);
   min-height: 560px;
   position: relative;
 }
@@ -2604,6 +2618,7 @@
   .landing-form-feedback-visual,
   .landing-subscription-visual,
   .landing-workouts-visual {
+    left: 0;
     min-height: 500px;
   }
 
