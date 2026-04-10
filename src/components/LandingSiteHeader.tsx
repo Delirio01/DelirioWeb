@@ -20,29 +20,30 @@ export function LandingSiteHeader({
   downloadUrl = "https://apps.apple.com/us/search?term=delirio%20fit",
 }: LandingSiteHeaderProps) {
   return (
-    <header className={`landing-header ${isScrolled ? "landing-header--scrolled" : ""}`}>
-      <div className="landing-container landing-header-inner">
-        <Link className="landing-header-brand" to="/" aria-label="Delirio home">
-          <Logo width="30" height="40" />
-        </Link>
+    <>
+      <header className={`landing-header ${isScrolled ? "landing-header--scrolled" : ""}`}>
+        <div className="landing-container landing-header-inner">
+          <Link className="landing-header-brand" to="/" aria-label="Delirio home">
+            <Logo width="30" height="40" />
+          </Link>
 
-        <nav className="landing-header-nav" aria-label="Primary">
-          <button type="button" onClick={onFeaturesClick}>
-            Personal Trainers
-          </button>
-          <button type="button" className="landing-header-nav-item--with-icon" onClick={onPersonalitiesClick}>
-            <img src={irisDefault} alt="" aria-hidden="true" loading="eager" fetchPriority="high" decoding="async" />
-            <span>Realtime-Feedback</span>
-            <img src={reedDefault} alt="" aria-hidden="true" loading="eager" fetchPriority="high" decoding="async" />
-          </button>
-          <button type="button" onClick={onSubscriptionClick}>
-            Subscription
-          </button>
-        </nav>
+          <nav className="landing-header-nav" aria-label="Primary">
+            <button type="button" onClick={onFeaturesClick}>
+              Personal Trainers
+            </button>
+            <button type="button" className="landing-header-nav-item--with-icon" onClick={onPersonalitiesClick}>
+              <img src={irisDefault} alt="" aria-hidden="true" loading="eager" fetchPriority="high" decoding="async" />
+              <span>Realtime-Feedback</span>
+              <img src={reedDefault} alt="" aria-hidden="true" loading="eager" fetchPriority="high" decoding="async" />
+            </button>
+            <button type="button" onClick={onSubscriptionClick}>
+              Subscription
+            </button>
+          </nav>
 
-        <div className="landing-header-spacer" aria-hidden="true" />
-      </div>
-
+          <div className="landing-header-spacer" aria-hidden="true" />
+        </div>
+      </header>
       <div
         className={`landing-header-download-strip ${isScrolled ? "is-visible" : ""}`}
         role="region"
@@ -55,6 +56,6 @@ export function LandingSiteHeader({
           </a>
         </div>
       </div>
-    </header>
+    </>
   );
 }

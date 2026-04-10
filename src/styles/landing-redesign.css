@@ -1,7 +1,7 @@
 .landing-shell {
   --landing-header-height: 84px;
   --landing-download-strip-height: 56px;
-  --landing-header-stack-height: calc(var(--landing-header-height) + var(--landing-download-strip-height));
+  --landing-header-stack-height: var(--landing-header-height);
   --landing-panel-height: 100vh;
   --landing-content-max: 1120px;
   --landing-inline-pad: 10vw;
@@ -211,14 +211,15 @@
   -webkit-backdrop-filter: blur(28px) saturate(150%);
   backdrop-filter: blur(28px) saturate(150%);
   background: rgba(255, 255, 255, 0.54);
-  border-bottom: 1px solid rgba(10, 10, 10, 0.08);
+  border-top: 1px solid rgba(10, 10, 10, 0.08);
+  bottom: 0;
   left: 0;
   opacity: 0;
   pointer-events: none;
   position: fixed;
   right: 0;
-  top: var(--landing-header-height);
-  transform: translateY(-10px);
+  top: auto;
+  transform: translateY(10px);
   transition:
     opacity 220ms ease,
     transform 220ms ease,
@@ -245,7 +246,8 @@
   gap: 14px;
   justify-content: center;
   min-height: var(--landing-download-strip-height);
-  padding-block: 8px;
+  padding-block-end: calc(12px + env(safe-area-inset-bottom, 0px));
+  padding-block-start: 12px;
 }
 
 .landing-header-download-copy {
@@ -2699,7 +2701,7 @@
   .landing-shell {
     --landing-header-height: 72px;
     --landing-download-strip-height: 46px;
-    --landing-inline-pad: 12px;
+    --landing-inline-pad: clamp(32px, 5.4vw, 40px);
     --landing-mobile-section-gap: clamp(200px, 16vh, 220px);
     --landing-mobile-font-xs: clamp(0.72rem, 2.2vw, 0.86rem);
     --landing-mobile-font-sm: clamp(0.84rem, 2.7vw, 1rem);
@@ -2735,7 +2737,7 @@
   }
 
   .landing-section--hero {
-    margin-top: calc(var(--landing-download-strip-height) * -0.5);
+    margin-top: calc(var(--landing-header-height) * -0.5);
   }
 
   .landing-main .landing-section + .landing-section {
