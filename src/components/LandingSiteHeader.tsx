@@ -6,6 +6,7 @@ import appStoreBadge from "../images/appleOfficialBadges/Mobile app store badge.
 
 interface LandingSiteHeaderProps {
   isScrolled?: boolean;
+  isStripVisible?: boolean;
   onFeaturesClick: () => void;
   onPersonalitiesClick: () => void;
   onSubscriptionClick: () => void;
@@ -14,11 +15,14 @@ interface LandingSiteHeaderProps {
 
 export function LandingSiteHeader({
   isScrolled = false,
+  isStripVisible,
   onFeaturesClick,
   onPersonalitiesClick,
   onSubscriptionClick,
   downloadUrl = "https://apps.apple.com/us/search?term=delirio%20fit",
 }: LandingSiteHeaderProps) {
+  const shouldShowStrip = isStripVisible ?? isScrolled;
+
   return (
     <>
       <header className={`landing-header ${isScrolled ? "landing-header--scrolled" : ""}`}>
@@ -45,7 +49,7 @@ export function LandingSiteHeader({
         </div>
       </header>
       <div
-        className={`landing-header-download-strip ${isScrolled ? "is-visible" : ""}`}
+        className={`landing-header-download-strip ${shouldShowStrip ? "is-visible" : ""}`}
         role="region"
         aria-label="App download"
       >

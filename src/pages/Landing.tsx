@@ -506,6 +506,7 @@ function PhoneMock({
 export default function Landing() {
   const firestoreServiceRef = useRef<FirestoreService | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isDownloadStripVisible, setIsDownloadStripVisible] = useState(false);
   const [activeCoach, setActiveCoach] = useState<CoachId>('reed');
   const [interactionMode, setInteractionMode] = useState<InteractionMode>('voice');
   const [coachSlideDirection, setCoachSlideDirection] = useState<1 | -1>(1);
@@ -525,6 +526,7 @@ export default function Landing() {
   const chatEndRef = useRef<HTMLDivElement | null>(null);
   const chatInputRef = useRef<HTMLInputElement | null>(null);
   const previousCoachRef = useRef<CoachId>(activeCoach);
+  const previousScrollYRef = useRef(0);
 
   const {
     sessionState,
@@ -560,9 +562,24 @@ export default function Landing() {
 
   useEffect(() => {
     function onScroll() {
-      setIsScrolled(window.scrollY > 24);
+      const currentScrollY = Math.max(window.scrollY, 0);
+      const hasScrolled = currentScrollY > 24;
+      const previousScrollY = previousScrollYRef.current;
+      const isScrollingDown = currentScrollY > previousScrollY + 1;
+      const isScrollingUp = currentScrollY < previousScrollY - 1;
+
+      setIsScrolled(hasScrolled);
+
+      if (!hasScrolled || isScrollingUp) {
+        setIsDownloadStripVisible(false);
+      } else if (isScrollingDown) {
+        setIsDownloadStripVisible(true);
+      }
+
+      previousScrollYRef.current = currentScrollY;
     }
 
+    previousScrollYRef.current = Math.max(window.scrollY, 0);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
 
@@ -851,6 +868,7 @@ export default function Landing() {
       />
       <LandingSiteHeader
         isScrolled={isScrolled}
+        isStripVisible={isDownloadStripVisible}
         onFeaturesClick={() => scrollToSection('features')}
         onPersonalitiesClick={() => scrollToSection('form-feedback')}
         onSubscriptionClick={() => scrollToSection('subscription')}

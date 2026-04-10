@@ -245,8 +245,9 @@
   column-gap: 14px;
   display: flex;
   justify-content: center;
-  inline-size: clamp(300px, 50vw, 760px);
+  inline-size: fit-content;
   margin-inline: auto;
+  min-inline-size: clamp(300px, 50vw, 760px);
   max-inline-size: calc(100vw - (2 * var(--landing-inline-pad)));
   min-height: var(--landing-download-strip-height);
   padding-block-end: calc(12px + env(safe-area-inset-bottom, 0px));
@@ -255,8 +256,10 @@
 
 .landing-header-download-copy {
   align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   color: rgba(10, 10, 10, 0.68);
-  display: flex;
+  display: -webkit-box;
   flex: 1 1 auto;
   font-family: var(--landing-font-subhead);
   font-size: clamp(0.86rem, 1.4vw, 1.2rem);
@@ -264,8 +267,8 @@
   line-height: 1.18;
   margin: 0;
   min-width: 0;
+  overflow: hidden;
   overflow-wrap: anywhere;
-  text-overflow: clip;
   white-space: normal;
 }
 
@@ -2730,7 +2733,7 @@
 
   .landing-header-download-inner {
     column-gap: 10px;
-    inline-size: min(50vw, 620px);
+    max-inline-size: calc(100vw - (2 * var(--landing-inline-pad)));
   }
 
   .landing-header-download-copy {
