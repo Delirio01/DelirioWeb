@@ -242,21 +242,31 @@
 .landing-header-download-inner {
   align-items: center;
   box-sizing: border-box;
+  column-gap: 14px;
   display: flex;
-  gap: 14px;
   justify-content: center;
+  inline-size: clamp(300px, 50vw, 760px);
+  margin-inline: auto;
+  max-inline-size: calc(100vw - (2 * var(--landing-inline-pad)));
   min-height: var(--landing-download-strip-height);
   padding-block-end: calc(12px + env(safe-area-inset-bottom, 0px));
   padding-block-start: 12px;
 }
 
 .landing-header-download-copy {
+  align-items: center;
   color: rgba(10, 10, 10, 0.68);
+  display: flex;
+  flex: 1 1 auto;
   font-family: var(--landing-font-subhead);
-  font-size: 1.2rem;
+  font-size: clamp(0.86rem, 1.4vw, 1.2rem);
   letter-spacing: -0.01em;
-  line-height: 1;
+  line-height: 1.18;
   margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+  white-space: normal;
 }
 
 .landing-header-download-cta {
@@ -2719,11 +2729,12 @@
   }
 
   .landing-header-download-inner {
-    justify-content: center;
+    column-gap: 10px;
+    inline-size: min(50vw, 620px);
   }
 
   .landing-header-download-copy {
-    display: none;
+    font-size: clamp(0.72rem, 2.7vw, 0.88rem);
   }
 
   .landing-header-spacer {
