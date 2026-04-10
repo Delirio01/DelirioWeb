@@ -1415,8 +1415,8 @@ export default function Landing() {
           <div className="landing-container landing-warm-network">
             <div className="landing-warm-copy">
               <h2 className="landing-display landing-display--section landing-warm-title">
-                <span>NOT READY TO</span>
-                <span className="landing-display-blue">DOWNLOAD?</span>
+                <span>JOIN OUR</span>
+                <span className="landing-display-blue">WARM NETWORK</span>
               </h2>
               <p className="landing-section-body landing-warm-body landing-subheading-match">
                 No pressure. Drop your info and we&apos;ll keep you in the loop - launches, updates, and the occasional
