@@ -56,7 +56,7 @@ export function LandingSiteHeader({
         <div className="landing-container landing-header-download-inner">
           <p className="landing-header-download-copy">Download Delirio on the App Store</p>
           <a className="landing-header-download-cta" href={downloadUrl} target="_blank" rel="noreferrer">
-            <img className="landing-header-badge" src={appStoreBadge} alt="Download on the App Store" />
+            <img style = {{height: 46}} className="landing-header-badge" src={appStoreBadge} alt="Download on the App Store" />
           </a>
         </div>
       </div>

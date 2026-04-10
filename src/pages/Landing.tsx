@@ -3,12 +3,16 @@ import {
   ChevronLeft,
   ChevronRight,
   MessageCircle,
-  Mic,
   MoveRight,
-  SendHorizontal,
   Smartphone,
-  Volume2,
 } from 'lucide-react';
+import CallRoundedIcon from '@mui/icons-material/CallRounded';
+import CallEndRoundedIcon from '@mui/icons-material/CallEndRounded';
+import MicOffRoundedIcon from '@mui/icons-material/MicOffRounded';
+import MicRoundedIcon from '@mui/icons-material/MicRounded';
+import SendRoundedIcon from '@mui/icons-material/SendRounded';
+import VolumeOffRoundedIcon from '@mui/icons-material/VolumeOffRounded';
+import VolumeUpRoundedIcon from '@mui/icons-material/VolumeUpRounded';
 import { Logo } from '../components/logo';
 import { LandingSiteFooter } from '../components/LandingSiteFooter';
 import { LandingSiteHeader } from '../components/LandingSiteHeader';
@@ -25,8 +29,6 @@ import reedSpeaking from '../images/emojis/Reed/Reed_botSpeaking_1.png';
 import reedSpeakingAlt from '../images/emojis/Reed/Reed_botSpeaking_2.png';
 import reedDisconnected from '../images/emojis/Reed/Reed_disconnected_1.png';
 import reedLive from '../images/emojis/Reed/Reed_micLive_2.png';
-import coachSelectionReed from '../images/iMocksImages/iMockup - iPhone 14.png';
-import coachSelectionIris from '../images/iMocksImages/iMockup - iPhone 14-1.png';
 import splitRest from '../images/iMocksImages/iMockup - iPhone 14-2.png';
 import exerciseLibrary from '../images/iMocksImages/iMockup - iPhone 14-3.png';
 import activityList from '../images/iMocksImages/iMockup - iPhone 14-4.png';
@@ -66,6 +68,7 @@ type ComparisonRow = {
 type CoachId = 'iris' | 'reed';
 
 type InteractionMode = 'voice' | 'text';
+type ContactActionsView = 'chooser' | 'voice' | 'text';
 
 type CoachProfile = {
   name: string;
@@ -73,12 +76,6 @@ type CoachProfile = {
   avatar: string;
   blurb: string;
   approach: string;
-  voicePrompt: string;
-  textPrompt: string;
-  demoExchange: {
-    user: string;
-    coach: string;
-  };
 };
 
 type WaveSection =
@@ -149,26 +146,14 @@ const coachProfiles: Record<CoachId, CoachProfile> = {
     accent: 'pink',
     avatar: irisDefault,
     blurb: 'Expressive, energetic coaching that keeps momentum high and sessions moving.',
-    approach: 'Best for athletes who want encouragement, energy, and quick resets between sets.',
-    voicePrompt: 'Want momentum today? Iris will keep your pace high and your focus tight.',
-    textPrompt: 'Text Iris for high-energy check-ins, encouragement, and mid-week adjustments.',
-    demoExchange: {
-      user: "I'm dragging today.",
-      coach: "No problem. We cut one accessory, keep the main lift, and stack a clean win.",
-    },
+    approach: '',
   },
   reed: {
     name: 'Reed',
     accent: 'blue',
     avatar: reedDefault,
     blurb: 'Direct, structured coaching focused on clean execution and practical progression.',
-    approach: 'Best for athletes who want clear structure, specific corrections, and no fluff.',
-    voicePrompt: 'Need structure today? Reed keeps sessions focused and technically sharp.',
-    textPrompt: 'Text Reed for direct feedback, specific targets, and plan changes that make sense.',
-    demoExchange: {
-      user: 'My squats felt off.',
-      coach: 'Your hips shifted right on rep three. Widen stance one inch and slow the descent.',
-    },
+    approach: '',
   },
 };
 
@@ -178,12 +163,6 @@ const comparisonRows: ComparisonRow[] = [
     inPerson: 'In the room with you',
     online: 'Not there - you train alone',
     delirio: 'Watching your form live, talking during rest',
-  },
-  {
-    label: 'Check-ins',
-    inPerson: 'Only during sessions',
-    online: 'Weekly (maybe)',
-    delirio: 'Daily - your coach is available every day',
   },
   {
     label: 'Form feedback',
@@ -196,12 +175,6 @@ const comparisonRows: ComparisonRow[] = [
     inPerson: 'Varies by trainer',
     online: 'Google Sheet or PDF',
     delirio: 'Built and adjusted by your coach dynamically',
-  },
-  {
-    label: 'Communication',
-    inPerson: 'In-person only',
-    online: 'Email or app portal',
-    delirio: 'Text, voice, in-app - however you want',
   },
   {
     label: 'Scheduling',
@@ -509,6 +482,7 @@ export default function Landing() {
   const [isDownloadStripVisible, setIsDownloadStripVisible] = useState(false);
   const [activeCoach, setActiveCoach] = useState<CoachId>('reed');
   const [interactionMode, setInteractionMode] = useState<InteractionMode>('voice');
+  const [contactActionsView, setContactActionsView] = useState<ContactActionsView>('chooser');
   const [coachSlideDirection, setCoachSlideDirection] = useState<1 | -1>(1);
   const [coachSlideTick, setCoachSlideTick] = useState(0);
   const [activeFaqCategory, setActiveFaqCategory] = useState<FaqCategory>('AI');
@@ -523,25 +497,19 @@ export default function Landing() {
   const [warmSubmitError, setWarmSubmitError] = useState<string | null>(null);
   const [isWarmSubmitSuccess, setIsWarmSubmitSuccess] = useState(false);
 
-  const chatEndRef = useRef<HTMLDivElement | null>(null);
   const chatInputRef = useRef<HTMLInputElement | null>(null);
+  const chatTranscriptRef = useRef<HTMLDivElement | null>(null);
   const previousCoachRef = useRef<CoachId>(activeCoach);
   const previousScrollYRef = useRef(0);
 
   const {
     sessionState,
     isMicMuted,
-    isBotSpeaking,
-    isUserSpeaking,
-    botTranscript,
-    botTurns,
-    userTranscript,
-    error: voiceError,
+    isSpeakerMuted,
     connect,
     disconnect,
     toggleMic,
     toggleSpeakerMute,
-    isSpeakerMuted,
   } = useVoiceSession({
     personality: activeCoach,
     userId: sessionUserId,
@@ -643,19 +611,27 @@ export default function Landing() {
   }, []);
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [chatMessages, chatLoading]);
-
-  useEffect(() => {
     if (previousCoachRef.current === activeCoach) {
       return;
     }
+
+    const shouldStayInTextMode =
+      contactActionsView === 'text' || interactionMode === 'text';
 
     previousCoachRef.current = activeCoach;
     disconnect();
     clearMessages();
     setChatInput('');
-  }, [activeCoach, clearMessages, disconnect]);
+
+    if (shouldStayInTextMode) {
+      setInteractionMode('text');
+      setContactActionsView('text');
+      return;
+    }
+
+    setInteractionMode('voice');
+    setContactActionsView('chooser');
+  }, [activeCoach, clearMessages, contactActionsView, disconnect, interactionMode]);
 
   useEffect(() => {
     if (interactionMode === 'text' && (sessionState === 'connected' || sessionState === 'connecting')) {
@@ -663,15 +639,100 @@ export default function Landing() {
     }
   }, [disconnect, interactionMode, sessionState]);
 
-  function handleChatSubmit(event?: FormEvent<HTMLFormElement>) {
-    event?.preventDefault();
-
-    const trimmed = chatInput.trim();
-    if (!trimmed || chatLoading) {
+  useEffect(() => {
+    if (contactActionsView !== 'text') {
       return;
     }
 
-    sendMessage(trimmed);
+    const focusTimer = window.setTimeout(() => {
+      chatInputRef.current?.focus();
+    }, 60);
+
+    return () => window.clearTimeout(focusTimer);
+  }, [contactActionsView]);
+
+  useEffect(() => {
+    if (contactActionsView !== 'text') {
+      return;
+    }
+
+    const scrollTimer = window.setTimeout(() => {
+      const transcript = chatTranscriptRef.current;
+      if (!transcript) {
+        return;
+      }
+
+      transcript.scrollTo({
+        top: transcript.scrollHeight,
+        behavior: 'smooth',
+      });
+    }, 40);
+
+    return () => window.clearTimeout(scrollTimer);
+  }, [chatMessages, chatLoading, contactActionsView]);
+
+  function handleOpenVoicePanel() {
+    setInteractionMode('voice');
+    setContactActionsView('voice');
+
+    if (sessionState === 'idle' || sessionState === 'error') {
+      connect();
+    }
+  }
+
+  function handleOpenTextPanel() {
+    setInteractionMode('text');
+    setContactActionsView('text');
+  }
+
+  function handleCoachSwitch(nextCoach: CoachId, forcedDirection?: 1 | -1) {
+    if (nextCoach === activeCoach) {
+      return;
+    }
+
+    const currentCoachIndex = coachOrder.indexOf(activeCoach);
+    const nextCoachIndex = coachOrder.indexOf(nextCoach);
+    const nextDirection: 1 | -1 =
+      forcedDirection ?? (nextCoachIndex >= currentCoachIndex ? 1 : -1);
+
+    setCoachSlideDirection(nextDirection);
+    setCoachSlideTick((previous) => previous + 1);
+    setActiveCoach(nextCoach);
+  }
+
+  function handleCycleCoach(direction: 1 | -1) {
+    const currentCoachIndex = coachOrder.indexOf(activeCoach);
+    const safeCurrentCoachIndex = currentCoachIndex < 0 ? 0 : currentCoachIndex;
+    const nextCoachIndex =
+      (safeCurrentCoachIndex + direction + coachOrder.length) % coachOrder.length;
+
+    handleCoachSwitch(coachOrder[nextCoachIndex], direction);
+  }
+
+  function handleCloseContactActionsPanel() {
+    if (sessionState === 'connected' || sessionState === 'connecting') {
+      disconnect();
+    }
+
+    setContactActionsView('chooser');
+    setInteractionMode('voice');
+  }
+
+  function handleHangupCall() {
+    disconnect();
+    setContactActionsView('chooser');
+    setInteractionMode('voice');
+  }
+
+  function handleChatSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const trimmedMessage = chatInput.trim();
+    if (!trimmedMessage || chatLoading) {
+      return;
+    }
+
+    sendMessage(trimmedMessage);
     setChatInput('');
   }
 
@@ -752,50 +813,6 @@ export default function Landing() {
     }
   }
 
-  function switchCoach(direction: 1 | -1) {
-    setCoachSlideDirection(direction);
-    setActiveCoach((currentCoach) => {
-      const currentIndex = coachOrder.indexOf(currentCoach);
-      const nextIndex = (currentIndex + direction + coachOrder.length) % coachOrder.length;
-      return coachOrder[nextIndex];
-    });
-    setCoachSlideTick((tick) => tick + 1);
-  }
-
-  function selectCoach(targetCoach: CoachId) {
-    if (targetCoach === activeCoach) {
-      return;
-    }
-
-    const currentIndex = coachOrder.indexOf(activeCoach);
-    const targetIndex = coachOrder.indexOf(targetCoach);
-    const direction: 1 | -1 = targetIndex > currentIndex ? 1 : -1;
-
-    setCoachSlideDirection(direction);
-    setActiveCoach(targetCoach);
-    setCoachSlideTick((tick) => tick + 1);
-  }
-
-  function handleFeatureCoachCardClick(targetCoach: CoachId) {
-    selectCoach(targetCoach);
-    const personalityPanel = document.querySelector('.landing-personality-console') as HTMLElement | null;
-
-    if (!personalityPanel) {
-      scrollToSection('personalities');
-      return;
-    }
-
-    const panelRect = personalityPanel.getBoundingClientRect();
-    const centerOffset = Math.max((window.innerHeight - panelRect.height) * 0.5, 0);
-    const extraScrollBias = 0; 
-    const targetTop = Math.max(window.scrollY + panelRect.top - centerOffset + extraScrollBias, 0);
-
-    window.scrollTo({
-      top: targetTop,
-      behavior: 'smooth',
-    });
-  }
-
   const visibleFaqItems = faqItems[activeFaqCategory];
   const lineMotion = waveMotionBySection[activeWaveSection];
   const activeCoachProfile = coachProfiles[activeCoach];
@@ -804,48 +821,9 @@ export default function Landing() {
   const isPersonalitySectionActive = activeWaveSection === 'personalities';
   const travelBlue = isPersonalitySectionActive && activeCoach === 'reed';
   const travelPink = isPersonalitySectionActive && activeCoach === 'iris';
-  const isVoiceConnected = interactionMode === 'voice' && sessionState === 'connected';
-  const isVoiceConnecting = interactionMode === 'voice' && sessionState === 'connecting';
-  const sessionStatusLabel = sessionState === 'connecting'
-    ? 'CONNECTING'
-    : sessionState === 'connected'
-      ? isBotSpeaking
-        ? 'COACH SPEAKING'
-        : isUserSpeaking
-          ? 'LISTENING'
-          : 'LIVE'
-      : sessionState === 'error'
-        ? 'ERROR'
-        : 'READY';
-  const sessionStatusTone = sessionState === 'error'
-    ? 'landing-personality-session-state--error'
-    : sessionState === 'connected'
-      ? 'landing-personality-session-state--live'
-      : sessionState === 'connecting'
-        ? 'landing-personality-session-state--busy'
-        : '';
-  const canSendChat = interactionMode === 'text' && chatInput.trim().length > 0 && !chatLoading;
-
-  let voiceTranscriptSpeaker = '';
-  let voiceTranscriptText = '';
-  const liveBotTranscript = botTranscript.trim();
-  const liveUserTranscript = userTranscript.trim();
-  const lastBotTurn = (botTurns[0] ?? '').trim();
-
-  if (liveBotTranscript) {
-    voiceTranscriptSpeaker = activeCoachProfile.name;
-    voiceTranscriptText = liveBotTranscript;
-  } else if (liveUserTranscript) {
-    voiceTranscriptSpeaker = 'You';
-    voiceTranscriptText = liveUserTranscript;
-  } else if (lastBotTurn) {
-    voiceTranscriptSpeaker = activeCoachProfile.name;
-    voiceTranscriptText = lastBotTurn;
-  }
-  const hasRenderableVoiceTranscript = Boolean(voiceTranscriptSpeaker && voiceTranscriptText);
 
   //wave behavior switch : swicthes on/off the wave behaviour in the baackground blue and pink lines 
-  const waveBehaviour = false;
+  const waveBehaviour = true;
 
   return (
     <div className="landing-shell">
@@ -869,7 +847,7 @@ export default function Landing() {
       <LandingSiteHeader
         isScrolled={isScrolled}
         isStripVisible={isDownloadStripVisible}
-        onFeaturesClick={() => scrollToSection('features')}
+        onFeaturesClick={() => scrollToSection('personalities')}
         onPersonalitiesClick={() => scrollToSection('form-feedback')}
         onSubscriptionClick={() => scrollToSection('subscription')}
         downloadUrl={APP_DOWNLOAD_URL}
@@ -880,16 +858,19 @@ export default function Landing() {
           <div className="landing-container landing-eyecatcher">
             <div className="landing-eyecatcher-copy">
               <p className="landing-eyecatcher-kicker">PERSONAL TRAINING</p>
-              <h1 className="landing-display landing-display--hero">
-                <span>GUDEINCE&nbsp;THAT</span>
-                <span className="landing-display-blue">SHOWS UP</span>
-                <span className="landing-display-blue">WHEN YOU</span>
+              <h1 className="landing-display landing-display--hero landing-display--hero-flex">
+                <span>GUDEINCE</span>
+                <span>THAT</span>
+                <span className="landing-display-blue">SHOWS</span>
+                <span className="landing-display-blue">UP</span>
+                <span className="landing-display-blue">WHEN</span>
+                <span className="landing-display-blue">YOU</span>
                 <span className="landing-display-blue">DO.</span>
               </h1>
               <div className="landing-eyecatcher-body">
                 <p>Meet the AI coach that watches your form, guides your workouts, and actually shows up when you do.</p>
               </div>
-              <button className="landing-outline-button landing-outline-button--hero" type="button" onClick={() => scrollToSection('features')}>
+              <button className="landing-outline-button landing-outline-button--hero" type="button" onClick={() => scrollToSection('personalities')}>
                 <span>Find your coach</span>
                 <MoveRight size={20} />
               </button>
@@ -897,62 +878,6 @@ export default function Landing() {
 
             <div className="landing-eyecatcher-visual">
               <FloatingCluster nodes={heroNodes} className="landing-floating-cluster--hero" eagerCount={6} />
-            </div>
-          </div>
-        </section>
-
-        <section id="features" data-wave-section="features" className="landing-section landing-section--feature-intro">
-          <div className="landing-container landing-feature-intro">
-            <div className="landing-feature-intro-copy">
-              <h2 className="landing-display landing-display--section">
-                <span>
-                  A COACH WHO&apos;S <span className="landing-display-blue">ACTUALLY THERE</span>
-                </span>
-              </h2>
-              <p className="landing-section-body landing-section-body--feature-intro">
-                Reed and Iris are distinct coaches with distinct styles. You choose who matches how you want to be coached,
-                and that coach stays with you.
-              </p>
-
-              <div className="landing-feature-intro-actions">
-                <div className="landing-coach-cards">
-                  <button
-                    type="button"
-                    className={`landing-coach-card landing-coach-card--blue ${activeCoach === 'reed' ? 'is-active' : ''}`}
-                    onClick={() => handleFeatureCoachCardClick('reed')}
-                    aria-pressed={activeCoach === 'reed'}
-                  >
-                    <h3>Reed</h3>
-                    <p>Direct, structured, practical. Clear cues. Clean execution.</p>
-                  </button>
-                  <button
-                    type="button"
-                    className={`landing-coach-card landing-coach-card--pink ${activeCoach === 'iris' ? 'is-active' : ''}`}
-                    onClick={() => handleFeatureCoachCardClick('iris')}
-                    aria-pressed={activeCoach === 'iris'}
-                  >
-                    <h3>Iris</h3>
-                    <p>Expressive, energetic, momentum-driven. High engagement from first rep to last.</p>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="landing-feature-intro-visual">
-              <PhoneMock
-                src={coachSelectionReed}
-                alt="Coach screen featuring Reed"
-                className="landing-phone--feature-main"
-                loading="eager"
-                fetchPriority="high"
-              />
-              <PhoneMock
-                src={coachSelectionIris}
-                alt="Coach screen featuring Iris"
-                className="landing-phone--feature-side"
-                loading="eager"
-                fetchPriority="high"
-              />
             </div>
           </div>
         </section>
@@ -971,231 +896,214 @@ export default function Landing() {
             </p>
 
             <div className="landing-personality-experience-shell">
-              <div className="landing-personality-console">
-                <article className="landing-personality-session-card">
-                  <div className="landing-personality-session-head">
-                    <span
-                      className={`landing-personality-session-state landing-personality-session-state--${activeCoachProfile.accent} ${sessionStatusTone}`.trim()}
-                    >
-                      {sessionStatusLabel}
-                    </span>
-                    <span className="landing-personality-session-channel">
-                      {activeCoachProfile.name} · {interactionMode === 'voice' ? 'Voice Coaching' : 'Text Coaching'}
-                    </span>
-                  </div>
-
-                  <div className="landing-personality-session-controls">
-                    <button
-                      type="button"
-                      className={`landing-personality-session-icon-button ${
-                        interactionMode === 'voice' && isSpeakerMuted ? 'is-muted' : ''
-                      }`.trim()}
-                      aria-label={interactionMode === 'voice' ? 'Toggle speaker output' : 'Clear chat'}
-                      aria-pressed={interactionMode === 'voice' ? isSpeakerMuted : undefined}
-                      onClick={() => {
-                        if (interactionMode === 'voice') {
-                          toggleSpeakerMute();
-                          return;
-                        }
-
-                        clearMessages();
-                      }}
-                    >
-                      <Volume2 size={26} />
-                    </button>
-                    <button
-                      type="button"
-                      className="landing-personality-session-start"
-                      disabled={interactionMode === 'voice' ? isVoiceConnecting : chatLoading}
-                      onClick={() => {
-                        if (interactionMode === 'voice') {
-                          if (isVoiceConnected || isVoiceConnecting) {
-                            disconnect();
-                          } else {
-                            connect();
-                          }
-                          return;
-                        }
-
-                        if (chatInput.trim()) {
-                          handleChatSubmit();
-                        } else {
-                          chatInputRef.current?.focus();
-                        }
-                      }}
-                    >
-                      {interactionMode === 'voice'
-                        ? isVoiceConnecting
-                          ? 'Connecting...'
-                          : isVoiceConnected
-                            ? 'End Session'
-                            : 'Start Session'
-                        : chatLoading
-                          ? 'Sending...'
-                          : chatInput.trim()
-                            ? 'Send Message'
-                            : 'Open Chat'}
-                    </button>
-                    <button
-                      type="button"
-                      className={`landing-personality-session-icon-button ${
-                        interactionMode === 'voice' && isMicMuted ? 'is-muted' : ''
-                      }`.trim()}
-                      aria-label={interactionMode === 'voice' ? 'Microphone' : 'Send message'}
-                      aria-pressed={interactionMode === 'voice' ? isMicMuted : undefined}
-                      disabled={interactionMode === 'text' ? !canSendChat : false}
-                      onClick={() => {
-                        if (interactionMode === 'voice') {
-                          toggleMic();
-                          return;
-                        }
-
-                        handleChatSubmit();
-                      }}
-                    >
-                      {interactionMode === 'voice' ? <Mic size={26} /> : <SendHorizontal size={26} />}
-                    </button>
-                  </div>
-
-                  {interactionMode === 'voice' && (
-                    <>
-                      {hasRenderableVoiceTranscript && (
-                        <div className="landing-personality-session-transcript">
-                          <p>
-                            <strong>{voiceTranscriptSpeaker}:</strong> {voiceTranscriptText}
-                          </p>
-                        </div>
-                      )}
-                      {!hasRenderableVoiceTranscript && <p className="landing-personality-chat-empty">{activeCoachProfile.voicePrompt}</p>}
-                      {voiceError && <p className="landing-personality-session-error">{voiceError}</p>}
-                    </>
-                  )}
-
-                  <div
-                    className={`landing-personality-mode-toggle landing-personality-mode-toggle--${activeCoachProfile.accent}`}
-                    role="tablist"
-                    aria-label="Choose interaction method"
-                  >
-                    <button
-                      type="button"
-                      role="tab"
-                      aria-selected={interactionMode === 'voice'}
-                      className={interactionMode === 'voice' ? 'is-active' : ''}
-                      onClick={() => setInteractionMode('voice')}
-                    >
-                      Voice
-                    </button>
-                    <button
-                      type="button"
-                      role="tab"
-                      aria-selected={interactionMode === 'text'}
-                      className={interactionMode === 'text' ? 'is-active' : ''}
-                      onClick={() => setInteractionMode('text')}
-                    >
-                      Text / Chat
-                    </button>
-                  </div>
-
-                  {interactionMode === 'text' && (
-                    <div className="landing-personality-chat-shell">
-                      <div className="landing-personality-chat-messages">
-                        {chatMessages.length === 0 && (
-                          <>
-                            <p className="landing-personality-chat-empty">{activeCoachProfile.textPrompt}</p>
-                            <div className="landing-personality-chat-bubble landing-personality-chat-bubble--user">
-                              <span>You</span>
-                              <p>{activeCoachProfile.demoExchange.user}</p>
-                            </div>
-                            <div className="landing-personality-chat-bubble landing-personality-chat-bubble--bot">
-                              <span>{activeCoachProfile.name}</span>
-                              <p>{activeCoachProfile.demoExchange.coach}</p>
-                            </div>
-                          </>
-                        )}
-
-                        {chatMessages.map((message, index) => (
-                          <div
-                            key={`${message.role}-${index}-${message.text.slice(0, 24)}`}
-                            className={`landing-personality-chat-bubble ${
-                              message.role === 'user'
-                                ? 'landing-personality-chat-bubble--user'
-                                : 'landing-personality-chat-bubble--bot'
-                            }`}
-                          >
-                            <span>{message.role === 'user' ? 'You' : activeCoachProfile.name}</span>
-                            <p>{message.text}</p>
-                          </div>
-                        ))}
-
-                        {chatLoading && (
-                          <div className="landing-personality-chat-bubble landing-personality-chat-bubble--bot">
-                            <span>{activeCoachProfile.name}</span>
-                            <p>Typing...</p>
-                          </div>
-                        )}
-
-                        <div ref={chatEndRef} />
-                      </div>
-
-                      <form className="landing-personality-chat-input-row" onSubmit={handleChatSubmit}>
-                        <input
-                          ref={chatInputRef}
-                          type="text"
-                          value={chatInput}
-                          placeholder={`Message ${activeCoachProfile.name}`}
-                          onChange={(event) => setChatInput(event.target.value)}
-                          disabled={chatLoading}
-                        />
-                        <button type="submit" disabled={!canSendChat}>
-                          <SendHorizontal size={20} />
-                        </button>
-                      </form>
-
-                      {chatError && <p className="landing-personality-session-error">{chatError}</p>}
-                    </div>
-                  )}
-                </article>
-              </div>
-
-              <div className="landing-personality-stage" aria-live="polite">
+	              <div className={`landing-personality-stage ${contactActionsView === 'text' ? 'is-text-mode' : ''}`} aria-live="polite">
                 <div className="landing-personality-stage-shell">
+                  {contactActionsView === 'text' ? (
+                    <button
+                      type="button"
+                      className="landing-personality-stage-back landing-personality-stage-back--corner"
+                      onClick={handleCloseContactActionsPanel}
+                      aria-label="Back to contact options"
+                    >
+                      <ChevronLeft size={18} aria-hidden="true" />
+                      <span>Back</span>
+                    </button>
+                  ) : null}
                   <button
-                    key={`${inactiveCoach}-${coachSlideTick}`}
                     type="button"
+                    key={`${inactiveCoach}-${coachSlideTick}`}
                     className={`landing-personality-stage-ghost landing-personality-stage-ghost--${inactiveCoach}`}
+                    onClick={() => handleCoachSwitch(inactiveCoach)}
                     aria-label={`Switch to ${inactiveCoachProfile.name}`}
-                    onClick={() => selectCoach(inactiveCoach)}
                   >
                     <img src={inactiveCoachProfile.avatar} alt="" />
                   </button>
-                  <div
-                    key={`${activeCoach}-${coachSlideTick}`}
-                    className={`landing-personality-stage-avatar landing-personality-stage-avatar--${activeCoach} ${
-                      coachSlideDirection > 0
-                        ? 'landing-personality-stage-avatar--descend-forward'
-                        : 'landing-personality-stage-avatar--descend-backward'
-                    } ${interactionMode === 'voice' && sessionState === 'connected' ? 'landing-personality-stage-avatar--voice' : ''}`}
-                  >
-                    <img src={activeCoachProfile.avatar} alt={`${activeCoachProfile.name} coach avatar`} />
+                  <div className="landing-personality-stage-focus">
+                    {contactActionsView !== 'text' ? (
+                      <button
+                        type="button"
+                        className="landing-personality-stage-switch landing-personality-stage-switch--left"
+                        onClick={() => handleCycleCoach(-1)}
+                        aria-label="Show previous coach"
+                      >
+                        <ChevronLeft size={24} />
+                      </button>
+                    ) : null}
+                    {contactActionsView === 'chooser' ? (
+                      <button
+                        type="button"
+                        key={`${activeCoach}-${coachSlideTick}`}
+                        className={`landing-personality-stage-avatar landing-personality-stage-avatar-button landing-personality-stage-avatar--${activeCoach} ${
+                          coachSlideDirection > 0
+                            ? 'landing-personality-stage-avatar--descend-forward'
+                            : 'landing-personality-stage-avatar--descend-backward'
+                        } ${interactionMode === 'voice' && sessionState === 'connected' ? 'landing-personality-stage-avatar--voice' : ''}`}
+                        onClick={() => handleCoachSwitch(inactiveCoach)}
+                        aria-label={`Switch to ${inactiveCoachProfile.name}`}
+                      >
+                        <img src={activeCoachProfile.avatar} alt={`${activeCoachProfile.name} coach avatar`} />
+                      </button>
+                    ) : (
+                      <div
+                        key={`${activeCoach}-${coachSlideTick}`}
+                        className={`landing-personality-stage-avatar landing-personality-stage-avatar--${activeCoach} ${
+                          coachSlideDirection > 0
+                            ? 'landing-personality-stage-avatar--descend-forward'
+                            : 'landing-personality-stage-avatar--descend-backward'
+                        } ${interactionMode === 'voice' && sessionState === 'connected' ? 'landing-personality-stage-avatar--voice' : ''}`}
+                      >
+                        <img src={activeCoachProfile.avatar} alt={`${activeCoachProfile.name} coach avatar`} />
+                      </div>
+                    )}
+                    {contactActionsView !== 'text' ? (
+                      <button
+                        type="button"
+                        className="landing-personality-stage-switch landing-personality-stage-switch--right"
+                        onClick={() => handleCycleCoach(1)}
+                        aria-label="Show next coach"
+                      >
+                        <ChevronRight size={24} />
+                      </button>
+                    ) : null}
                   </div>
                 </div>
 
                 <div className="landing-personality-stage-nav">
-                  <button type="button" aria-label="Previous coach" onClick={() => switchCoach(-1)}>
-                    <ChevronLeft size={26} />
-                  </button>
-
                   <div className="landing-personality-stage-meta">
-                    <p className={`landing-personality-stage-name landing-personality-stage-name--${activeCoachProfile.accent}`}>
-                      {activeCoachProfile.name}
-                    </p>
-                    <p className="landing-personality-stage-blurb">{activeCoachProfile.blurb}</p>
-                    <p className="landing-personality-stage-approach">{activeCoachProfile.approach}</p>
+	                    <p
+	                      className={`landing-personality-stage-name landing-personality-stage-name--${activeCoachProfile.accent} ${
+	                        contactActionsView === 'text' ? 'landing-personality-stage-name--compact' : ''
+	                      }`}
+	                    >
+	                      {activeCoachProfile.name}
+	                    </p>
+	                    {contactActionsView !== 'text' ? (
+	                      <p className="landing-personality-stage-blurb">{activeCoachProfile.blurb}</p>
+	                    ) : null}
+	                    {contactActionsView !== 'text' && activeCoachProfile.approach ? (
+	                      <p className="landing-personality-stage-approach">{activeCoachProfile.approach}</p>
+	                    ) : null}
                   </div>
+                </div>
 
-                  <button type="button" aria-label="Next coach" onClick={() => switchCoach(1)}>
-                    <ChevronRight size={26} />
-                  </button>
+                <div
+                  className={`landing-personality-contact-actions landing-personality-contact-actions--${activeCoachProfile.accent}`}
+                  aria-label="Choose contact method"
+                >
+                  {contactActionsView === 'chooser' && (
+                    <div className="landing-contact-actions-chooser">
+                      <button
+                        type="button"
+                        className={`landing-contact-action landing-contact-action--call ${interactionMode === 'voice' ? 'is-active' : ''}`.trim()}
+                        onClick={handleOpenVoicePanel}
+                      >
+                        <CallRoundedIcon className="landing-contact-action-icon" />
+                        <span className="landing-contact-action-label">Call</span>
+                      </button>
+                      <button
+                        type="button"
+                        className={`landing-contact-action landing-contact-action--text ${interactionMode === 'text' ? 'is-active' : ''}`.trim()}
+                        onClick={handleOpenTextPanel}
+                      >
+                        <SendRoundedIcon className="landing-contact-action-icon" />
+                        <span className="landing-contact-action-label">Text</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {contactActionsView === 'voice' && (
+                    <div className="landing-contact-panel landing-contact-panel--voice" role="group" aria-label="Voice call controls">
+                      <div className="landing-contact-panel-head">
+
+                        <button
+                          type="button"
+                          className="landing-contact-panel-back"
+                          onClick={handleCloseContactActionsPanel}
+                        >
+                          <ChevronLeft size={16} aria-hidden="true" />
+                          Back
+                        </button>
+                      </div>
+                      <div className="landing-voice-control-row">
+                        <button
+                          type="button"
+                          className="landing-voice-icon-button"
+                          onClick={toggleMic}
+                          aria-label={isMicMuted ? 'Unmute microphone' : 'Mute microphone'}
+                          aria-pressed={isMicMuted}
+                        >
+                          {isMicMuted ? <MicOffRoundedIcon /> : <MicRoundedIcon />}
+                        </button>
+                        <button
+                          type="button"
+                          className="landing-voice-hangup-button"
+                          onClick={handleHangupCall}
+                          aria-label="Hang up call"
+                        >
+                          <CallEndRoundedIcon className="landing-voice-hangup-icon" />
+                        </button>
+                        <button
+                          type="button"
+                          className="landing-voice-icon-button"
+                          onClick={toggleSpeakerMute}
+                          aria-label={isSpeakerMuted ? 'Unmute speaker' : 'Mute speaker'}
+                        >
+                          {isSpeakerMuted ? <VolumeOffRoundedIcon /> : <VolumeUpRoundedIcon />}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {contactActionsView === 'text' && (
+                    <form className="landing-contact-panel landing-contact-panel--text" onSubmit={handleChatSubmit}>
+                      <div
+                        ref={chatTranscriptRef}
+                        className="landing-chat-transcript"
+                        aria-live="polite"
+                        aria-label="Chat transcript"
+                      >
+                        {!chatMessages.length && !chatLoading ? (
+                          <p className="landing-chat-transcript-empty">
+                            Send a message to start chatting with {activeCoachProfile.name}.
+                          </p>
+                        ) : null}
+
+                        {chatMessages.map((message, index) => (
+                          <div
+                            key={`${message.role}-${index}`}
+                            className={`landing-chat-bubble-row landing-chat-bubble-row--${message.role}`}
+                          >
+                            <p className={`landing-chat-bubble landing-chat-bubble--${message.role}`}>{message.text}</p>
+                          </div>
+                        ))}
+
+                        {chatLoading ? (
+                          <div className="landing-chat-bubble-row landing-chat-bubble-row--assistant">
+                            <p className="landing-chat-bubble landing-chat-bubble--assistant landing-chat-bubble--typing">...</p>
+                          </div>
+                        ) : null}
+                      </div>
+                      <div className="landing-text-composer">
+                        <input
+                          ref={chatInputRef}
+                          type="text"
+                          placeholder="iMessage"
+                          value={chatInput}
+                          onChange={(event) => setChatInput(event.target.value)}
+                          disabled={chatLoading}
+                        />
+                        <button
+                          type="submit"
+                          className="landing-text-send-button"
+                          aria-label="Send message"
+                          disabled={chatLoading || !chatInput.trim()}
+                        >
+                          <SendRoundedIcon />
+                        </button>
+                      </div>
+                      {chatError && <p className="landing-contact-panel-error">{chatError}</p>}
+                    </form>
+                  )}
                 </div>
               </div>
             </div>
@@ -1213,11 +1121,6 @@ export default function Landing() {
                 Your coach tracks your movement live and gives corrections during the set, not after it. You train with
                 eyes on your form the whole time.
               </p>
-              <ul className="landing-check-list landing-check-list--blue landing-check-list--feedback">
-                <li>LIVE FORM CUES WHILE YOU MOVE</li>
-                <li>REST-TIME ADJUSTMENTS BETWEEN SETS</li>
-                <li>CORRECTIONS TIED TO YOUR EXACT REPS</li>
-              </ul>
             </div>
 
             <div className="landing-form-feedback-visual">
@@ -1230,7 +1133,7 @@ export default function Landing() {
         <section id="messaging" data-wave-section="messaging" className="landing-section landing-section--messaging">
           <div className="landing-container landing-messaging">
             <h2 className="landing-heading landing-heading--center">
-              YOUR COACH STAYS WITH YOU <span className="landing-display-blue">BETWEEN WORKOUTS</span>
+              MULTIPLE WAYS TO <span className="landing-display-blue">CONNECT.</span>
             </h2>
             <p className="landing-comparison-subtitle">Text, voice, and in-app chat. Same coach. Same thread. Every day.</p>
 
@@ -1242,12 +1145,6 @@ export default function Landing() {
                   </span>
                   <span>TEXT FROM ANYWHERE</span>
                 </div>
-
-                <ul className="landing-check-list landing-check-list--blue">
-                  <li>SMS OR WHATSAPP, WHATEVER&apos;S EASIEST</li>
-                  <li>DAILY CHECK-INS THAT FEEL HUMAN</li>
-                  <li>NO CONTEXT LOST BETWEEN CHANNELS</li>
-                </ul>
 
                 <PhoneMock src={messagingLeft} alt="SMS coaching conversation" className="landing-phone--messaging" />
               </div>
@@ -1261,12 +1158,6 @@ export default function Landing() {
                     VOICE + <span className="landing-display-pink">IN-APP CHAT</span>
                   </span>
                 </div>
-
-                <ul className="landing-check-list landing-check-list--pink">
-                  <li>TALK MID-SESSION WHEN THINGS CHANGE</li>
-                  <li>UPDATE TRAINING ON THE SPOT</li>
-                  <li>KEEP ACCOUNTABILITY ALIVE BETWEEN LIFTS</li>
-                </ul>
 
                 <PhoneMock src={messagingRight} alt="In-app coach chat" className="landing-phone--messaging" />
               </div>
@@ -1283,7 +1174,7 @@ export default function Landing() {
             </div>
 
             <div className="landing-workouts-copy">
-              <p className="landing-overline landing-overline--blue">COACH-BUILT PROGRAMMING</p>
+
               <h2 className="landing-display landing-display--section">
                 <span>YOUR PLAN</span>
                 <span>
@@ -1433,8 +1324,8 @@ export default function Landing() {
           <div className="landing-container landing-warm-network">
             <div className="landing-warm-copy">
               <h2 className="landing-display landing-display--section landing-warm-title">
-                <span>JOIN OUR</span>
-                <span className="landing-display-blue">WARM NETWORK</span>
+                <span>STAY IN THE</span>
+                <span className="landing-display-blue">LOOP</span>
               </h2>
               <p className="landing-section-body landing-warm-body landing-subheading-match">
                 No pressure. Drop your info and we&apos;ll keep you in the loop - launches, updates, and the occasional

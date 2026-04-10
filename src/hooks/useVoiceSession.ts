@@ -73,6 +73,14 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
     }
   }, [isSpeakerMuted]);
 
+  useEffect(() => {
+    if (sessionState !== "connected" || !clientRef.current) {
+      return;
+    }
+
+    clientRef.current.enableMic(!isMicMuted);
+  }, [isMicMuted, sessionState]);
+
   const resetPendingBotTurn = useCallback(() => {
     pendingBotTurnRef.current = "";
     pendingBotTurnSourceRef.current = "none";
@@ -450,11 +458,12 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
   }, [commitPendingBotTurn]);
 
   const toggleMic = useCallback(() => {
-    if (!clientRef.current) return;
-    const newState = !isMicMuted;
-    clientRef.current.enableMic(!newState);
-    setIsMicMuted(newState);
-  }, [isMicMuted]);
+    setIsMicMuted((currentState) => {
+      const nextState = !currentState;
+      clientRef.current?.enableMic(!nextState);
+      return nextState;
+    });
+  }, []);
 
   const toggleSpeakerMute = useCallback(() => {
     setIsSpeakerMuted((currentState) => {
