@@ -29,8 +29,8 @@ import reedSpeaking from '../images/emojis/Reed/Reed_botSpeaking_1.png';
 import reedSpeakingAlt from '../images/emojis/Reed/Reed_botSpeaking_2.png';
 import reedDisconnected from '../images/emojis/Reed/Reed_disconnected_1.png';
 import reedLive from '../images/emojis/Reed/Reed_micLive_2.png';
-import splitRest from '../images/iMocksImages/iMockup - iPhone 14-2.png';
-import activityList from '../images/iMocksImages/iMockup - iPhone 14-4.png';
+import feedbackPushup from '../images/iMocksImages/realtime-feedback-pushup.png';
+import feedbackSquat from '../images/iMocksImages/realtime-feedback-squat.png';
 import messagingLeft from '../images/iMocksImages/blueChat_iMsg_iMock.png';
 import messagingRight from '../images/iMocksImages/inApp_msging_iMock.png';
 import { useTextChat } from '../hooks/useTextChat';
@@ -1210,8 +1210,8 @@ export default function Landing() {
             </div>
 
             <div className="landing-form-feedback-visual">
-              <PhoneMock src={splitRest} alt="Live form feedback during workout session" className="landing-phone--feedback-main" />
-              <PhoneMock src={activityList} alt="Activity view with live coaching context" className="landing-phone--feedback-right" />
+              <PhoneMock src={feedbackPushup} alt="Live form feedback during workout session" className="landing-phone--feedback-main" />
+              <PhoneMock src={feedbackSquat} alt="Activity view with live coaching context" className="landing-phone--feedback-right" />
             </div>
           </div>
         </section>

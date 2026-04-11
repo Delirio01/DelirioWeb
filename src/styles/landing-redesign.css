@@ -29,8 +29,8 @@
   --landing-font-body: "Source Sans 3", "Avenir Next", "Helvetica Neue", sans-serif;
   --landing-phone-feature-main: clamp(220px, 24vw, 330px);
   --landing-phone-feature-side: clamp(90px, 11vw, 100px);
-  --landing-phone-feedback-main: clamp(180px, 18vw, 200px);
-  --landing-phone-feedback-side: clamp(116px, 12vw, 168px);
+  --landing-phone-feedback-main: clamp(204px, 21vw, 236px);
+  --landing-phone-feedback-side: clamp(132px, 14vw, 188px);
   --landing-phone-messaging: clamp(164px, 16vw, 228px);
   --landing-phone-messaging-secondary: clamp(123px, 12vw, 171px);
   --landing-phone-workout-left: clamp(126px, 13vw, 182px);
@@ -893,7 +893,7 @@
 
 .landing-form-feedback-visual {
   left: clamp(-28px, -2.2vw, -12px);
-  min-height: clamp(420px, 48vw, 560px);
+  min-height: clamp(460px, 52vw, 620px);
   position: relative;
 }
 
@@ -3198,23 +3198,23 @@
   .landing-subscription-visual,
   .landing-workouts-visual {
     left: 0;
-    min-height: clamp(420px, 46vw, 500px);
+    min-height: clamp(450px, 50vw, 540px);
   }
 
   .landing-phone--feedback-main {
-    width: clamp(170px, 24vw, 220px);
+    width: clamp(188px, 27vw, 242px);
   }
 
   .landing-phone--feedback-side {
-    left: 12%;
+    left: 10%;
     top: 10%;
-    width: clamp(112px, 16vw, 146px);
+    width: clamp(122px, 18vw, 162px);
   }
 
   .landing-phone--feedback-right {
-    right: 12%;
+    right: 10%;
     top: 10%;
-    width: clamp(112px, 16vw, 146px);
+    width: clamp(122px, 18vw, 162px);
   }
 
   .landing-phone--feature-main {
@@ -3396,7 +3396,7 @@
   .landing-form-feedback-visual,
   .landing-subscription-visual,
   .landing-workouts-visual {
-    min-height: 420px;
+    min-height: 460px;
   }
 
   .landing-eyecatcher {
@@ -3496,19 +3496,19 @@
   }
 
   .landing-phone--feedback-main {
-    width: clamp(124px, 38vw, 168px);
+    width: clamp(136px, 41vw, 186px);
   }
 
   .landing-phone--feedback-side {
-    left: 3%;
+    left: 2%;
     top: 10%;
-    width: clamp(86px, 27vw, 120px);
+    width: clamp(94px, 30vw, 132px);
   }
 
   .landing-phone--feedback-right {
-    right: 3%;
+    right: 2%;
     top: 10%;
-    width: clamp(86px, 27vw, 120px);
+    width: clamp(94px, 30vw, 132px);
   }
 
   .landing-workouts-visual {
