@@ -36,6 +36,8 @@ export function LandingLegalShell({
     <div className="landing-shell">
       <LandingSiteHeader
         isScrolled={isScrolled}
+        isStripVisible={false}
+        showDownloadStrip={false}
         onFeaturesClick={() => goToHomeSection("features")}
         onPersonalitiesClick={() => goToHomeSection("form-feedback")}
         onSubscriptionClick={() => goToHomeSection("subscription")}

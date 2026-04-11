@@ -7,6 +7,7 @@ import appStoreBadge from "../images/appleOfficialBadges/Mobile app store badge.
 interface LandingSiteHeaderProps {
   isScrolled?: boolean;
   isStripVisible?: boolean;
+  showDownloadStrip?: boolean;
   onFeaturesClick: () => void;
   onPersonalitiesClick: () => void;
   onSubscriptionClick: () => void;
@@ -16,6 +17,7 @@ interface LandingSiteHeaderProps {
 export function LandingSiteHeader({
   isScrolled = false,
   isStripVisible,
+  showDownloadStrip = true,
   onFeaturesClick,
   onPersonalitiesClick,
   onSubscriptionClick,
@@ -48,18 +50,20 @@ export function LandingSiteHeader({
           <div className="landing-header-spacer" aria-hidden="true" />
         </div>
       </header>
-      <div
-        className={`landing-header-download-strip ${shouldShowStrip ? "is-visible" : ""}`}
-        role="region"
-        aria-label="App download"
-      >
-        <div className="landing-container landing-header-download-inner">
-          <p className="landing-header-download-copy">Download Delirio on the App Store</p>
-          <a className="landing-header-download-cta" href={downloadUrl} target="_blank" rel="noreferrer">
-            <img style = {{height: 46}} className="landing-header-badge" src={appStoreBadge} alt="Download on the App Store" />
-          </a>
+      {showDownloadStrip ? (
+        <div
+          className={`landing-header-download-strip ${shouldShowStrip ? "is-visible" : ""}`}
+          role="region"
+          aria-label="App download"
+        >
+          <div className="landing-container landing-header-download-inner">
+            <p className="landing-header-download-copy">Download Delirio on the App Store</p>
+            <a className="landing-header-download-cta" href={downloadUrl} target="_blank" rel="noreferrer">
+              <img style = {{height: 46}} className="landing-header-badge" src={appStoreBadge} alt="Download on the App Store" />
+            </a>
+          </div>
         </div>
-      </div>
+      ) : null}
     </>
   );
 }
