@@ -13,6 +13,14 @@
   --landing-copy: #6d6d72;
   --landing-soft-blue: rgba(58, 144, 255, 0.3);
   --landing-soft-pink: rgba(216, 117, 255, 0.28);
+  --landing-hero-blue-gradient: linear-gradient(
+    132deg,
+    #2f7ef8 0%,
+    #56a8ff 34%,
+    #8cc3ff 49%,
+    #4698ff 66%,
+    #256fe5 100%
+  );
   --landing-line: rgba(15, 23, 42, 0.12);
   --landing-card: rgba(255, 255, 255, 0.9);
   --landing-shadow: 0 26px 60px rgba(72, 99, 163, 0.12);
@@ -446,14 +454,18 @@
 
 @supports ((-webkit-background-clip: text) or (background-clip: text)) {
   .landing-display--hero-flex .landing-display-blue {
-    background-image: linear-gradient(
-      132deg,
-      #2f7ef8 0%,
-      #56a8ff 34%,
-      #8cc3ff 49%,
-      #4698ff 66%,
-      #256fe5 100%
-    );
+    background-image: var(--landing-hero-blue-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .landing-header-nav button:hover,
+  .landing-header-nav button:focus-visible {
+    background-image: var(--landing-hero-blue-gradient);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
