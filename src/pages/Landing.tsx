@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type FormEvent } from 'react';
 import {
   ChevronLeft,
   ChevronRight,
@@ -30,7 +30,6 @@ import reedSpeakingAlt from '../images/emojis/Reed/Reed_botSpeaking_2.png';
 import reedDisconnected from '../images/emojis/Reed/Reed_disconnected_1.png';
 import reedLive from '../images/emojis/Reed/Reed_micLive_2.png';
 import splitRest from '../images/iMocksImages/iMockup - iPhone 14-2.png';
-import exerciseLibrary from '../images/iMocksImages/iMockup - iPhone 14-3.png';
 import activityList from '../images/iMocksImages/iMockup - iPhone 14-4.png';
 import messagingLeft from '../images/iMocksImages/blueChat_iMsg_iMock.png';
 import messagingRight from '../images/iMocksImages/inApp_msging_iMock.png';
@@ -84,7 +83,6 @@ type WaveSection =
   | 'personalities'
   | 'form-feedback'
   | 'messaging'
-  | 'workouts'
   | 'comparison'
   | 'subscription'
   | 'faq';
@@ -105,18 +103,18 @@ type WaveLineMotion = {
 };
 
 const heroNodes: ClusterNode[] = [
-  { src: irisDefault, top: '12%', left: '16%', size: 128, rotate: -2 },
-  { kind: 'text', text: '\u{1F4A1}', top: '10%', left: '34%', size: 32 },
-  { src: irisSpeaking, top: '18%', left: '74%', size: 106, rotate: 2 },
-  { src: reedSpeakingAlt, top: '30%', left: '34%', size: 86, rotate: -5 },
-  { src: irisSpeakingAlt, top: '40%', left: '57%', size: 240, rotate: -1 },
-  { src: reedDefault, top: '48%', left: '14%', size: 80, rotate: 4 },
-  { src: reedLive, top: '47%', left: '86%', size: 76, rotate: -3 },
-  { src: irisConnecting, top: '60%', left: '30%', size: 210, rotate: -3 },
-  { src: reedDisconnected, top: '66%', left: '56%', size: 102, rotate: -2 },
-  { src: irisDefault, top: '72%', left: '12%', size: 88, rotate: -6 },
-  { src: reedSpeaking, top: '78%', left: '86%', size: 112, rotate: -2 },
-  { src: irisLive, top: '88%', left: '44%', size: 154, rotate: 1 },
+  { src: irisDefault, top: '6%', left: '8%', size: 108, rotate: -2 },
+  { kind: 'text', text: '\u{1F4A1}', top: '4%', left: '29%', size: 28 },
+  { src: irisSpeaking, top: '12%', left: '88%', size: 96, rotate: 2 },
+  { src: reedSpeakingAlt, top: '24%', left: '19%', size: 76, rotate: -5 },
+  { src: irisSpeakingAlt, top: '38%', left: '55%', size: 206, rotate: -1 },
+  { src: reedDefault, top: '52%', left: '5%', size: 68, rotate: 4 },
+  { src: reedLive, top: '50%', left: '96%', size: 68, rotate: -3 },
+  { src: irisConnecting, top: '66%', left: '17%', size: 182, rotate: -3 },
+  { src: reedDisconnected, top: '69%', left: '69%', size: 90, rotate: -2 },
+  { src: irisDefault, top: '82%', left: '6%', size: 78, rotate: -6 },
+  { src: reedSpeaking, top: '83%', left: '94%', size: 96, rotate: -2 },
+  { src: irisLive, top: '92%', left: '44%', size: 130, rotate: 1 },
 ];
 
 const subscriptionNodes: ClusterNode[] = [
@@ -364,7 +362,6 @@ const waveSections: WaveSection[] = [
   'personalities',
   'form-feedback',
   'messaging',
-  'workouts',
   'comparison',
   'subscription',
   'faq',
@@ -395,16 +392,24 @@ const waveMotionBySection: Record<WaveSection, WaveLineMotion> = {
   },
   'form-feedback': { blueAmp: 1.1, pinkAmp: 0.98, blueShiftX: -2, blueShiftY: 8, pinkShiftX: 3, pinkShiftY: 14, blueScaleX: 1.02, pinkScaleX: 1.04, blueRotate: 0.4, pinkRotate: -0.4 },
   messaging: { blueAmp: 1.34, pinkAmp: 0.86, blueShiftX: -3, blueShiftY: 18, pinkShiftX: 2, pinkShiftY: 22, blueScaleX: 1.04, pinkScaleX: 1.08, blueRotate: 1.2, pinkRotate: -1.2 },
-  workouts: { blueAmp: 0.9, pinkAmp: 1.22, blueShiftX: -1, blueShiftY: 20, pinkShiftX: 4, pinkShiftY: 12, blueScaleX: 1.03, pinkScaleX: 1.1, blueRotate: 0.7, pinkRotate: -0.8 },
   comparison: { blueAmp: 1.28, pinkAmp: 0.92, blueShiftX: 0, blueShiftY: 0, pinkShiftX: 1, pinkShiftY: 14, blueScaleX: 1.04, pinkScaleX: 1.02, blueRotate: -0.6, pinkRotate: 0.6 },
   subscription: { blueAmp: 1.28, pinkAmp: 1.12, blueShiftX: -1, blueShiftY: -2, pinkShiftX: 2, pinkShiftY: 8, blueScaleX: 1.03, pinkScaleX: 1.05, blueRotate: 0.5, pinkRotate: -0.2 },
   faq: { blueAmp: 0.94, pinkAmp: 1.18, blueShiftX: -2, blueShiftY: -6, pinkShiftX: 3, pinkShiftY: 4, blueScaleX: 1, pinkScaleX: 1.04, blueRotate: -0.3, pinkRotate: 0.5 },
 };
 
-function scrollToSection(sectionId: string) {
-  document.getElementById(sectionId)?.scrollIntoView({
+function scrollToSection(sectionId: string, offsetPx: number = 0) {
+  const section = document.getElementById(sectionId);
+  if (!section) {
+    return;
+  }
+
+  const scrollMarginTop = Number.parseFloat(window.getComputedStyle(section).scrollMarginTop || '0') || 0;
+  const targetTop =
+    window.scrollY + section.getBoundingClientRect().top - scrollMarginTop + offsetPx;
+
+  window.scrollTo({
+    top: Math.max(targetTop, 0),
     behavior: 'smooth',
-    block: 'start',
   });
 }
 
@@ -412,43 +417,63 @@ function FloatingCluster({
   nodes,
   className = '',
   eagerCount = 0,
+  animationEnabled = true,
+  burstFromLogo = false,
+  burstOrigin = { left: 53, top: 54 },
 }: {
   nodes: ClusterNode[];
   className?: string;
   eagerCount?: number;
+  animationEnabled?: boolean;
+  burstFromLogo?: boolean;
+  burstOrigin?: { left: number; top: number };
 }) {
   return (
-    <div className={`landing-floating-cluster ${className}`}>
+    <div className={`landing-floating-cluster ${className} ${animationEnabled ? '' : 'is-static'}`.trim()}>
       {nodes.map((node, index) => {
+        const floatDelay = burstFromLogo ? `${420 + index * 56}ms` : `${index * -0.75}s`;
+        const burstDelay = `${80 + index * 42}ms`;
+
         const style = {
-          top: node.top,
-          left: node.left,
+          top: 'var(--node-top)',
+          left: 'var(--node-left)',
           width: `${node.size}px`,
           height: `${node.size}px`,
           fontSize: `${node.size}px`,
           transform: `translate(-50%, -50%) rotate(${node.rotate ?? 0}deg)`,
           opacity: node.opacity ?? 1,
-          animationDelay: `${index * -0.75}s`,
-        };
+          '--node-left': node.left,
+          '--node-top': node.top,
+          '--node-origin-left': `${burstOrigin.left}%`,
+          '--node-origin-top': `${burstOrigin.top}%`,
+          '--node-float-delay': floatDelay,
+          '--node-burst-delay': burstDelay,
+        } as CSSProperties;
+
+        const nodeClassName = `landing-floating-node ${burstFromLogo ? 'landing-floating-node--burst' : ''} ${
+          node.kind === 'text' ? 'landing-floating-node--text' : ''
+        }`;
 
         if (node.kind === 'text') {
           return (
-            <span key={`${node.text}-${index}`} className="landing-floating-node landing-floating-node--text" style={style} aria-hidden="true">
-              {node.text}
+            <span key={`${node.text}-${index}`} className={nodeClassName} style={style} aria-hidden="true">
+              <span className="landing-floating-node-content">{node.text}</span>
             </span>
           );
         }
 
         const shouldEagerLoad = index < eagerCount;
         return (
-          <span key={`${node.src}-${index}`} className="landing-floating-node" style={style} aria-hidden="true">
-            <img
-              src={node.src}
-              alt=""
-              loading={shouldEagerLoad ? 'eager' : 'lazy'}
-              fetchPriority={shouldEagerLoad && index < 2 ? 'high' : 'auto'}
-              decoding="async"
-            />
+          <span key={`${node.src}-${index}`} className={nodeClassName} style={style} aria-hidden="true">
+            <span className="landing-floating-node-content">
+              <img
+                src={node.src}
+                alt=""
+                loading={shouldEagerLoad ? 'eager' : 'lazy'}
+                fetchPriority={shouldEagerLoad && index < 2 ? 'high' : 'auto'}
+                decoding="async"
+              />
+            </span>
           </span>
         );
       })}
@@ -477,6 +502,7 @@ function PhoneMock({
 }
 
 export default function Landing() {
+  const simplePricingAnimation = false;
   const firestoreServiceRef = useRef<FirestoreService | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDownloadStripVisible, setIsDownloadStripVisible] = useState(false);
@@ -496,11 +522,15 @@ export default function Landing() {
   const [isWarmSubmitting, setIsWarmSubmitting] = useState(false);
   const [warmSubmitError, setWarmSubmitError] = useState<string | null>(null);
   const [isWarmSubmitSuccess, setIsWarmSubmitSuccess] = useState(false);
+  const [subscriptionBurstTick, setSubscriptionBurstTick] = useState(0);
+  const [hasSubscriptionFocused, setHasSubscriptionFocused] = useState(false);
 
   const chatInputRef = useRef<HTMLInputElement | null>(null);
   const chatTranscriptRef = useRef<HTMLDivElement | null>(null);
   const previousCoachRef = useRef<CoachId>(activeCoach);
   const previousScrollYRef = useRef(0);
+  const previousWaveSectionRef = useRef<WaveSection>('hero');
+  const subscriptionBurstDelayTimerRef = useRef<number | null>(null);
 
   const {
     sessionState,
@@ -552,6 +582,23 @@ export default function Landing() {
     window.addEventListener('scroll', onScroll, { passive: true });
 
     return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    const messagingSection = document.getElementById('messaging');
+    if (!messagingSection) {
+      return;
+    }
+
+    const nextProgress = activeWaveSection === 'messaging' ? 1 : 0;
+    messagingSection.style.setProperty('--messaging-focus-progress', `${nextProgress}`);
+  }, [activeWaveSection]);
+
+  useEffect(() => {
+    const messagingSection = document.getElementById('messaging');
+    return () => {
+      messagingSection?.style.removeProperty('--messaging-focus-progress');
+    };
   }, []);
 
   useEffect(() => {
@@ -609,6 +656,44 @@ export default function Landing() {
       window.removeEventListener('resize', updateActiveWaveSection);
     };
   }, []);
+
+  useEffect(() => {
+    if (!simplePricingAnimation) {
+      if (subscriptionBurstDelayTimerRef.current !== null) {
+        window.clearTimeout(subscriptionBurstDelayTimerRef.current);
+        subscriptionBurstDelayTimerRef.current = null;
+      }
+
+      setHasSubscriptionFocused(false);
+      previousWaveSectionRef.current = activeWaveSection;
+      return;
+    }
+
+    const previousSection = previousWaveSectionRef.current;
+    const enteredSubscription =
+      activeWaveSection === 'subscription' && previousSection !== 'subscription';
+
+    if (enteredSubscription) {
+      if (subscriptionBurstDelayTimerRef.current !== null) {
+        window.clearTimeout(subscriptionBurstDelayTimerRef.current);
+      }
+
+      subscriptionBurstDelayTimerRef.current = window.setTimeout(() => {
+        setHasSubscriptionFocused(true);
+        setSubscriptionBurstTick((current) => current + 1);
+        subscriptionBurstDelayTimerRef.current = null;
+      }, 220);
+    }
+
+    previousWaveSectionRef.current = activeWaveSection;
+
+    return () => {
+      if (subscriptionBurstDelayTimerRef.current !== null) {
+        window.clearTimeout(subscriptionBurstDelayTimerRef.current);
+        subscriptionBurstDelayTimerRef.current = null;
+      }
+    };
+  }, [activeWaveSection, simplePricingAnimation]);
 
   useEffect(() => {
     if (previousCoachRef.current === activeCoach) {
@@ -824,7 +909,6 @@ export default function Landing() {
 
   //wave behavior switch : swicthes on/off the wave behaviour in the baackground blue and pink lines 
   const waveBehaviour = true;
-
   return (
     <div className="landing-shell">
       <LandingBackgroundLines
@@ -856,10 +940,11 @@ export default function Landing() {
       <main className="landing-main">
         <section id="hero" data-wave-section="hero" className="landing-section landing-section--hero">
           <div className="landing-container landing-eyecatcher">
+            
             <div className="landing-eyecatcher-copy">
               <p className="landing-eyecatcher-kicker">PERSONAL TRAINING</p>
               <h1 className="landing-display landing-display--hero landing-display--hero-flex">
-                <span>GUDEINCE</span>
+                <span>GUIDANCE</span>
                 <span>THAT</span>
                 <span className="landing-display-blue">SHOWS</span>
                 <span className="landing-display-blue">UP</span>
@@ -870,7 +955,7 @@ export default function Landing() {
               <div className="landing-eyecatcher-body">
                 <p>Meet the AI coach that watches your form, guides your workouts, and actually shows up when you do.</p>
               </div>
-              <button className="landing-outline-button landing-outline-button--hero" type="button" onClick={() => scrollToSection('personalities')}>
+              <button className="landing-outline-button landing-outline-button--hero" type="button" onClick={() => scrollToSection('personalities', 264)}>
                 <span>Find your coach</span>
                 <MoveRight size={20} />
               </button>
@@ -879,6 +964,7 @@ export default function Landing() {
             <div className="landing-eyecatcher-visual">
               <FloatingCluster nodes={heroNodes} className="landing-floating-cluster--hero" eagerCount={6} />
             </div>
+            
           </div>
         </section>
 
@@ -1130,12 +1216,22 @@ export default function Landing() {
           </div>
         </section>
 
-        <section id="messaging" data-wave-section="messaging" className="landing-section landing-section--messaging">
+        <section
+          id="messaging"
+          data-wave-section="messaging"
+          className="landing-section landing-section--messaging"
+        >
           <div className="landing-container landing-messaging">
-            <h2 className="landing-heading landing-heading--center">
-              MULTIPLE WAYS TO <span className="landing-display-blue">CONNECT.</span>
+            <h2 className="landing-heading landing-heading--center landing-heading--connect-schedule">
+              <span>MULTIPLE WAYS TO</span>
+              <span className="landing-display-blue">CONNECT</span>
+              <span>&amp;</span>
+              <span className="landing-display-blue">SCHEDULE.</span>
             </h2>
-            <p className="landing-comparison-subtitle">Text, voice, and in-app chat. Same coach. Same thread. Every day.</p>
+            <p className="landing-comparison-subtitle">
+              Text, voice, or in-app chat with the same coach and build your routine in the same thread:
+              generate your split, adjust your schedule, and update the plan in real time.
+            </p>
 
             <div className="landing-messaging-grid">
               <div className="landing-messaging-column">
@@ -1143,10 +1239,20 @@ export default function Landing() {
                   <span className="landing-icon-badge landing-icon-badge--blue" aria-hidden="true">
                     <MessageCircle size={36} />
                   </span>
-                  <span>TEXT FROM ANYWHERE</span>
+                  <span style = {{fontWeight:"bolder"}}>TEXT</span>
                 </div>
-
-                <PhoneMock src={messagingLeft} alt="SMS coaching conversation" className="landing-phone--messaging" />
+                <div className="landing-messaging-stack landing-messaging-stack--blue">
+                  <PhoneMock
+                    src={messagingLeft}
+                    alt="SMS coaching conversation"
+                    className="landing-phone--messaging landing-phone--messaging-main"
+                  />
+                  <PhoneMock
+                    src={messagingRight}
+                    alt="In-app coaching thread placeholder"
+                    className="landing-phone--messaging landing-phone--messaging-secondary"
+                  />
+                </div>
               </div>
 
               <div className="landing-messaging-column landing-messaging-column--right">
@@ -1154,36 +1260,23 @@ export default function Landing() {
                   <span className="landing-icon-badge landing-icon-badge--pink" aria-hidden="true">
                     <Smartphone size={36} />
                   </span>
-                  <span>
-                    VOICE + <span className="landing-display-pink">IN-APP CHAT</span>
+                  <span style = {{fontWeight:"bolder"}}>
+                    VOICE 
                   </span>
                 </div>
-
-                <PhoneMock src={messagingRight} alt="In-app coach chat" className="landing-phone--messaging" />
+                <div className="landing-messaging-stack landing-messaging-stack--pink">
+                  <PhoneMock
+                    src={messagingRight}
+                    alt="In-app coach chat"
+                    className="landing-phone--messaging landing-phone--messaging-main"
+                  />
+                  <PhoneMock
+                    src={messagingLeft}
+                    alt="SMS coaching thread placeholder"
+                    className="landing-phone--messaging landing-phone--messaging-secondary"
+                  />
+                </div>
               </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="workouts" data-wave-section="workouts" className="landing-section landing-section--workouts">
-          <div className="landing-container landing-workouts">
-            <div className="landing-workouts-visual">
-              <PhoneMock src={exerciseLibrary} alt="Exercise library view" className="landing-phone--workout-left" />
-              <PhoneMock src={splitRest} alt="Workout split view" className="landing-phone--workout-center" />
-              <PhoneMock src={activityList} alt="Activity plan view" className="landing-phone--workout-right" />
-            </div>
-
-            <div className="landing-workouts-copy">
-
-              <h2 className="landing-display landing-display--section">
-                <span>YOUR PLAN</span>
-                <span>
-                  ADAPTS <span className="landing-display-blue">WITH YOU</span>
-                </span>
-              </h2>
-              <p className="landing-section-body">
-                Traveling, short on time, or recovering from a rough week? Your coach adjusts your week in real time.
-              </p>
             </div>
           </div>
         </section>
@@ -1252,7 +1345,13 @@ export default function Landing() {
             </div>
 
             <div className="landing-subscription-visual">
-              <FloatingCluster nodes={subscriptionNodes} className="landing-floating-cluster--subscription" />
+              <FloatingCluster
+                key={simplePricingAnimation ? `subscription-burst-${subscriptionBurstTick}` : 'subscription-static'}
+                nodes={subscriptionNodes}
+                className="landing-floating-cluster--subscription"
+                animationEnabled={simplePricingAnimation}
+                burstFromLogo={simplePricingAnimation && hasSubscriptionFocused}
+              />
 
               <div className="landing-subscription-stage">
                 <div className="landing-subscription-logo-block">
@@ -1313,7 +1412,7 @@ export default function Landing() {
                 })}
 
                 <a className="landing-faq-more" href="mailto:contact@delirio.fit">
-                  Still have a question? contact@delirio.fit
+                  Still have a question? Email contact@delirio.fit
                 </a>
               </div>
             </div>
@@ -1328,7 +1427,7 @@ export default function Landing() {
                 <span className="landing-display-blue">LOOP</span>
               </h2>
               <p className="landing-section-body landing-warm-body landing-subheading-match">
-                No pressure. Drop your info and we&apos;ll keep you in the loop - launches, updates, and the occasional
+                No pressure. Drop your info and we&apos;ll keep you in the loop: launches, updates, and the occasional
                 discount.
               </p>
             </div>

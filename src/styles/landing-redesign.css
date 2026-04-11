@@ -20,10 +20,11 @@
   --landing-font-subhead: "Manrope", "Avenir Next", "Helvetica Neue", sans-serif;
   --landing-font-body: "Source Sans 3", "Avenir Next", "Helvetica Neue", sans-serif;
   --landing-phone-feature-main: clamp(220px, 24vw, 330px);
-  --landing-phone-feature-side: clamp(108px, 11vw, 154px);
-  --landing-phone-feedback-main: clamp(180px, 18vw, 248px);
+  --landing-phone-feature-side: clamp(90px, 11vw, 100px);
+  --landing-phone-feedback-main: clamp(180px, 18vw, 200px);
   --landing-phone-feedback-side: clamp(116px, 12vw, 168px);
   --landing-phone-messaging: clamp(164px, 16vw, 228px);
+  --landing-phone-messaging-secondary: clamp(123px, 12vw, 171px);
   --landing-phone-workout-left: clamp(126px, 13vw, 182px);
   --landing-phone-workout-center: clamp(164px, 17vw, 232px);
   --landing-phone-workout-right: clamp(118px, 12vw, 172px);
@@ -357,6 +358,18 @@
   margin-top: 0;
 }
 
+.landing-section--messaging {
+  --messaging-focus-progress: 0;
+  --messaging-blue-main-x-base: -50%;
+  --messaging-blue-main-x-shift: -34%;
+  --messaging-pink-main-x-base: -50%;
+  --messaging-pink-main-x-shift: 34%;
+  --messaging-blue-secondary-x-base: -75%;
+  --messaging-blue-secondary-x-shift: 132%;
+  --messaging-pink-secondary-x-base: -46%;
+  --messaging-pink-secondary-x-shift: -110%;
+}
+
 .landing-section--testimonials::before {
 
   content: '';
@@ -385,13 +398,16 @@
   column-gap: 0.14em;
   display: flex;
   flex-wrap: wrap;
-  max-inline-size: min(100%, 10.6ch);
+  max-inline-size: min(100%, 10.8ch);
+  overflow: visible;
+  padding-inline-end: 0.04em;
   row-gap: 0.02em;
 }
 
 .landing-display--hero-flex > span {
   display: inline-flex;
   flex: 0 0 auto;
+  padding-inline-end: 0.02em;
 }
 
 .landing-display--section {
@@ -410,8 +426,39 @@
   text-align: center;
 }
 
+.landing-heading--connect-schedule {
+  align-items: baseline;
+  column-gap: 0.22em;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  row-gap: 0.04em;
+}
+
+.landing-heading--connect-schedule > span {
+  display: inline-flex;
+  white-space: nowrap;
+}
+
 .landing-display-blue {
   color: var(--landing-blue);
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .landing-display--hero-flex .landing-display-blue {
+    background-image: linear-gradient(
+      132deg,
+      #2f7ef8 0%,
+      #56a8ff 34%,
+      #8cc3ff 49%,
+      #4698ff 66%,
+      #256fe5 100%
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
 }
 
 .landing-display-pink {
@@ -537,12 +584,28 @@
   inset: 0;
 }
 
+.landing-floating-cluster--subscription {
+  z-index: 1;
+}
+
 .landing-floating-node {
-  animation: landingFloat 7s ease-in-out infinite;
   display: block;
   filter: drop-shadow(0 14px 18px rgba(72, 99, 163, 0.08));
   position: absolute;
   transform-origin: center;
+}
+
+.landing-floating-node-content {
+  animation: landingFloat 7s ease-in-out infinite;
+  animation-delay: var(--node-float-delay, 0s);
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.landing-floating-cluster.is-static .landing-floating-node,
+.landing-floating-cluster.is-static .landing-floating-node-content {
+  animation: none !important;
 }
 
 .landing-floating-node img {
@@ -556,10 +619,27 @@
 .landing-floating-node--text {
   align-items: center;
   display: flex;
+  justify-content: center;
+}
+
+.landing-floating-node--text .landing-floating-node-content {
+  align-items: center;
+  display: flex;
   font-size: inherit;
   justify-content: center;
   line-height: 1;
 }
+
+.landing-floating-cluster--subscription .landing-floating-node--burst {
+  animation: landingEmojiBurstOut 920ms cubic-bezier(0.2, 0.88, 0.3, 1) both;
+  animation-delay: var(--node-burst-delay, 0ms);
+}
+
+.landing-floating-cluster--subscription .landing-floating-node--burst .landing-floating-node-content {
+  animation-delay: calc(var(--node-float-delay, 0ms) + var(--node-burst-delay, 0ms));
+}
+
+
 
 .landing-eyecatcher,
 .landing-feature-intro,
@@ -641,6 +721,32 @@
   transform: scale(clamp(0.44, 0.16vw + 0.4, 0.58));
   transform-origin: right center;
   width: min(42vw, 560px);
+}
+
+@media (min-width: 1121px) {
+  .landing-eyecatcher {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    justify-content: space-evenly;
+  }
+
+  .landing-eyecatcher-copy {
+    justify-self: center;
+    padding-left: 0;
+  }
+
+  .landing-eyecatcher-visual {
+    inset: auto;
+    justify-self: center;
+    min-height: clamp(460px, 56vw, 620px);
+    position: relative;
+    width: min(100%, 580px);
+  }
+
+  .landing-floating-cluster--hero {
+    right: clamp(-6px, -0.4vw, 10px);
+    transform-origin: center;
+    width: min(100%, 540px);
+  }
 }
 
 .landing-feature-intro-copy,
@@ -826,7 +932,7 @@
   gap: clamp(32px, 2.8vw, 48px);
   justify-items: center;
   margin-inline: auto;
-  max-width: clamp(280px, 34vw, 460px);
+  max-width: clamp(300px, 36vw, 500px);
   width: 100%;
 }
 
@@ -933,8 +1039,97 @@
 
 .landing-phone--messaging {
   justify-self: center;
-  margin-top: clamp(10px, 1.4vw, 18px);
   width: var(--landing-phone-messaging);
+}
+
+.landing-messaging-stack {
+  isolation: isolate;
+  min-height: clamp(340px, 38vw, 480px);
+  perspective: 1100px;
+  position: relative;
+  width: min(100%, 430px);
+}
+
+.landing-messaging-stack .landing-phone {
+  margin-top: 0;
+  position: absolute;
+}
+
+.landing-phone--messaging-main {
+  --messaging-main-x-base: -50%;
+  --messaging-main-x-shift: 0%;
+  --messaging-main-y-base: 0px;
+  --messaging-main-y-shift: 0px;
+  --messaging-main-z-base: 0px;
+  --messaging-main-z-shift: 0px;
+  left: 50%;
+  top: 0;
+  transform: translate3d(
+      calc(var(--messaging-main-x-base) + (var(--messaging-main-x-shift) * var(--messaging-focus-progress))),
+      calc(var(--messaging-main-y-base) + (var(--messaging-main-y-shift) * var(--messaging-focus-progress))),
+      calc(var(--messaging-main-z-base) + (var(--messaging-main-z-shift) * var(--messaging-focus-progress)))
+    );
+  transition: transform 640ms cubic-bezier(0.4, 0, 0.2, 1);
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  will-change: transform;
+  width: var(--landing-phone-messaging);
+  z-index: 2;
+}
+
+.landing-messaging-stack--blue .landing-phone--messaging-main {
+  --messaging-main-x-base: var(--messaging-blue-main-x-base);
+  --messaging-main-x-shift: var(--messaging-blue-main-x-shift);
+}
+
+.landing-messaging-stack--pink .landing-phone--messaging-main {
+  --messaging-main-x-base: var(--messaging-pink-main-x-base);
+  --messaging-main-x-shift: var(--messaging-pink-main-x-shift);
+}
+
+.landing-phone--messaging-secondary {
+  --messaging-secondary-x-base: -60%;
+  --messaging-secondary-x-shift: 0%;
+  --messaging-secondary-y-base: 18px;
+  --messaging-secondary-y-shift: 12px;
+  --messaging-secondary-z-base: -320px;
+  --messaging-secondary-z-shift: 320px;
+  --messaging-secondary-scale-base: 1;
+  --messaging-secondary-scale-shift: 0;
+  --messaging-secondary-opacity-base: 0.46;
+  --messaging-secondary-opacity-shift: 0.5;
+  --messaging-secondary-blur-base: 1.6px;
+  --messaging-secondary-blur-shift: 1.4px;
+  filter: saturate(calc(0.82 + (0.28 * var(--messaging-focus-progress))))
+    blur(calc(var(--messaging-secondary-blur-base) - (var(--messaging-secondary-blur-shift) * var(--messaging-focus-progress))));
+  left: 50%;
+  opacity: calc(var(--messaging-secondary-opacity-base) + (var(--messaging-secondary-opacity-shift) * var(--messaging-focus-progress)));
+  top: 0;
+  transform: translate3d(
+      calc(var(--messaging-secondary-x-base) + (var(--messaging-secondary-x-shift) * var(--messaging-focus-progress))),
+      calc(var(--messaging-secondary-y-base) - (var(--messaging-secondary-y-shift) * var(--messaging-focus-progress))),
+      calc(var(--messaging-secondary-z-base) + (var(--messaging-secondary-z-shift) * var(--messaging-focus-progress)))
+    ) scale(calc(var(--messaging-secondary-scale-base) + (var(--messaging-secondary-scale-shift) * var(--messaging-focus-progress))));
+  transform-origin: 50% 50%;
+  transition:
+    transform 640ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 260ms ease,
+    filter 260ms ease;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  will-change: transform, opacity, filter;
+  width: var(--landing-phone-messaging-secondary);
+  z-index: 1;
+}
+
+.landing-messaging-stack--blue .landing-phone--messaging-secondary {
+  --messaging-secondary-x-base: var(--messaging-blue-secondary-x-base);
+  --messaging-secondary-x-shift: var(--messaging-blue-secondary-x-shift);
+}
+
+.landing-messaging-stack--pink .landing-phone--messaging-secondary {
+  --messaging-secondary-x-base: var(--messaging-pink-secondary-x-base);
+  --messaging-secondary-x-shift: var(--messaging-pink-secondary-x-shift);
 }
 
 .landing-workouts-visual {
@@ -1348,13 +1543,13 @@
 
 .landing-personality-experience {
   align-content: start;
-  gap: clamp(56px, 8.6vh, 108px);
+  gap: clamp(36px, 6.2vh, 72px);
 }
 
 .landing-personality-experience-shell {
   align-items: center;
   display: grid;
-  gap: clamp(40px, 5vw, 80px);
+  gap: clamp(24px, 3.6vw, 48px);
   grid-template-columns: minmax(0, 1fr);
   justify-items: center;
 }
@@ -1368,7 +1563,7 @@
 }
 
 .landing-personality-stage .landing-personality-contact-actions {
-  margin-top: clamp(10px, 1.8vh, 24px);
+  margin-top: clamp(6px, 1.2vh, 14px);
 }
 
 .landing-personality-contact-actions--blue {
@@ -1479,8 +1674,12 @@
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
   background: transparent;
-  border: 0;
-  box-shadow: none;
+  border: 1.5px solid color-mix(in srgb, var(--landing-contact-active) 34%, transparent);
+  border-radius: 20px;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--landing-contact-active) 16%, transparent),
+    0 0 20px color-mix(in srgb, var(--landing-contact-active) 18%, transparent),
+    0 0 44px color-mix(in srgb, var(--landing-contact-active) 10%, transparent);
   max-width: 100%;
   overflow: visible;
   position: relative;
@@ -1642,13 +1841,13 @@
 }
 
 .landing-chat-transcript {
-  -webkit-backdrop-filter: blur(16px) saturate(116%);
-  backdrop-filter: blur(16px) saturate(116%);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(58, 144, 255, 0.24);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: transparent;
+  border: 0;
   border-radius: 18px;
   box-sizing: border-box;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  box-shadow: none;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -1793,7 +1992,7 @@
 
 .landing-personality-stage {
   display: grid;
-  gap: 24px;
+  gap: 16px;
   justify-items: center;
   perspective: 1200px;
   transition: gap 260ms ease;
@@ -1805,7 +2004,7 @@
   display: grid;
   isolation: isolate;
   justify-items: center;
-  min-height: 460px;
+  min-height: 390px;
   overflow: visible;
   padding-top: 0;
   position: relative;
@@ -1819,7 +2018,7 @@
 .landing-personality-stage-focus {
   align-items: center;
   display: flex;
-  gap: clamp(14px, 2.2vw, 24px);
+  gap: clamp(10px, 1.6vw, 16px);
   justify-content: center;
   position: relative;
   transition:
@@ -1890,7 +2089,7 @@
 .landing-personality-stage-back--corner {
   left: clamp(4px, 1.3vw, 14px);
   position: absolute;
-  top: calc(clamp(10px, 1.6vh, 20px) + (clamp(71px, 7.65vw, 102px) / 2));
+  top: calc(clamp(10px, 1.6vh, 20px) + (clamp(60px, 6.6vw, 86px) / 2));
   transform: translateY(-50%);
   z-index: 9;
 }
@@ -1931,7 +2130,7 @@
     opacity 220ms ease,
     transform 220ms ease;
   animation: landingCoachGhostLift 680ms cubic-bezier(0.19, 0.86, 0.32, 1) both;
-  width: clamp(118px, 16vw, 182px);
+  width: clamp(100px, 13.6vw, 154px);
   z-index: 4;
   pointer-events: auto;
 }
@@ -1981,7 +2180,7 @@
   transition:
     width 280ms cubic-bezier(0.22, 1, 0.36, 1),
     transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
-  width: clamp(210px, 36vw, 340px);
+  width: clamp(176px, 30vw, 286px);
   z-index: 5;
 }
 
@@ -2104,26 +2303,29 @@
 .landing-personality-stage-nav {
   align-items: center;
   display: grid;
-  gap: 14px;
+  gap: 10px;
   grid-template-columns: minmax(0, 1fr);
   justify-items: center;
   width: min(560px, 100%);
 }
 
 .landing-personality-stage.is-text-mode {
-  gap: clamp(8px, 1.3vh, 14px);
+  --landing-text-panel-width: clamp(320px, 72vw, 860px);
+  gap: clamp(4px, 0.8vh, 8px);
   width: min(880px, 100%);
 }
 
 .landing-personality-stage.is-text-mode .landing-personality-contact-actions {
   max-width: min(100%, calc(100vw - (2 * var(--landing-inline-pad))));
-  width: clamp(320px, 72vw, 860px);
+  width: var(--landing-text-panel-width);
 }
 
 .landing-personality-stage.is-text-mode .landing-personality-stage-shell {
   align-items: start;
-  min-height: clamp(150px, 19vh, 220px);
-  padding-top: clamp(10px, 1.6vh, 20px);
+  min-height: clamp(132px, 16vh, 186px);
+  padding-top: clamp(6px, 1.1vh, 14px);
+  max-width: min(100%, calc(100vw - (2 * var(--landing-inline-pad))));
+  width: var(--landing-text-panel-width);
 }
 
 .landing-personality-stage.is-text-mode .landing-personality-stage-focus {
@@ -2140,7 +2342,7 @@
 }
 
 .landing-personality-stage.is-text-mode .landing-personality-stage-avatar {
-  width: clamp(71px, 7.65vw, 102px);
+  width: clamp(60px, 6.6vw, 86px);
 }
 
 .landing-personality-stage.is-text-mode .landing-personality-stage-ghost {
@@ -2149,12 +2351,17 @@
   left: calc(50% + clamp(32px, 4.2vw, 56px));
   right: auto;
   top: clamp(-6px, 0.6vh, 6px);
-  width: clamp(54px, 7.14vw, 82px);
+  width: clamp(46px, 6.1vw, 70px);
   transform: translate3d(0, 0, var(--ghost-final-z)) scale(calc(var(--ghost-final-scale) * 0.72));
   z-index: 4;
 }
 
+.landing-personality-stage.is-text-mode .landing-personality-stage-back--corner {
+  left: clamp(8px, 1.2vw, 16px);
+}
+
 .landing-personality-stage.is-text-mode .landing-personality-stage-nav {
+  margin-top: -4px;
   width: auto;
 }
 
@@ -2203,7 +2410,7 @@
   font-size: clamp(1rem, 1.3vw, 1.22rem);
   letter-spacing: -0.015em;
   line-height: 1.18;
-  transform: translateY(-10px);
+  transform: translateY(-12px);
 }
 
 .landing-personality-stage-name--pink {
@@ -2502,8 +2709,9 @@
 
 .landing-footer-tagline {
   color: rgba(255, 255, 255, 0.92);
-  font-family: "Big Caslon", "Iowan Old Style", "Georgia", serif;
-  font-size: clamp(1rem, 3vw, 1.5rem);
+  font-family: var(--landing-font-body);
+  font-size: clamp(1rem, 3vw, 1.25rem);
+  font-weight: 600;
   line-height: 0.96;
   margin: 0;
   max-lines: 1;
@@ -2528,9 +2736,12 @@
 .landing-footer-contact h2 {
   color: #fff;
   font-family: var(--landing-font-subhead);
-  font-size: 1.9rem;
-  font-weight: 700;
+  font-size: 1.2rem;
+  font-weight:bolder;
   margin: 0 0 14px;
+
+  align-self: flex-start;
+
 }
 
 .landing-footer-contact a {
@@ -2817,6 +3028,41 @@
   }
 }
 
+@keyframes landingEmojiBurstOut {
+  0% {
+    filter: saturate(1.06) blur(0.8px);
+    left: var(--node-origin-left);
+    opacity: 0;
+    top: var(--node-origin-top);
+  }
+
+  22% {
+    filter: saturate(1.03) blur(0.4px);
+    left: var(--node-origin-left);
+    opacity: 0;
+    top: var(--node-origin-top);
+  }
+
+  60% {
+    filter: saturate(1) blur(0);
+    left: calc(var(--node-left) + ((var(--node-left) - var(--node-origin-left)) * 0.12));
+    opacity: 1;
+    top: calc(var(--node-top) + ((var(--node-top) - var(--node-origin-top)) * 0.14));
+  }
+
+  80% {
+    left: calc(var(--node-left) - ((var(--node-left) - var(--node-origin-left)) * 0.05));
+    top: calc(var(--node-top) - ((var(--node-top) - var(--node-origin-top)) * 0.06));
+  }
+
+  100% {
+    filter: saturate(1) blur(0);
+    left: var(--node-left);
+    opacity: 1;
+    top: var(--node-top);
+  }
+}
+
 @media (max-width: 1120px) {
   .landing-shell {
     --landing-download-strip-height: 52px;
@@ -2860,6 +3106,11 @@
     grid-template-columns: 1fr;
   }
 
+  .landing-messaging-grid{ 
+    display: flex; 
+    flex-direction: column;
+    gap: 100px;
+  }
   .landing-faq-layout {
     gap: clamp(28px, 4.2vw, 52px);
     grid-template-columns: clamp(140px, 24vw, 190px) minmax(0, 1fr);
@@ -2902,6 +3153,16 @@
 
   .landing-comparison-subtitle {
     margin-top: -16px;
+  }
+
+  .landing-heading--connect-schedule {
+    column-gap: 0.16em;
+    row-gap: 0.06em;
+  }
+
+  .landing-heading--connect-schedule > span:first-child {
+    flex-basis: 100%;
+    justify-content: center;
   }
 
   .landing-eyecatcher-copy,
@@ -2960,6 +3221,23 @@
     justify-items: center;
   }
 
+  .landing-messaging-column {
+    max-width: min(560px, 100%);
+  }
+
+  .landing-messaging-stack {
+    min-height: clamp(320px, 58vw, 460px);
+    width: min(100%, 460px);
+  }
+
+  .landing-phone--messaging-secondary {
+    --messaging-secondary-y-base: 13px;
+    --messaging-secondary-z-base: -280px;
+    --messaging-secondary-z-shift: 280px;
+    --messaging-secondary-scale-base: 1;
+    --messaging-secondary-scale-shift: 0;
+  }
+
   .landing-comparison-column--mirrored {
     text-align: left;
   }
@@ -2970,11 +3248,11 @@
   }
 
   .landing-personality-experience {
-    gap: 54px;
+    gap: 36px;
   }
 
   .landing-personality-stage-shell {
-    min-height: 390px;
+    min-height: 340px;
     width: min(520px, 100%);
   }
 
@@ -2984,12 +3262,12 @@
   }
 
   .landing-personality-stage.is-text-mode .landing-personality-stage-shell {
-    min-height: clamp(140px, 17vh, 188px);
-    padding-top: clamp(8px, 1.2vh, 14px);
+    min-height: clamp(126px, 14vh, 172px);
+    padding-top: clamp(6px, 1vh, 10px);
   }
 
   .landing-personality-stage.is-text-mode .landing-personality-stage-avatar {
-    width: clamp(68px, 8.16vw, 90px);
+    width: clamp(58px, 7vw, 76px);
   }
 
   .landing-personality-stage-name--compact {
@@ -3072,7 +3350,8 @@
   }
 
   .landing-display--hero-flex {
-    max-inline-size: min(100%, 9.6ch);
+    max-inline-size: min(100%, 9.9ch);
+    padding-inline-end: 0.05em;
   }
 
   .landing-display--section,
@@ -3161,8 +3440,31 @@
     width: clamp(74px, 22vw, 104px);
   }
 
-  .landing-phone--messaging {
-    width: clamp(144px, 42vw, 186px);
+  .landing-messaging-stack {
+    min-height: clamp(270px, 72vw, 360px);
+    width: min(100%, 340px);
+  }
+
+  .landing-phone--messaging-main {
+    width: clamp(108px, 31.5vw, 140px);
+  }
+
+  .landing-phone--messaging-secondary {
+    --messaging-secondary-y-base: 10px;
+    --messaging-secondary-z-base: -230px;
+    --messaging-secondary-z-shift: 230px;
+    --messaging-secondary-scale-base: 1;
+    --messaging-secondary-scale-shift: 0;
+    width: clamp(81px, 23.6vw, 105px);
+  }
+
+  .landing-section--messaging {
+    --messaging-blue-main-x-shift: -20%;
+    --messaging-pink-main-x-shift: 20%;
+    --messaging-blue-secondary-x-base: -74%;
+    --messaging-blue-secondary-x-shift: 50%;
+    --messaging-pink-secondary-x-base: -44%;
+    --messaging-pink-secondary-x-shift: -20%;
   }
 
   .landing-phone--feedback-main {
@@ -3368,11 +3670,11 @@
   }
 
   .landing-personality-stage-shell {
-    min-height: 320px;
+    min-height: 286px;
   }
 
   .landing-personality-stage-focus {
-    gap: 14px;
+    gap: 10px;
   }
 
   .landing-personality-stage-switch {
@@ -3389,16 +3691,16 @@
     --ghost-start-y: 48px;
     right: clamp(6px, 2vw, 14px);
     top: clamp(-6px, 0.8vh, 4px);
-    width: clamp(92px, 26vw, 132px);
+    width: clamp(78px, 22vw, 112px);
   }
 
   .landing-personality-stage-avatar {
-    width: clamp(150px, 45vw, 250px);
+    width: clamp(128px, 38vw, 212px);
   }
 
   .landing-personality-stage.is-text-mode .landing-personality-stage-shell {
-    min-height: 132px;
-    padding-top: 8px;
+    min-height: 120px;
+    padding-top: 6px;
   }
 
   .landing-personality-stage.is-text-mode .landing-personality-stage-focus {
@@ -3406,26 +3708,26 @@
   }
 
   .landing-personality-stage.is-text-mode .landing-personality-stage-avatar {
-    width: clamp(60px, 19.55vw, 78px);
+    width: clamp(51px, 16.6vw, 66px);
   }
 
   .landing-personality-stage.is-text-mode .landing-personality-stage-ghost {
     left: calc(50% + clamp(24px, 10vw, 34px));
     right: auto;
     top: -4px;
-    width: clamp(43px, 12.75vw, 56px);
+    width: clamp(36px, 10.8vw, 48px);
   }
 
   .landing-personality-stage-back--corner {
     left: 2px;
-    top: calc(8px + (clamp(60px, 19.55vw, 78px) / 2));
+    top: calc(8px + (clamp(51px, 16.6vw, 66px) / 2));
     transform: translateY(-50%);
   }
 
   .landing-personality-stage-name--compact {
     font-size: clamp(0.92rem, 3.2vw, 1.02rem);
     letter-spacing: -0.01em;
-    transform: translateY(-8px);
+    transform: translateY(-10px);
   }
 
   .landing-personality-stage-nav {
@@ -3438,6 +3740,7 @@
   }
 
   .landing-pricing-card {
+    margin-inline: auto;
     max-width: 100%;
     padding: 28px 24px 26px;
     width: min(420px, 100%);
