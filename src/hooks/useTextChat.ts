@@ -123,6 +123,19 @@ export function useTextChat(options: UseTextChatOptions = {}) {
 
         console.log("[TextChat] Bot replies:", botReplies);
 
+        // Sanitize: if a reply parses into a JSON object, replace with fallback
+        botReplies = botReplies.map((reply) => {
+          try {
+            const parsed = JSON.parse(reply);
+            if (parsed !== null && typeof parsed === "object") {
+              return "Please respond without special characters";
+            }
+          } catch {
+            // not JSON — that's fine, keep the original string
+          }
+          return reply;
+        });
+
         setMessages((prev) => [
           ...prev,
           ...botReplies.map((t) => ({ role: "assistant" as const, text: t })),
