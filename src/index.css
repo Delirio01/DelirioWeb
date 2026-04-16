@@ -2665,4 +2665,8 @@ html {
   transform: none;
 }
 /* Text Chat : END */
-body { background-color: #ff4444 !important; }
+body { background-color: white !important; }
+/* Premium redesign: gray-blue/gold, Playfair/Inter, glass */ 
+body { background-color: white !important; } 
+:root { --primary: #1e293b; --accent: #f59e0b; --glass: rgba(248, 250, 252, 0.8); font-family: "Inter", sans-serif; } 
+h1, h2 { font-family: "Playfair Display", serif; }
