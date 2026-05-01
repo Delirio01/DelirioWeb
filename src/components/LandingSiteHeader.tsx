@@ -6,7 +6,12 @@ import irisDefault from "../images/emojis/Iris/Iris_default_1.png";
 import reedDefault from "../images/emojis/Reed/Reed_default_1.png";
 import "smartbanner-tsx/dist/style.css";
 
+
+//APP TESTFLIGHT DOWNLOAD HYPER LINK HERE : START
 const TESTFLIGHT_DOWNLOAD_URL = import.meta.env.VITE_TESTFLIGHT_URL || "https://testflight.apple.com/";
+//APP TESTFLIGHT DOWNLOAD HYPER LINK HERE : END
+
+
 const SMART_BANNER_META = {
   ios: "delirio-smart-banner-ios-app",
   android: "delirio-smart-banner-android-app",
