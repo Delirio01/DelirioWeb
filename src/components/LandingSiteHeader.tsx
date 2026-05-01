@@ -8,7 +8,7 @@ import "smartbanner-tsx/dist/style.css";
 
 
 //APP TESTFLIGHT DOWNLOAD HYPER LINK HERE : START
-const TESTFLIGHT_DOWNLOAD_URL = import.meta.env.VITE_TESTFLIGHT_URL || "https://testflight.apple.com/";
+const TESTFLIGHT_DOWNLOAD_URL = "https://testflight.apple.com/join/sG9UyYY1";
 //APP TESTFLIGHT DOWNLOAD HYPER LINK HERE : END
 
 
@@ -43,7 +43,7 @@ interface LandingSiteHeaderProps {
   showDownloadStrip?: boolean;
   onFeaturesClick: () => void;
   onPersonalitiesClick: () => void;
-  onSubscriptionClick: () => void;
+  onTestFlightClick: () => void;
   downloadUrl?: string;
 }
 
@@ -53,7 +53,7 @@ export function LandingSiteHeader({
   showDownloadStrip = true,
   onFeaturesClick,
   onPersonalitiesClick,
-  onSubscriptionClick,
+  onTestFlightClick,
   downloadUrl = TESTFLIGHT_DOWNLOAD_URL,
 }: LandingSiteHeaderProps) {
   const shouldShowStrip = isStripVisible ?? isScrolled;
@@ -86,8 +86,8 @@ export function LandingSiteHeader({
               <span>Realtime-Feedback</span>
               <img src={reedDefault} alt="" aria-hidden="true" loading="eager" fetchPriority="high" decoding="async" />
             </button>
-            <button type="button" onClick={onSubscriptionClick}>
-              Subscription
+            <button type="button" onClick={onTestFlightClick}>
+              TestFlight
             </button>
           </nav>
 

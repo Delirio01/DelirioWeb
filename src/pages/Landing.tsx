@@ -36,7 +36,6 @@ import messagingRight from '../images/iMocksImages/inApp_msging_iMock.png';
 import { useTextChat } from '../hooks/useTextChat';
 import { useVoiceSession } from '../hooks/useVoiceSession';
 import { generateDiscoveryId } from '../utils/pipecatConfig';
-import { FirestoreService } from '../utils/firebase';
 import '../styles/landing-redesign.css';
 type ClusterNode = {
   kind?: 'image' | 'text';
@@ -83,7 +82,7 @@ type WaveSection =
   | 'form-feedback'
   | 'messaging'
   | 'comparison'
-  | 'subscription'
+  | 'beta'
   | 'faq';
 
 type WaveLineMotion = {
@@ -116,7 +115,7 @@ const heroNodes: ClusterNode[] = [
   { src: irisLive, top: '92%', left: '44%', size: 130, rotate: 1 },
 ];
 
-const subscriptionNodes: ClusterNode[] = [
+const betaNodes: ClusterNode[] = [
   { src: reedSpeaking, top: '32%', left: '22%', size: 84, rotate: -4 },
   { src: irisConnecting, top: '20%', left: '38%', size: 58, rotate: -6 },
   { kind: 'text', text: '\u{1F4A1}', top: '20%', left: '44%', size: 24 },
@@ -133,8 +132,7 @@ const subscriptionNodes: ClusterNode[] = [
   { kind: 'text', text: '\u{1F4A1}', top: '88%', left: '72%', size: 30 },
 ];
 
-const TESTFLIGHT_DOWNLOAD_URL = import.meta.env.VITE_TESTFLIGHT_URL || 'https://testflight.apple.com/';
-
+const TESTFLIGHT_DOWNLOAD_URL = "https://testflight.apple.com/join/sG9UyYY1";
 const coachOrder: CoachId[] = ['reed', 'iris'];
 
 const coachProfiles: Record<CoachId, CoachProfile> = {
@@ -241,9 +239,9 @@ const faqItems: Record<FaqCategory, FaqItem[]> = {
         "It's not a fitness app. Fitness apps give you content - videos, plans, timers - and leave you to figure it out. Delirio gives you a coach. Someone who knows your name, checks in on you between sessions, watches your form while you train, and remembers that you tweaked your shoulder two weeks ago. The difference is relationship, not features.",
     },
     {
-      question: 'How is this different from an online coaching subscription?',
+      question: 'How is this different from online coaching?',
       answer:
-        "Most online coaches give you a Google Sheet, check in once a week, and charge $150-200/month. Your Delirio coach is available every day, watches your form live, and costs a fraction of that. The tradeoff is that it's AI, not a human - but for most people, daily AI coaching beats weekly human check-ins.",
+        "Most online coaches give you a Google Sheet and check in once a week. Your Delirio coach is available every day and watches your form live. The tradeoff is that it's AI, not a human - but for most people, daily AI coaching beats waiting on weekly check-ins.",
     },
     {
       question: 'Do I need to work out every day for this to be worth it?',
@@ -362,7 +360,7 @@ const waveSections: WaveSection[] = [
   'form-feedback',
   'messaging',
   'comparison',
-  'subscription',
+  'beta',
   'faq',
 ];
 
@@ -392,7 +390,7 @@ const waveMotionBySection: Record<WaveSection, WaveLineMotion> = {
   'form-feedback': { blueAmp: 1.1, pinkAmp: 0.98, blueShiftX: -2, blueShiftY: 8, pinkShiftX: 3, pinkShiftY: 14, blueScaleX: 1.02, pinkScaleX: 1.04, blueRotate: 0.4, pinkRotate: -0.4 },
   messaging: { blueAmp: 1.34, pinkAmp: 0.86, blueShiftX: -3, blueShiftY: 18, pinkShiftX: 2, pinkShiftY: 22, blueScaleX: 1.04, pinkScaleX: 1.08, blueRotate: 1.2, pinkRotate: -1.2 },
   comparison: { blueAmp: 1.28, pinkAmp: 0.92, blueShiftX: 0, blueShiftY: 0, pinkShiftX: 1, pinkShiftY: 14, blueScaleX: 1.04, pinkScaleX: 1.02, blueRotate: -0.6, pinkRotate: 0.6 },
-  subscription: { blueAmp: 1.28, pinkAmp: 1.12, blueShiftX: -1, blueShiftY: -2, pinkShiftX: 2, pinkShiftY: 8, blueScaleX: 1.03, pinkScaleX: 1.05, blueRotate: 0.5, pinkRotate: -0.2 },
+  beta: { blueAmp: 1.28, pinkAmp: 1.12, blueShiftX: -1, blueShiftY: -2, pinkShiftX: 2, pinkShiftY: 8, blueScaleX: 1.03, pinkScaleX: 1.05, blueRotate: 0.5, pinkRotate: -0.2 },
   faq: { blueAmp: 0.94, pinkAmp: 1.18, blueShiftX: -2, blueShiftY: -6, pinkShiftX: 3, pinkShiftY: 4, blueScaleX: 1, pinkScaleX: 1.04, blueRotate: -0.3, pinkRotate: 0.5 },
 };
 
@@ -501,8 +499,7 @@ function PhoneMock({
 }
 
 export default function Landing() {
-  const simplePricingAnimation = false;
-  const firestoreServiceRef = useRef<FirestoreService | null>(null);
+  const testFlightAnimation = false;
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDownloadStripVisible, setIsDownloadStripVisible] = useState(false);
   const [activeCoach, setActiveCoach] = useState<CoachId>('reed');
@@ -515,21 +512,15 @@ export default function Landing() {
   const [activeWaveSection, setActiveWaveSection] = useState<WaveSection>('hero');
   const [sessionUserId] = useState(() => generateDiscoveryId());
   const [chatInput, setChatInput] = useState('');
-  const [warmName, setWarmName] = useState('');
-  const [warmEmail, setWarmEmail] = useState('');
-  const [warmPhone, setWarmPhone] = useState('');
-  const [isWarmSubmitting, setIsWarmSubmitting] = useState(false);
-  const [warmSubmitError, setWarmSubmitError] = useState<string | null>(null);
-  const [isWarmSubmitSuccess, setIsWarmSubmitSuccess] = useState(false);
-  const [subscriptionBurstTick, setSubscriptionBurstTick] = useState(0);
-  const [hasSubscriptionFocused, setHasSubscriptionFocused] = useState(false);
+  const [betaBurstTick, setBetaBurstTick] = useState(0);
+  const [hasBetaFocused, setHasBetaFocused] = useState(false);
 
   const chatInputRef = useRef<HTMLInputElement | null>(null);
   const chatTranscriptRef = useRef<HTMLDivElement | null>(null);
   const previousCoachRef = useRef<CoachId>(activeCoach);
   const previousScrollYRef = useRef(0);
   const previousWaveSectionRef = useRef<WaveSection>('hero');
-  const subscriptionBurstDelayTimerRef = useRef<number | null>(null);
+  const betaBurstDelayTimerRef = useRef<number | null>(null);
 
   const {
     sessionState,
@@ -657,42 +648,42 @@ export default function Landing() {
   }, []);
 
   useEffect(() => {
-    if (!simplePricingAnimation) {
-      if (subscriptionBurstDelayTimerRef.current !== null) {
-        window.clearTimeout(subscriptionBurstDelayTimerRef.current);
-        subscriptionBurstDelayTimerRef.current = null;
+    if (!testFlightAnimation) {
+      if (betaBurstDelayTimerRef.current !== null) {
+        window.clearTimeout(betaBurstDelayTimerRef.current);
+        betaBurstDelayTimerRef.current = null;
       }
 
-      setHasSubscriptionFocused(false);
+      setHasBetaFocused(false);
       previousWaveSectionRef.current = activeWaveSection;
       return;
     }
 
     const previousSection = previousWaveSectionRef.current;
-    const enteredSubscription =
-      activeWaveSection === 'subscription' && previousSection !== 'subscription';
+    const enteredBeta =
+      activeWaveSection === 'beta' && previousSection !== 'beta';
 
-    if (enteredSubscription) {
-      if (subscriptionBurstDelayTimerRef.current !== null) {
-        window.clearTimeout(subscriptionBurstDelayTimerRef.current);
+    if (enteredBeta) {
+      if (betaBurstDelayTimerRef.current !== null) {
+        window.clearTimeout(betaBurstDelayTimerRef.current);
       }
 
-      subscriptionBurstDelayTimerRef.current = window.setTimeout(() => {
-        setHasSubscriptionFocused(true);
-        setSubscriptionBurstTick((current) => current + 1);
-        subscriptionBurstDelayTimerRef.current = null;
+      betaBurstDelayTimerRef.current = window.setTimeout(() => {
+        setHasBetaFocused(true);
+        setBetaBurstTick((current) => current + 1);
+        betaBurstDelayTimerRef.current = null;
       }, 220);
     }
 
     previousWaveSectionRef.current = activeWaveSection;
 
     return () => {
-      if (subscriptionBurstDelayTimerRef.current !== null) {
-        window.clearTimeout(subscriptionBurstDelayTimerRef.current);
-        subscriptionBurstDelayTimerRef.current = null;
+      if (betaBurstDelayTimerRef.current !== null) {
+        window.clearTimeout(betaBurstDelayTimerRef.current);
+        betaBurstDelayTimerRef.current = null;
       }
     };
-  }, [activeWaveSection, simplePricingAnimation]);
+  }, [activeWaveSection, testFlightAnimation]);
 
   useEffect(() => {
     if (previousCoachRef.current === activeCoach) {
@@ -825,78 +816,6 @@ export default function Landing() {
     setOpenFaqQuestion(faqItems[category][0].question);
   }
 
-  async function handleWarmNetworkSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    if (isWarmSubmitting) {
-      return;
-    }
-
-    try {
-      const name = warmName.trim();
-      const email = warmEmail.trim().toLowerCase();
-      const phone = warmPhone.trim();
-
-      if (!name || !email || !phone) {
-        setWarmSubmitError('Please complete all required fields.');
-        setIsWarmSubmitSuccess(false);
-        return;
-      }
-
-      setIsWarmSubmitting(true);
-      setWarmSubmitError(null);
-      setIsWarmSubmitSuccess(false);
-      console.log('[InfoCapture] submit started');
-
-      let timeoutId: number | undefined;
-      try {
-        const firestoreService = firestoreServiceRef.current ?? new FirestoreService();
-        firestoreServiceRef.current = firestoreService;
-
-        const savePromise = firestoreService.addWarmNetworkSubmissionDocument({
-          Timestamp: new Date().toISOString(),
-          Name: name,
-          Email: email,
-          Phone: phone,
-        });
-
-        const timeoutPromise = new Promise<never>((_, reject) => {
-          timeoutId = window.setTimeout(() => reject(new Error('warm_network_submit_timeout')), 15000);
-        });
-
-        await Promise.race([savePromise, timeoutPromise]);
-      } finally {
-        if (timeoutId !== undefined) {
-          window.clearTimeout(timeoutId);
-        }
-      }
-
-      setWarmName('');
-      setWarmEmail('');
-      setWarmPhone('');
-      setIsWarmSubmitSuccess(true);
-      console.log('[InfoCapture] submit successful');
-    } catch (error) {
-      console.error('[InfoCapture] submit failed', error);
-      const firebaseErrorCode = typeof error === 'object' && error && 'code' in error
-        ? String((error as { code?: string }).code ?? '')
-        : '';
-
-      if (error instanceof Error && error.message.startsWith('missing_firebase_env_vars:')) {
-        setWarmSubmitError('Firebase config is missing. Check your VITE_FIREBASE_* variables and restart the dev server.');
-      } else if (firebaseErrorCode === 'permission-denied') {
-        setWarmSubmitError('Firestore rules are blocking this write. Ask admin to allow create on info capture.');
-      } else if (error instanceof Error && error.message === 'warm_network_submit_timeout') {
-        setWarmSubmitError('Request timed out. Please try again.');
-      } else {
-        setWarmSubmitError('There was a problem submitting your info. Please try again.');
-      }
-      setIsWarmSubmitSuccess(false);
-    } finally {
-      setIsWarmSubmitting(false);
-    }
-  }
-
   const visibleFaqItems = faqItems[activeFaqCategory];
   const lineMotion = waveMotionBySection[activeWaveSection];
   const activeCoachProfile = coachProfiles[activeCoach];
@@ -932,7 +851,7 @@ export default function Landing() {
         isStripVisible={isDownloadStripVisible}
         onFeaturesClick={() => scrollToSection('personalities')}
         onPersonalitiesClick={() => scrollToSection('form-feedback')}
-        onSubscriptionClick={() => scrollToSection('subscription')}
+        onTestFlightClick={() => scrollToSection('contact-capture')}
         downloadUrl={TESTFLIGHT_DOWNLOAD_URL}
       />
 
@@ -1312,62 +1231,6 @@ export default function Landing() {
           </div>
         </section>
 
-        <section id="subscription" data-wave-section="subscription" className="landing-section landing-section--subscription">
-          <div className="landing-container landing-subscription">
-            <div className="landing-subscription-copy">
-              <h2 className="landing-display landing-display--section">
-                <span>SIMPLE</span>
-                <span className="landing-display-blue">PRICING</span>
-              </h2>
-              <p className="landing-section-body">$50/month. Less than a single session with most trainers.</p>
-
-              <div className="landing-pricing-card">
-                <div className="landing-pricing-stat">
-                  <span>$50</span>
-                  <span>per month</span>
-                </div>
-                <p className="landing-pricing-context">Less than a single session with most trainers.</p>
-
-                <div className="landing-pricing-actions">
-                  <ul className="landing-check-list landing-check-list--blue landing-check-list--pricing">
-                    <li>Personalized workout plans</li>
-                    <li>Nutrition guidance</li>
-                    <li>24/7 coach availability</li>
-                    <li>Progress tracking</li>
-                  </ul>
-
-                  <a className="landing-outline-button landing-outline-button--full" href={TESTFLIGHT_DOWNLOAD_URL} target="_blank" rel="noreferrer">
-                    Join the TestFlight beta
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div className="landing-subscription-visual">
-              <FloatingCluster
-                key={simplePricingAnimation ? `subscription-burst-${subscriptionBurstTick}` : 'subscription-static'}
-                nodes={subscriptionNodes}
-                className="landing-floating-cluster--subscription"
-                animationEnabled={simplePricingAnimation}
-                burstFromLogo={simplePricingAnimation && hasSubscriptionFocused}
-              />
-
-              <div className="landing-subscription-stage">
-                <div className="landing-subscription-logo-block">
-                  <Logo width="50" height="auto" />
-                </div>
-                <a className="landing-testflight-cta" href={TESTFLIGHT_DOWNLOAD_URL} target="_blank" rel="noreferrer">
-                  <img src={testFlightIcon} alt="" aria-hidden="true" loading="lazy" decoding="async" />
-                  <span className="landing-testflight-cta-copy">
-                    <span>Available on</span>
-                    <strong>TestFlight</strong>
-                  </span>
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <section id="faq" data-wave-section="faq" className="landing-section landing-section--faq">
           <div className="landing-container landing-faq">
             <div className="landing-faq-title">
@@ -1422,68 +1285,39 @@ export default function Landing() {
           </div>
         </section>
 
-        <section id="contact-capture" className="landing-section landing-section--warm-network">
+        <section id="contact-capture" data-wave-section="beta" className="landing-section landing-section--warm-network" aria-label="TestFlight beta">
           <div className="landing-container landing-warm-network">
             <div className="landing-warm-copy">
               <h2 className="landing-display landing-display--section landing-warm-title">
-                <span>STAY IN THE</span>
-                <span className="landing-display-blue">LOOP</span>
+                <span>BECOME A</span>
+                <span className="landing-display-blue">BETA USER</span>
+                <span>TODAY</span>
               </h2>
               <p className="landing-section-body landing-warm-body landing-subheading-match">
-                No pressure. Drop your info and we&apos;ll keep you in the loop: launches, updates, and the occasional
-                discount.
+                Try Delirio early on TestFlight and help shape what comes next.
               </p>
             </div>
 
-            <div className={`landing-warm-card ${isWarmSubmitSuccess ? 'is-success' : ''}`.trim()}>
-              <div className="landing-warm-form-shell" aria-hidden={isWarmSubmitSuccess}>
-                <Logo width="44" height="62" />
-                <form className="landing-warm-form" onSubmit={handleWarmNetworkSubmit}>
-                  <label>
-                    <span>Name</span>
-                    <input
-                      type="text"
-                      placeholder="Jane Doe"
-                      value={warmName}
-                      onChange={(event) => setWarmName(event.target.value)}
-                      disabled={isWarmSubmitting}
-                      required
-                    />
-                  </label>
-                  <label>
-                    <span>Email</span>
-                    <input
-                      type="email"
-                      placeholder="you@example.com"
-                      value={warmEmail}
-                      onChange={(event) => setWarmEmail(event.target.value)}
-                      disabled={isWarmSubmitting}
-                      required
-                    />
-                  </label>
-                  <label>
-                    <span>Phone Number</span>
-                    <input
-                      type="tel"
-                      placeholder="+1 (555) 123-4567"
-                      value={warmPhone}
-                      onChange={(event) => setWarmPhone(event.target.value)}
-                      disabled={isWarmSubmitting}
-                      required
-                    />
-                  </label>
-                  <button className="joinButton" type="submit" disabled={isWarmSubmitting}>
-                    {isWarmSubmitting ? 'Submitting...' : 'Keep me in the loop'}
-                  </button>
-                  {warmSubmitError && <p className="landing-warm-form-status landing-warm-form-status--error">{warmSubmitError}</p>}
-                </form>
-              </div>
+            <div className="landing-warm-visual landing-beta-visual">
+              <FloatingCluster
+                key={testFlightAnimation ? `beta-burst-${betaBurstTick}` : 'beta-static'}
+                nodes={betaNodes}
+                className="landing-floating-cluster--beta"
+                animationEnabled={testFlightAnimation}
+                burstFromLogo={testFlightAnimation && hasBetaFocused}
+              />
 
-              <div className="landing-warm-success" aria-live="polite" aria-hidden={!isWarmSubmitSuccess}>
-                <span className="landing-warm-success-ring">
-                  <span className="landing-warm-success-check" aria-hidden="true">✓</span>
-                </span>
-                <p className="landing-warm-success-text">You&apos;re in. We&apos;ll keep you posted.</p>
+              <div className="landing-beta-stage">
+                <div className="landing-beta-logo-block">
+                  <Logo width="50" height="auto" />
+                </div>
+                <a className="landing-testflight-cta" href={TESTFLIGHT_DOWNLOAD_URL} target="_blank" rel="noreferrer">
+                  <img src={testFlightIcon} alt="" aria-hidden="true" loading="lazy" decoding="async" />
+                  <span className="landing-testflight-cta-copy">
+                    <span>Available on</span>
+                    <strong>TestFlight</strong>
+                  </span>
+                </a>
               </div>
             </div>
           </div>

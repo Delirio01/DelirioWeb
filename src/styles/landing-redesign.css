@@ -761,11 +761,11 @@
 }
 
 .landing-floating-cluster--hero,
-.landing-floating-cluster--subscription {
+.landing-floating-cluster--beta {
   inset: 0;
 }
 
-.landing-floating-cluster--subscription {
+.landing-floating-cluster--beta {
   z-index: 1;
 }
 
@@ -811,20 +811,19 @@
   line-height: 1;
 }
 
-.landing-floating-cluster--subscription .landing-floating-node--burst {
+.landing-floating-cluster--beta .landing-floating-node--burst {
   animation: landingEmojiBurstOut 920ms cubic-bezier(0.2, 0.88, 0.3, 1) both;
   animation-delay: var(--node-burst-delay, 0ms);
 }
 
-.landing-floating-cluster--subscription .landing-floating-node--burst .landing-floating-node-content {
+.landing-floating-cluster--beta .landing-floating-node--burst .landing-floating-node-content {
   animation-delay: calc(var(--node-float-delay, 0ms) + var(--node-burst-delay, 0ms));
 }
 
 
 
 .landing-eyecatcher,
-.landing-feature-intro,
-.landing-subscription {
+.landing-feature-intro {
   align-items: center;
   display: grid;
   gap: clamp(26px, 3.8vw, 46px);
@@ -879,10 +878,17 @@
 }
 
 .landing-eyecatcher-visual,
-.landing-subscription-visual {
+.landing-beta-visual {
   min-height: clamp(460px, 56vw, 620px);
   overflow: visible;
   position: relative;
+}
+
+.landing-warm-visual {
+  justify-self: center;
+  margin-inline: auto;
+  max-width: 640px;
+  width: min(100%, 640px);
 }
 
 .landing-eyecatcher-visual {
@@ -931,8 +937,7 @@
 }
 
 .landing-feature-intro-copy,
-.landing-workouts-copy,
-.landing-subscription-copy {
+.landing-workouts-copy {
   max-width: clamp(320px, 34vw, 460px);
 }
 
@@ -1203,19 +1208,6 @@
 
 .landing-check-list--pink li::before {
   color: var(--landing-pink);
-}
-
-.landing-check-list--pricing li {
-  color: var(--landing-copy);
-  font-family: inherit;
-  font-size: 1rem;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  text-transform: none;
-}
-
-.landing-check-list--pricing li::before {
-  top: 1px;
 }
 
 .landing-phone--messaging {
@@ -2622,83 +2614,7 @@
   margin-top: 10px;
 }
 
-.landing-pricing-card {
-  background: var(--landing-card);
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  border-radius: 38px;
-  box-shadow: var(--landing-shadow);
-  margin-top: 38px;
-  max-width: clamp(320px, 32vw, 420px);
-  padding: clamp(22px, 2.4vw, 34px) clamp(24px, 2.6vw, 36px) clamp(24px, 2.6vw, 36px);
-  position: relative;
-  width: min(clamp(320px, 32vw, 420px), 100%);
-}
-
-.landing-pricing-card-top {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-}
-
-.landing-pricing-tier {
-  color: rgba(10, 10, 10, 0.7);
-  font-size: 1.16rem;
-  font-weight: 600;
-}
-
-.landing-pricing-card-icons {
-  align-items: center;
-  display: flex;
-  gap: 6px;
-}
-
-.landing-pricing-card-icons img {
-  height: 52px;
-  object-fit: contain;
-  width: 52px;
-}
-
-.landing-pricing-card-icons span {
-  color: #caa300;
-  font-size: 22px;
-}
-
-.landing-pricing-stat {
-  display: grid;
-  gap: 8px;
-  margin: 10px 0 18px;
-  text-align: center;
-}
-
-.landing-pricing-stat span:first-child {
-  color: var(--landing-blue);
-  font-size: clamp(3.5rem, 4.2vw, 4.4rem);
-  font-weight: 700;
-  letter-spacing: -0.07em;
-  line-height: 0.88;
-}
-
-.landing-pricing-stat span:last-child {
-  color: var(--landing-black);
-  font-size: 1.26rem;
-  font-weight: 600;
-}
-
-.landing-pricing-context {
-  color: var(--landing-copy);
-  font-size: 1.02rem;
-  line-height: 1.34;
-  margin: 0 0 24px;
-  text-align: center;
-}
-
-.landing-pricing-actions {
-  display: flex;
-  flex-direction: column;
-  row-gap: clamp(20px, 2.6vw, 34px);
-}
-
-.landing-subscription-stage {
+.landing-beta-stage {
   align-items: center;
   display: grid;
   gap: clamp(14px, 1.8vw, 24px);
@@ -2710,7 +2626,7 @@
   z-index: 2;
 }
 
-.landing-subscription-logo-block {
+.landing-beta-logo-block {
   align-items: center;
   background: #fff;
   border-radius: 32px;
@@ -2992,212 +2908,6 @@
   margin-top: 18px;
 }
 
-.landing-warm-card {
-  background: var(--landing-card);
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  border-radius: 28px;
-  box-shadow: var(--landing-shadow);
-  display: block;
-  margin-inline: auto;
-  max-width: clamp(320px, 34vw, 436px);
-  min-height: clamp(420px, 42vw, 560px);
-  overflow: hidden;
-  padding: clamp(22px, 2.4vw, 34px) clamp(18px, 2.1vw, 30px) clamp(18px, 2.1vw, 30px);
-  position: relative;
-  width: min(clamp(320px, 34vw, 436px), 100%);
-}
-
-.landing-warm-form-shell {
-  display: grid;
-  gap: clamp(18px, 2.4vw, 30px);
-  grid-template-rows: auto minmax(0, 1fr);
-  height: 100%;
-  justify-items: center;
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  transition:
-    opacity 360ms ease,
-    transform 360ms ease;
-  
-    padding-block: 24px; 
-}
-
-.landing-warm-card.is-success .landing-warm-form-shell {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(12px) scale(0.98);
-}
-
-.landing-warm-form {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  height: 100%;
-  width: 100%;
-  gap: clamp(18px, 2.6vw, 32px); 
-  margin-top: 24px; 
-
-}
-
-.landing-warm-form .joinButton{ 
-  margin-block: 24px; 
-
-}
-
-.landing-warm-form label {
-  display: grid;
-  gap: 8px;
-}
-
-.landing-warm-form label span {
-  color: rgba(10, 10, 10, 0.58);
-  font-family: var(--landing-font-subhead);
-  font-size: 1.03rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.landing-warm-form input {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(15, 23, 42, 0.18);
-  border-radius: 12px;
-  color: rgba(10, 10, 10, 0.85);
-  font-size: 1.05rem;
-  min-height: 44px;
-  outline: none;
-  padding: 0 12px;
-  width: 100%;
-}
-
-.landing-warm-form input::placeholder {
-  color: rgba(10, 10, 10, 0.38);
-}
-
-.landing-warm-form input:focus {
-  border-color: rgba(58, 144, 255, 0.58);
-  box-shadow: 0 0 0 3px rgba(58, 144, 255, 0.12);
-}
-
-.landing-warm-form button {
-  background: linear-gradient(90deg, #3a90ff 0%, #4d95ef 100%);
-  border: 1px solid rgba(58, 144, 255, 0.95);
-  border-radius: 14px;
-  box-shadow: 0 12px 24px rgba(58, 144, 255, 0.2);
-  color: #fff;
-  cursor: pointer;
-  font-family: var(--landing-font-subhead);
-  font-size: 0.98rem;
-  font-weight: 700;
-  align-self: center;
-  letter-spacing: 0.06em;
-  margin: 0 auto;
-  min-height: 42px;
-  text-transform: uppercase;
-  width: 100%;
-  transition:
-    transform 160ms ease,
-    box-shadow 160ms ease,
-    filter 160ms ease;
-}
-
-.landing-warm-form button:hover {
-  box-shadow: 0 15px 26px rgba(58, 144, 255, 0.24);
-  filter: brightness(1.03);
-  transform: translateY(-1px);
-}
-
-.landing-warm-form button:disabled {
-  box-shadow: 0 10px 20px rgba(58, 144, 255, 0.16);
-  cursor: wait;
-  filter: none;
-  opacity: 0.74;
-  transform: none;
-}
-
-.landing-warm-form-status {
-  font-size: 0.92rem;
-  line-height: 1.3;
-  margin: 0;
-  text-align: center;
-}
-
-.landing-warm-form-status--error {
-  color: #ba2f2f;
-}
-
-.landing-warm-form-status--success {
-  color: #089454;
-}
-
-.landing-warm-success {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  inset: 0;
-  justify-content: center;
-  opacity: 0;
-  pointer-events: none;
-  position: absolute;
-  transform: scale(0.9);
-  transition:
-    opacity 420ms ease,
-    transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.landing-warm-card.is-success .landing-warm-success {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.landing-warm-success-ring {
-  align-items: center;
-  background: transparent;
-  border: 3px solid var(--landing-blue);
-  border-radius: 100%;
-  display: inline-flex;
-  height: clamp(118px, 12vw, 142px);
-  justify-content: center;
-  width: clamp(118px, 12vw, 142px);
-}
-
-.landing-warm-success-ring::before {
-  content: none;
-}
-
-.landing-warm-success-ring::after {
-  content: none;
-}
-
-.landing-warm-success-check {
-  color: var(--landing-blue);
-  font-family: var(--landing-font-subhead);
-  font-size: clamp(2.4rem, 3.6vw, 3.2rem);
-  font-weight: 700;
-  line-height: 1;
-  opacity: 0;
-  position: relative;
-  transform: translateY(6px) scale(0.9);
-  transition:
-    opacity 280ms ease 120ms,
-    transform 280ms ease 120ms;
-  z-index: 1;
-}
-
-.landing-warm-card.is-success .landing-warm-success-check {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-
-.landing-warm-success-text {
-  color: rgba(10, 10, 10, 0.72);
-  font-size: 1rem;
-  margin: 0;
-  text-align: center;
-}
-
-
 @keyframes landingFloat {
   0%,
   100% {
@@ -3278,7 +2988,6 @@
   .landing-eyecatcher,
   .landing-feature-intro,
   .landing-form-feedback,
-  .landing-subscription,
   .landing-messaging-grid,
   .landing-testimonial-track,
   .landing-personality-experience-shell,
@@ -3349,7 +3058,6 @@
   .landing-eyecatcher-copy,
   .landing-feature-intro-copy,
   .landing-workouts-copy,
-  .landing-subscription-copy,
   .landing-testimonials-copy,
   .landing-faq-title {
     max-width: 100%;
@@ -3364,7 +3072,7 @@
   .landing-eyecatcher-visual,
   .landing-feature-intro-visual,
   .landing-form-feedback-visual,
-  .landing-subscription-visual,
+  .landing-beta-visual,
   .landing-workouts-visual {
     left: 0;
     min-height: clamp(450px, 50vw, 540px);
@@ -3563,7 +3271,7 @@
   .landing-eyecatcher-visual,
   .landing-feature-intro-visual,
   .landing-form-feedback-visual,
-  .landing-subscription-visual,
+  .landing-beta-visual,
   .landing-workouts-visual {
     min-height: 460px;
   }
@@ -3936,31 +3644,12 @@
     width: 44px;
   }
 
-  .landing-pricing-card {
-    margin-inline: auto;
-    max-width: 100%;
-    padding: 28px 24px 26px;
-    width: min(420px, 100%);
-  }
-
-  .landing-pricing-stat span:first-child {
-    font-size: clamp(3rem, 12vw, 3.8rem);
-  }
-
-  .landing-pricing-stat span:last-child {
-    font-size: var(--landing-mobile-font-md);
-  }
-
-  .landing-pricing-actions {
-    row-gap: 24px;
-  }
-
-  .landing-subscription-stage {
+  .landing-beta-stage {
     left: 50%;
     top: 56%;
   }
 
-  .landing-subscription-logo-block {
+  .landing-beta-logo-block {
     border-radius: 26px;
     height: 142px;
     width: 142px;
@@ -4086,57 +3775,6 @@
   .landing-subheading-match {
     font-size: var(--landing-mobile-font-lg);
   }
-
-  .landing-warm-card {
-    border-radius: 20px;
-    max-width: 100%;
-    min-height: 430px;
-    padding: 24px 14px 18px;
-  }
-
-  .landing-warm-form-shell {
-    gap: 22px;
-  }
-
-  .landing-warm-form {
-    justify-content: space-evenly;
-  }
-
-  .landing-warm-form label {
-    gap: 6px;
-  }
-
-  .landing-warm-form label span {
-    font-size: clamp(0.82rem, 3.3vw, 0.98rem);
-    letter-spacing: 0.06em;
-  }
-
-  .landing-warm-form input {
-    border-radius: 10px;
-    font-size: clamp(0.94rem, 3.8vw, 1.02rem);
-    min-height: 40px;
-    padding: 0 10px;
-  }
-
-  .landing-warm-form button {
-    font-size: clamp(0.88rem, 3.8vw, 1rem);
-    min-height: 40px;
-    width: 100%;
-  }
-
-  .landing-warm-success-ring {
-    height: clamp(102px, 28vw, 122px);
-    width: clamp(102px, 28vw, 122px);
-  }
-
-  .landing-warm-success-ring::after {
-    inset: 7px;
-  }
-
-  .landing-warm-success-check {
-    font-size: clamp(2.05rem, 9vw, 2.6rem);
-  }
-
 
 }
 

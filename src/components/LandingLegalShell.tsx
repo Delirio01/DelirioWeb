@@ -42,7 +42,7 @@ export function LandingLegalShell({
         showDownloadStrip={false}
         onFeaturesClick={() => goToHomeSection("features")}
         onPersonalitiesClick={() => goToHomeSection("form-feedback")}
-        onSubscriptionClick={() => goToHomeSection("subscription")}
+        onTestFlightClick={() => goToHomeSection("contact-capture")}
         downloadUrl={TESTFLIGHT_DOWNLOAD_URL}
       />
 
