@@ -16,9 +16,25 @@ const SMART_BANNER_META = {
   ios: "delirio-smart-banner-ios-app",
   android: "delirio-smart-banner-android-app",
 };
+const SMART_BANNER_APP_ID = "delirio-testflight-beta";
 
-function clearSmartBannerClosedCookie() {
+function clearSmartBannerCookies() {
   document.cookie = "smartbanner-closed=; Max-Age=0; path=/";
+  document.cookie = "smartbanner-installed=; Max-Age=0; path=/";
+}
+
+function ensureSmartBannerMetaTag() {
+  const existingMeta = document.querySelector(`meta[name="${SMART_BANNER_META.ios}"]`);
+
+  if (existingMeta) {
+    existingMeta.setAttribute("content", `app-id=${SMART_BANNER_APP_ID}`);
+    return;
+  }
+
+  const meta = document.createElement("meta");
+  meta.name = SMART_BANNER_META.ios;
+  meta.content = `app-id=${SMART_BANNER_APP_ID}`;
+  document.head.append(meta);
 }
 
 interface LandingSiteHeaderProps {
@@ -48,7 +64,8 @@ export function LandingSiteHeader({
   };
 
   useEffect(() => {
-    clearSmartBannerClosedCookie();
+    ensureSmartBannerMetaTag();
+    clearSmartBannerCookies();
     setIsSmartBannerReady(true);
   }, []);
 
@@ -95,13 +112,15 @@ export function LandingSiteHeader({
                 }}
                 meta={SMART_BANNER_META}
                 url={smartBannerUrls}
-                force={import.meta.env.DEV ? "ios" : undefined}
+                force="ios"
                 placement="bottom"
                 withPortal={false}
                 disableHtmlMargin
                 ignoreIosVersion
                 daysHidden={0}
-                onClose={clearSmartBannerClosedCookie}
+                daysReminder={0}
+                onClose={clearSmartBannerCookies}
+                onInstall={clearSmartBannerCookies}
                 className="landing-testflight-smartbanner"
               />
             ) : null}
