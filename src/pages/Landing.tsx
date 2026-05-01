@@ -467,7 +467,7 @@ function FloatingCluster({
                 src={node.src}
                 alt=""
                 loading={shouldEagerLoad ? 'eager' : 'lazy'}
-                fetchPriority={shouldEagerLoad && index < 2 ? 'high' : 'auto'}
+                fetchPriority={ "high" /*shouldEagerLoad && index < 2 ? 'high' : 'auto'*/}
                 decoding="async"
               />
             </span>
