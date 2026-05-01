@@ -4,6 +4,8 @@ import InstaIcon from "../imports/InstaIcon";
 import TikTokIcon from "../imports/TikTokIcon";
 import XIcon from "../imports/XIcon";
 
+const TESTFLIGHT_DOWNLOAD_URL = import.meta.env.VITE_TESTFLIGHT_URL || "https://testflight.apple.com/";
+
 export function LandingSiteFooter() {
   return (
     <footer id="footer" className="landing-footer">
@@ -30,8 +32,8 @@ export function LandingSiteFooter() {
           <div className="landing-footer-contact">
             <h2>Contact</h2>
             <a href="mailto:contact@delirio.fit">contact@delirio.fit</a>
-            <a href="https://apps.apple.com/us/search?term=delirio%20fit" target="_blank" rel="noreferrer">
-              Download the app
+            <a href={TESTFLIGHT_DOWNLOAD_URL} target="_blank" rel="noreferrer">
+              Join the TestFlight beta
             </a>
           </div>
         </div>

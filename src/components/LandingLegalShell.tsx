@@ -3,6 +3,8 @@ import { LandingSiteFooter } from "./LandingSiteFooter";
 import { LandingSiteHeader } from "./LandingSiteHeader";
 import "../styles/landing-redesign.css";
 
+const TESTFLIGHT_DOWNLOAD_URL = import.meta.env.VITE_TESTFLIGHT_URL || "https://testflight.apple.com/";
+
 function goToHomeSection(sectionId: string) {
   if (window.location.pathname === "/") {
     document.getElementById(sectionId)?.scrollIntoView({
@@ -41,7 +43,7 @@ export function LandingLegalShell({
         onFeaturesClick={() => goToHomeSection("features")}
         onPersonalitiesClick={() => goToHomeSection("form-feedback")}
         onSubscriptionClick={() => goToHomeSection("subscription")}
-        downloadUrl="https://apps.apple.com/us/search?term=delirio%20fit"
+        downloadUrl={TESTFLIGHT_DOWNLOAD_URL}
       />
 
       <main className="landing-main">

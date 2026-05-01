@@ -232,10 +232,10 @@
 }
 
 .landing-header-download-strip {
-  -webkit-backdrop-filter: blur(28px) saturate(150%);
-  backdrop-filter: blur(28px) saturate(150%);
-  background: rgba(255, 255, 255, 0.54);
-  border-top: 1px solid rgba(10, 10, 10, 0.08);
+  -webkit-backdrop-filter: blur(40px) saturate(165%);
+  backdrop-filter: blur(40px) saturate(165%);
+  background: rgba(255, 255, 255, 0.42);
+  border-top: 1px solid rgba(10, 10, 10, 0.07);
   bottom: 0;
   left: 0;
   opacity: 0;
@@ -318,6 +318,175 @@
   display: block;
   height: var(--landing-download-badge-height);
   width: auto;
+}
+
+.landing-header-download-strip:not(:has(.landing-testflight-smartbanner)) {
+  display: none;
+}
+
+.landing-header-download-inner:has(.landing-testflight-smartbanner) {
+  inline-size: 100%;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  padding-block-end: env(safe-area-inset-bottom, 0px);
+  padding-block-start: 0;
+  padding-inline: 0;
+}
+
+.landing-header-download-strip .landing-testflight-smartbanner {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  color: var(--landing-black);
+  font-family: var(--landing-font-subhead);
+  height: auto;
+  left: auto;
+  line-height: 1;
+  min-height: 80px;
+  overflow: visible;
+  position: static;
+  width: 100%;
+  z-index: auto;
+}
+
+.landing-testflight-smartbanner .smartbanner-container {
+  align-items: center;
+  display: grid;
+  gap: clamp(10px, 1.8vw, 18px);
+  grid-template-columns: auto 56px minmax(0, 1fr) auto;
+  margin: 0 auto;
+  max-width: none;
+  min-height: 80px;
+  padding: 10px var(--landing-inline-pad) 10px clamp(6px, 0.9vw, 12px);
+}
+
+.landing-testflight-smartbanner.smartbanner-ios .smartbanner-close {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  color: #007aff;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  font-size: 24px;
+  font-weight: 300;
+  height: 32px;
+  justify-content: center;
+  line-height: 1;
+  margin: 0;
+  padding: 0;
+  text-shadow: none;
+  width: 32px;
+}
+
+.landing-testflight-smartbanner.smartbanner-ios .smartbanner-close:hover,
+.landing-testflight-smartbanner.smartbanner-ios .smartbanner-close:focus-visible {
+  background: rgba(0, 122, 255, 0.1);
+  color: #007aff;
+  outline: none;
+}
+
+.landing-testflight-smartbanner.smartbanner-ios .smartbanner-icon {
+  background-image: url('../images/appleOfficialBadges/testFlight.webp') !important;
+  border-radius: 12px;
+  box-shadow: none;
+  height: 56px;
+  margin: 0;
+  width: 56px;
+}
+
+.landing-testflight-smartbanner.smartbanner-ios .smartbanner-info {
+  color: rgba(10, 10, 10, 0.7);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.18;
+  text-shadow: none;
+  width: auto;
+}
+
+.landing-testflight-smartbanner.smartbanner-ios .smartbanner-title {
+  color: var(--landing-black);
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.12;
+}
+
+.landing-testflight-smartbanner.smartbanner-ios .smartbanner-author,
+.landing-testflight-smartbanner.smartbanner-ios .smartbanner-description {
+  line-height: 1.18;
+}
+
+.landing-testflight-smartbanner .smartbanner-wrapper {
+  max-width: none;
+  text-align: right;
+  width: auto;
+}
+
+.landing-testflight-smartbanner.smartbanner-ios .smartbanner-button {
+  align-items: center;
+  background: var(--landing-blue);
+  border-radius: 999px;
+  color: #fff;
+  display: inline-flex;
+  font-size: 0.88rem;
+  font-weight: 800;
+  height: 36px;
+  line-height: 1;
+  min-width: 0;
+  padding: 0 18px;
+  text-shadow: none;
+  text-transform: none;
+}
+
+.landing-testflight-cta {
+  align-items: center;
+  aspect-ratio: 306 / 88;
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: clamp(8px, 0.9vw, 12px);
+  box-shadow: 0 16px 34px rgba(10, 10, 10, 0.22);
+  color: #fff;
+  display: inline-grid;
+  gap: clamp(6px, 0.7vw, 9px);
+  grid-template-columns: clamp(28px, 2.8vw, 36px) minmax(0, 1fr);
+  justify-items: start;
+  width: clamp(132px, 14vw, 182px);
+  padding: clamp(5px, 0.62vw, 7px) clamp(8px, 0.9vw, 11px);
+  text-align: left;
+  text-decoration: none;
+}
+
+.landing-testflight-cta img {
+  border-radius: clamp(7px, 0.72vw, 10px);
+  display: block;
+  height: clamp(28px, 2.8vw, 36px);
+  width: clamp(28px, 2.8vw, 36px);
+}
+
+.landing-testflight-cta-copy {
+  align-content: center;
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.landing-testflight-cta-copy span {
+  color: #fff;
+  font-family: var(--landing-font-subhead);
+  font-size: clamp(0.52rem, 0.58vw, 0.68rem);
+  font-weight: 800;
+  line-height: 0.96;
+}
+
+.landing-testflight-cta-copy strong {
+  color: #fff;
+  font-family: var(--landing-font-subhead);
+  font-size: clamp(1.02rem, 1.42vw, 1.44rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 0.9;
 }
 
 .landing-section {
@@ -3799,6 +3968,52 @@
 
   .landing-app-badge {
     width: 180px;
+  }
+
+  .landing-testflight-cta {
+    grid-template-columns: 28px minmax(0, 1fr);
+    padding: 5px 9px;
+    width: 142px;
+  }
+
+  .landing-testflight-cta img {
+    border-radius: 8px;
+    height: 28px;
+    width: 28px;
+  }
+
+  .landing-testflight-cta-copy span {
+    font-size: 0.56rem;
+  }
+
+  .landing-testflight-cta-copy strong {
+    font-size: 1.08rem;
+  }
+
+  .landing-testflight-smartbanner .smartbanner-container {
+    gap: 8px;
+    grid-template-columns: auto 40px minmax(0, 1fr) auto;
+    padding: 8px 8px 8px 6px;
+  }
+
+  .landing-testflight-smartbanner.smartbanner-ios .smartbanner-icon {
+    border-radius: 10px;
+    height: 40px;
+    width: 40px;
+  }
+
+  .landing-testflight-smartbanner.smartbanner-ios .smartbanner-title {
+    font-size: 0.84rem;
+  }
+
+  .landing-testflight-smartbanner.smartbanner-ios .smartbanner-info {
+    font-size: 0.68rem;
+  }
+
+  .landing-testflight-smartbanner.smartbanner-ios .smartbanner-button {
+    font-size: 0.8rem;
+    height: 34px;
+    padding: 0 14px;
   }
 
   .landing-footer {

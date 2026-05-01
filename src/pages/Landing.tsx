@@ -17,7 +17,7 @@ import { Logo } from '../components/logo';
 import { LandingSiteFooter } from '../components/LandingSiteFooter';
 import { LandingSiteHeader } from '../components/LandingSiteHeader';
 import LandingBackgroundLines from '../components/LandingBackgroundLines';
-import appStoreBadge from '../images/appleOfficialBadges/Mobile app store badge.svg';
+import testFlightIcon from '../images/appleOfficialBadges/testFlight.webp';
 import irisDefault from '../images/emojis/Iris/Iris_default_1.png';
 import irisSpeaking from '../images/emojis/Iris/Iris_botSpeaking_1.png';
 import irisSpeakingAlt from '../images/emojis/Iris/Iris_botSpeaking_2.png';
@@ -38,7 +38,6 @@ import { useVoiceSession } from '../hooks/useVoiceSession';
 import { generateDiscoveryId } from '../utils/pipecatConfig';
 import { FirestoreService } from '../utils/firebase';
 import '../styles/landing-redesign.css';
-
 type ClusterNode = {
   kind?: 'image' | 'text';
   src?: string;
@@ -134,7 +133,7 @@ const subscriptionNodes: ClusterNode[] = [
   { kind: 'text', text: '\u{1F4A1}', top: '88%', left: '72%', size: 30 },
 ];
 
-const APP_DOWNLOAD_URL = 'https://apps.apple.com/us/search?term=delirio%20fit';
+const TESTFLIGHT_DOWNLOAD_URL = import.meta.env.VITE_TESTFLIGHT_URL || 'https://testflight.apple.com/';
 
 const coachOrder: CoachId[] = ['reed', 'iris'];
 
@@ -934,7 +933,7 @@ export default function Landing() {
         onFeaturesClick={() => scrollToSection('personalities')}
         onPersonalitiesClick={() => scrollToSection('form-feedback')}
         onSubscriptionClick={() => scrollToSection('subscription')}
-        downloadUrl={APP_DOWNLOAD_URL}
+        downloadUrl={TESTFLIGHT_DOWNLOAD_URL}
       />
 
       <main className="landing-main">
@@ -1337,8 +1336,8 @@ export default function Landing() {
                     <li>Progress tracking</li>
                   </ul>
 
-                  <a className="landing-outline-button landing-outline-button--full" href={APP_DOWNLOAD_URL} target="_blank" rel="noreferrer">
-                    Download the app
+                  <a className="landing-outline-button landing-outline-button--full" href={TESTFLIGHT_DOWNLOAD_URL} target="_blank" rel="noreferrer">
+                    Join the TestFlight beta
                   </a>
                 </div>
               </div>
@@ -1357,8 +1356,12 @@ export default function Landing() {
                 <div className="landing-subscription-logo-block">
                   <Logo width="50" height="auto" />
                 </div>
-                <a className="landing-app-badge-link" href={APP_DOWNLOAD_URL} target="_blank" rel="noreferrer">
-                  <img className="landing-app-badge" src={appStoreBadge} alt="Download on the App Store" />
+                <a className="landing-testflight-cta" href={TESTFLIGHT_DOWNLOAD_URL} target="_blank" rel="noreferrer">
+                  <img src={testFlightIcon} alt="" aria-hidden="true" loading="lazy" decoding="async" />
+                  <span className="landing-testflight-cta-copy">
+                    <span>Available on</span>
+                    <strong>TestFlight</strong>
+                  </span>
                 </a>
               </div>
             </div>
