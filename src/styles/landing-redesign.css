@@ -560,7 +560,8 @@
 .landing-heading {
   font-family: var(--landing-font-heading);
   font-weight: 700;
-  letter-spacing: -0.065em;
+  font-kerning: normal;
+  letter-spacing: 0;
   line-height: 0.88;
   margin: 0;
   text-transform: uppercase;
@@ -572,19 +573,19 @@
 
 .landing-display--hero-flex {
   align-content: flex-start;
-  column-gap: 0.14em;
+  column-gap: 0.16em;
   display: flex;
   flex-wrap: wrap;
-  max-inline-size: min(100%, 10.8ch);
+  max-inline-size: min(100%, 12.35ch);
   overflow: visible;
-  padding-inline-end: 0.04em;
+  padding-inline-end: 0.08em;
   row-gap: 0.02em;
 }
 
 .landing-display--hero-flex > span {
   display: inline-flex;
   flex: 0 0 auto;
-  padding-inline-end: 0.02em;
+  padding-inline: 0.015em 0.04em;
 }
 
 .landing-display--section {
@@ -624,8 +625,13 @@
 @supports ((-webkit-background-clip: text) or (background-clip: text)) {
   .landing-display--hero-flex .landing-display-blue {
     background-image: var(--landing-hero-blue-gradient);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 115% 100%;
     background-clip: text;
     -webkit-background-clip: text;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
     color: transparent;
     -webkit-text-fill-color: transparent;
   }
@@ -3239,8 +3245,8 @@
   }
 
   .landing-display--hero-flex {
-    max-inline-size: min(100%, 9.9ch);
-    padding-inline-end: 0.05em;
+    max-inline-size: min(100%, 11.85ch);
+    padding-inline-end: 0.08em;
   }
 
   .landing-display--section,
@@ -3316,16 +3322,10 @@
   }
 
   .landing-display--hero-flex .landing-display-blue {
-    background-image: linear-gradient(
-      132deg,
-      #2f7ef8 0%,
-      #56a8ff 34%,
-      #8cc3ff 49%,
-      #4698ff 66%,
-      #256fe5 100%
-    );
-    background-size: 100% 100%;
+    background-image: var(--landing-hero-blue-gradient);
+    background-position: center;
     background-repeat: no-repeat;
+    background-size: 115% 100%;
     color: transparent;
     -webkit-text-fill-color: transparent;
     opacity: 1;

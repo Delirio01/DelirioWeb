@@ -871,7 +871,7 @@ export default function Landing() {
                 <span className="landing-display-blue">DO.</span>
               </h1>
               <div className="landing-eyecatcher-body">
-                <p>Meet the AI coach that watches your form, guides your workouts, and actually shows up when you do.</p>
+                <p>More personal training for less — more guidance than online plans, without the cost or hassle of in-person training.</p>
               </div>
               <button className="landing-outline-button landing-outline-button--hero" type="button" onClick={() => scrollToSection('personalities', 264)}>
                 <span>Find your coach</span>
