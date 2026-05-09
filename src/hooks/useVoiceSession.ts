@@ -270,6 +270,8 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
         transport,
         enableMic: true,
         enableCam: false,
+        // TODO: `timeout` is honored at runtime but missing from PipecatClientOptions in @pipecat-ai/client-js typings.
+        // @ts-expect-error -- runtime-supported option not in SDK type definitions
         timeout,
         callbacks: {
           onConnected: () => {
@@ -392,6 +394,8 @@ export function useVoiceSession(options: UseVoiceSessionOptions = {}) {
       await client.startBotAndConnect({
         endpoint: connectUrl,
         requestData: requestBody,
+        // TODO: `config` is honored at runtime but missing from APIRequest in @pipecat-ai/client-js typings.
+        // @ts-expect-error -- runtime-supported field not in SDK type definitions
         config:[
           {
             service: "llm", 
