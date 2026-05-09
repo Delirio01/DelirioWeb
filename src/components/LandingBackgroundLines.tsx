@@ -440,6 +440,13 @@ export default function LandingBackgroundLines({
     };
 
     waveRafRef.current = requestAnimationFrame(tick);
+
+    return () => {
+      if (waveRafRef.current !== null) {
+        cancelAnimationFrame(waveRafRef.current);
+        waveRafRef.current = null;
+      }
+    };
   }, [waveBehaviour]);
 
   useEffect(() => {
@@ -450,10 +457,6 @@ export default function LandingBackgroundLines({
 
       if (pinkMorphRafRef.current !== null) {
         cancelAnimationFrame(pinkMorphRafRef.current);
-      }
-
-      if (waveRafRef.current !== null) {
-        cancelAnimationFrame(waveRafRef.current);
       }
     };
   }, []);
