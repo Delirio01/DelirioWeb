@@ -21,4 +21,7 @@ src/devEnv/
 *.log
 npm-debug.log*
 
+# playwright-cli artifacts (screenshots, snapshots, traces, videos, console logs)
+.playwright-cli/
+
 pipecatSecrets.xml

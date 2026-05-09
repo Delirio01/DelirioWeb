@@ -40,6 +40,57 @@ npm run lint        # eslint src
 npm run format      # prettier --write src
 ```
 
+There is no unit-test runner configured (no vitest/jest). Code-correctness checks are
+`typecheck` + `lint`; feature correctness comes from browser-testing — see below.
+
+## Verifying changes
+
+Before reporting any code change as done:
+
+1. `npm run typecheck` — must pass.
+2. `npm run lint` — must not introduce new errors. Existing warning count is in **Lint state**
+   below; don't increase it without reason.
+3. **Browser-test the change.** Start `npm run dev` and use the `playwright-cli` skill
+   (defined at `.claude/skills/playwright-cli/`) to drive a real browser against
+   `http://localhost:3000`. Visit the affected route, exercise the changed flow end-to-end,
+   and check the console (`playwright-cli console`) for new errors or warnings. Typecheck and
+   lint confirm code correctness; only the browser confirms feature correctness. If you
+   genuinely cannot exercise the flow in a browser (e.g. it depends on a backend you can't
+   reach), say so explicitly rather than claiming success.
+4. **Test mobile first.** This is a marketing site for an iOS app — the majority of real
+   traffic will land on a phone. Any UI change must be checked at a phone viewport before
+   it's reported as done; desktop alone is not enough. Sanity-check at least these two
+   viewports, and add a tablet width if the change touches a breakpoint:
+   ```
+   playwright-cli resize 390 844    # iPhone-class — REQUIRED for any UI change
+   playwright-cli resize 1440 900   # desktop
+   playwright-cli resize 820 1180   # iPad-class — when touching responsive breakpoints
+   ```
+   Watch for: text overflow, tap targets <44px, horizontal scroll, content hidden behind the
+   smart banner, hero/section padding collapsing, image mockups overlapping copy.
+
+### playwright-cli artifacts
+
+All `playwright-cli` output — screenshots, PDFs, traces, videos, snapshot YAMLs, console
+logs — must land inside `.playwright-cli/` (gitignored). Auto-named files (snapshots,
+console logs) already go there; for screenshots and PDFs you **must** pass the path
+explicitly or they fall into the repo root:
+
+```
+playwright-cli screenshot --filename=.playwright-cli/hero.png
+playwright-cli screenshot e5 --filename=.playwright-cli/hero-cta.png
+playwright-cli pdf --filename=.playwright-cli/page.pdf
+```
+
+Never write playwright artifacts to the repo root or anywhere else under version control.
+
+### Session hygiene
+
+- Always run `playwright-cli close` when done — don't leave headless browsers around.
+- Stop the dev server when done (kill the background `vite` process you started).
+- Don't reuse a stale browser session across unrelated tasks. If `playwright-cli` returns
+  "browser is not open," start fresh with `playwright-cli open <url>` rather than guessing.
+
 ## Environment variables
 
 ```
