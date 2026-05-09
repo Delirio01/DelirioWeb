@@ -1,17 +1,14 @@
 [[redirects]]
   from = "/terms"
-  to = "/terms.html"
-  status = 200
+  to = "/terms-of-service"
+  status = 301
+  force = true
 
 [[redirects]]
   from = "/privacy"
-  to = "/privacy.html"
-  status = 200
-
-[[redirects]]
-  from = "/sms-signup"
-  to = "/sms-signup.html"
-  status = 200
+  to = "/privacy-policy"
+  status = 301
+  force = true
 
 [[redirects]]
   from = "/*"

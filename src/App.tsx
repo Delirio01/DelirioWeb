@@ -8,8 +8,8 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="/terms" element={<TermsServices />} />
-        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-service" element={<TermsServices />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       </Routes>
     </BrowserRouter>
   );

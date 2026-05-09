@@ -43,8 +43,8 @@ export function LandingSiteFooter() {
         <div className="landing-footer-bottom">
           <p>&copy; 2026 Delirio</p>
           <div className="landing-footer-legal">
-            <Link to="/terms">Terms of Service</Link>
-            <Link to="/privacy">Privacy Policy</Link>
+            <Link to="/terms-of-service">Terms of Service</Link>
+            <Link to="/privacy-policy">Privacy Policy</Link>
           </div>
         </div>
       </div>
